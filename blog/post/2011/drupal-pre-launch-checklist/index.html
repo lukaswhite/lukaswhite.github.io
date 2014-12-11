@@ -1,0 +1,325 @@
+<!doctype html>
+<!--[if lt IE 7 ]><html class="ie ie6" lang="en"> <![endif]-->
+<!--[if IE 7 ]><html class="ie ie7" lang="en"> <![endif]-->
+<!--[if IE 8 ]><html class="ie ie8" lang="en"> <![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!--><html lang="en"> <!--<![endif]-->
+<head>
+<meta charset="utf-8">
+
+<!--
+••••••••••••••••••••••••
+
+Powered by Type & Grids™
+www.typeandgrids.com
+
+••••••••••••••••••••••••
+-->
+
+<title>A Drupal Pre-Launch Checklist</title>
+<meta name="description" content="The website of Lukas White, Manchester-based Freelance Web Designer and Developer">
+<meta name="author" content="Lukas White">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+<!-- CSS
+================================================================================================= -->
+<link rel="stylesheet" href="/dist/styles.min.css">
+
+<!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+
+<!-- Favicons
+================================================================================================= -->
+<link rel="shortcut icon" href="/favicon.ico">
+<link rel="apple-touch-icon" href="images/favicons/apple-touch-icon.png">
+<link rel="apple-touch-icon" sizes="72x72" href="images/favicons/apple-touch-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="114x114" href="images/favicons/apple-touch-icon-114x114.png">
+
+</head>
+<body>
+
+<div class="container">
+  
+  <!-- Header begins ========================================================================== -->
+  <header id="page-header" class="sixteen columns">
+    <div id="logo">
+      <a href="/">
+        <h1>Lukas White</h1>
+        <h2>Freelance Web Developer</h2>
+      </a>
+      <!--
+      <img src="images/logo.png" width="275" height="35" alt="Logo" />
+      -->
+    </div>
+    <nav>
+      <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/about">About</a></li>
+        <li><a href="/blog">Blog</a></li>
+        <li><a href="/work">Work</a></li>
+        <li><a href="/contact">Contact</a></li>        
+      </ul>
+    </nav>
+    <hr />
+  </header>
+  <!-- Header ends ============================================================================ -->
+  
+  <div id="content" class="content">
+  <article class="eleven columns post">
+	<h2>A Drupal Pre-Launch Checklist</h2>
+	<p class="meta"> &ndash; <time datetime="2011-06-03">3<sup>rd</sup> June, 2011</time></p>
+
+	<div class="body">
+		<p>There are numerous steps you should complete before launching a new website; cross-browser testing, checking for dead links, proof-reading. These are covered more than adequately elsewhere but in this article I’m going to look at a number of steps applicable specifically to launching a Drupal site. You may not agree with them all, but then none of the following are compulsory – these are just my personal recommendations.</p>
+
+<p>There are numerous steps you should complete before launching a new website; cross-browser testing, checking for dead links, proof-reading. These are covered more than adequately elsewhere but in this article I’m going to look at a number of steps applicable specifically to launching a Drupal site. You may not agree with them all, but then none of the following are compulsory – these are just my personal recommendations. Rather than simply list them as bullet points, I’ve tried to give some of the rationale between these tasks, and pointers to online resources where I can.</p>
+
+<h3>Server Configuration</h3>
+
+<h4>Configure Cron</h4>
+
+<p>Drupal provides an extensible number of Cron jobs scheduled to run at varying intervals, such as re-indexing the search mechanism and checking for updates. Contributed or custom modules may define their own Cron jobs, from retrieving the latest Twitter feeds to processing message queues. Whilst it is possible to run a Drupal site without ever needing to run Cron, it’s highly recommended that you do so – the Update status module in particular is well worth using to help maintain the security of your website. There is good documentation on setting up Cron for Drupal in the <a href="http://drupal.org/cron" title="Find documentation about configuring Cron for Drupal">official documentation</a>. Alternatively you may wish to look at <a href="http://drupal.org/project/poormanscron">Poor Man’s Cron</a>, though this is simply a backport of automatic cron-running functionality offered in Drupal 7.</p>
+
+<h4>Check the maximum file upload sizes and max_execution time</h4>
+
+<p>If your site facilitates uploads of large files – such as MP3 files or videos – ensure that your server is configured to allow file uploads up to an appropriate size. In conjunction with this, look at the <code>max<em>execution</em>time</code> setting, which may well get exceeded if you’re uploading particularly large files.</p>
+
+<h4>Check recipient email addresses</h4>
+
+<p>Check that all forms, modules and so on are sending to the correct email addresses – it’s very easy to forget to update these once you go from development (your own addresses) to a client’s.</p>
+
+<h3>Security</h3>
+
+<h4>Set the file permissions</h4>
+
+<p>It’s vital that you correctly configure the security permissions on your filesystem in order to secure your site from malicious hackers. In particular, you should ensure the security of your settings.php file, which contains your database connection details. Note also that to facilitate uploads and so on your files directory needs to be writeable by the web server, and you should ensure your installation is configured with access to a writeable temporary directory. The official documentation contains a useful article on <a href="http://drupal.org/node/244924" title="Find information on securing file permissions and ownership in Drupal">securing file permissions and ownership</a>, and the installation guide contains information about the <a href="http://drupal.org/node/394704">files directory </a>specifically.</p>
+
+<h4>Protect your root account</h4>
+
+<p>Typically you’ll build your site using the default administrator account – the one you set up upon installation – but do remember that this account has full access to your website. Not only that, but the havoc which could be wreaked by a hacker getting access to this account could, network security not permitting, be carried out using nothing more than a web browser. You may select any username you wish; rather than, say “admin” you can make something altogether more difficult to guess. Ensure you’re using a strong password. Some people recommend that this account be disabled altogether, though this can complicate things when it comes to upgrading modules etc; something you’re likely to need to do often. As an aside, the password hashing mechanism used in version up to and including 6 is inherently insecure; you may wish to use a module such as <a href="http://drupal.org/project/aes" title="Get information about the AES module for securing Drupal">AES</a> to toughen up your security.</p>
+
+<h4>Check Permissions</h4>
+
+<p>Luckily new permissions introduced by installed modules tend to default to being pretty restrictive, and have to be manually enabled for other roles (whether anonymous, registered or custom). One of the flip-sides of this is that it can be easy to set up parts of a site as the root user only to find some way down the line that normal users can’t access things which they ought to be able to access. Always test the site under each role carefully before launching.</p>
+
+<h4>Turn off error reporting</h4>
+
+<p>I’m still amazed how often I see Drupal error messages on live sites. It’s not just Drupal-specific messages either; PHP errors can be rendered by Drupal itself. You can opt not to display system error messages and warnings in Site Configuration -&gt; Error Reporting; set the option of the same name to <em>Write errors to the log</em> so that they aren’t displayed to the user.</p>
+
+<h3>Error Handling</h3>
+
+<h4>Handle 404 errors gracefully</h4>
+
+<p>Do ensure that you cater for missing pages (404 errors) in as helpfully as possible. One (deliberate, I might add) feature of Drupal’s built-in 404 handling is that a page is displayed without any blocks, even if those blocks were set to appear on every page. As such, often your navigation disappears from the page when you get a page not found error. Consider using a module such as <a href="http://drupal.org/project/blocks404" title="Get information about the 404 Blocks module for Drupal">404 blocks</a> (renamed <a href="http://drupal.org/project/navigation404" title="Get information about the 404 Navigation module for Drupal">404 Navigation</a> in Drupal 7) for this, and perhaps a module such as <a href="http://drupal.org/project/customerror" title="Get information about the Custom Error module for Drupal">Custom Error</a> to define specific error pages. If you want to go the extra mile you may even wish to use something like <a href="http://drupal.org/project/search404" title="Get information about the Search 404 module for Drupal">Search 404</a> which upon displaying a page not found error, tries to second-guess what a user was looking for by feeding terms from the URL into the search engine.</p>
+
+<h3>Search Engine Optimisation</h3>
+
+<h4>Combine Pathauto with Global Redirect</h4>
+
+<p>If you use the <a href="http://drupal.org/project/pathauto" title="Get information about the Pathauto module for Drupal">Pathauto module</a> to automatically generate “friendly” URL’s (and I can’t recommend that step highly enough), you should install a module called <a href="http://drupal.org/project/globalredirect" title="Get information about the Global Redirect module for Drupal">Global Redirect</a> as well. This module works by analysing a visited link and if an alias for it exists, it performs a 301 redirect to the aliased path. For example, suppose contact-us is an alias for node/123, and somehow or another a user visits node/123 directly; Drupal will redirect back to contact-me. Why is this important? Well, if a single page is accessible from multiple URL’s, this – at least as far as Google is concerned – can impact negatively on your search ranking.</p>
+
+<h4>Check robots.txt</h4>
+
+<p>If appropriate, check your robots.txt to ensure that the relevant sections of your new site are excluded from crawlers. There is some documentation on <a href="http://drupal.org/node/22265" title="Read more about configuring robots.txt in Drupal">robots.txt in Drupal</a> on the official site.</p>
+
+<h3>Maintenance</h3>
+
+<h4>Create a Maintenance Page</h4>
+
+<p>Should you need to take your website down for any length of time, such as during a site upghrade, it’s worth thinking about what a visitor will see if they visit your site during that period. What a user gets by default is pretty unfriendly and somewhat unprofessional. Luckily – at least from Drupal 6 onwards – it’s pretty easy to create a custom maintenance page. For Drupal 6, the official documentation contains some useful information on <a href="http://drupal.org/node/195435" title="Read information on theming the Drupal 6 maintenance page">theming the Drupal 6 maintenance page</a>.</p>
+
+<h3>Performance</h3>
+
+<h4>Configure Caching</h4>
+
+<p>Caching will deliver significant performance boosts, particularly on high-traffic sites. Ensure that you’ve configured it in the Performance tab, but also, double-check any pages or blocks created by the Views module; these have their own caching options which are generally switched off by default.</p>
+
+<h4>Configure CSS and JavaScript Optimisation</h4>
+
+<p>One of the by-products of Drupal’s modular system is that a typical site will probably have scores of JavaScript and CSS files, increasing the number of HTTP calls for every page significantly. (As an aside, if you have a lot of modules it&#39;s actually quite easy to hit <a href="http://support.microsoft.com/kb/262161" title="Further information on Internet Explorer's limit of 31 stylesheet links">Internet Explorer’s limit of 31 links</a>.) Fortunately you can “squeeze” all the relevant CSS and JavaScript files, compressing them at the same time by enabling this feature in the Performance section. This is a typical last-minute configuration, as generally you’ll need this facility switched off during the development process.</p>
+
+<h3>Content and Publishing</h3>
+
+<h4>Check Unpublished Content is not Visible</h4>
+
+<p>In certain tasks, for example, when creating a view – and not to mention when writing custom code – it’s very easy to forget to check the status of a node before displaying it. Thus, draft content could appear on the website before it’s ready. Try adding a few items of content, leaving them unpublished and browsing the site trying to find them. Double-check the filters on your views. Check that any custom SQL includes a check of the status column.</p>
+
+<h4>Check your RSS feed</h4>
+
+<p>By default Drupal generates an RSS feed of your content, including individual feeds for your taxonomy terms. The default feed is comprised of published nodes which have been promoted to the front page – a facility which isn’t always relevant. In Drupal nodes can represent all sorts of things, which might not always be logical to publicise in a feed. Blog entries or new stories very much belong in a feed, static pages less so. However you may also have various other pages and objects that it doesn’t make sense to syndicate; custom error pages, confirmation pages or landing pages, for example. You could consider implementing your feed(s) using the <a href="http://drupal.org/project/views_rss" title="Get information about the Views RSS module for Drupal">Views RSS</a> module, which allows much more finely grained control over what goes into your RSS feeds. In any case you may wish to disallow access to rss.xml altogether.</p>
+
+<h4>Check your favicons</h4>
+
+<p>If you’re going to use a favicon, make sure it’s displaying correctly – and if not, ensure that you unselect the option to display Drupal&#39;s default favicon in your theme settings.</p>
+
+<h3>Site Monitoring</h3>
+
+<h4>Configure Statistics</h4>
+
+<p>It’s not just the security and reliability of your site you might want to be monitoring – you may wish to (and indeed probably should) monitor site usage, be it using the core <a href="http://drupal.org/documentation/modules/statistics">statistics</a> module – perhaps using the <a href="http://drupal.org/project/statistics_advanced">Advanced Statistics settings</a> companion module – or an external service such as <a href="http://drupal.org/project/google_analytics">Google Analytics</a>. 
+ 
+Have I missed anything? Please let me know using the comments below.</p>
+
+	</div>
+
+	
+	<p class="tags">Tagged with:
+	
+  <a href="/tag/drupal">Drupal</a> 
+	
+  <a href="/tag/deployment">deployment</a> 
+	
+	</p>
+	
+
+	<!--
+	<div class="author">
+		<a href="https://twitter.com/lukaswhite" title="Twitter">Twitter</a>
+		<a href="https://plus.google.com/+LukasWhiteWebDeveloper" title="My Google+ Profile">Google+</a>
+	</div>	
+-->
+
+	<div id="disqus_thread"></div>
+	<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">Comments powered by Disqus.</a></noscript>
+	<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+</article>
+
+<aside class="five columns">
+	
+	<h4>About Me</h4>
+
+<p>I&#39;m a web developer based in Manchester, England. I also design websites.  I generally favour open-source technologies such as PHP, MySQL and JQuery, and I have extensive experience using Drupal.</p>
+
+
+	<div class="block tag-cloud">
+			 	<h4>Tags</h4>
+			 	<ul class="tags">
+				
+	    		<li><a href="/blog/tags/drupal">Drupal</a></li>
+				
+	    		<li><a href="/blog/tags/mobile">mobile</a></li>
+				
+	    		<li><a href="/blog/tags/rwd">RWD</a></li>
+				
+	    		<li><a href="/blog/tags/responsive-web-design">responsive web design</a></li>
+				
+	    		<li><a href="/blog/tags/deployment">deployment</a></li>
+				
+	    		<li><a href="/blog/tags/prowl">Prowl</a></li>
+				
+	    		<li><a href="/blog/tags/push-notifications">push notifications</a></li>
+				
+	    		<li><a href="/blog/tags/concrete5">Concrete5</a></li>
+				
+	    		<li><a href="/blog/tags/cms">CMS</a></li>
+				
+	    		<li><a href="/blog/tags/tutorials">tutorials</a></li>
+				
+	    		<li><a href="/blog/tags/php">PHP</a></li>
+				
+	    		<li><a href="/blog/tags/laravel">Laravel</a></li>
+				
+	    		<li><a href="/blog/tags/frameworks">frameworks</a></li>
+				
+	    		<li><a href="/blog/tags/facebook">Facebook</a></li>
+				
+	    		<li><a href="/blog/tags/drupal-7">Drupal 7</a></li>
+				
+	    		<li><a href="/blog/tags/ux">UX</a></li>
+				
+	    		<li><a href="/blog/tags/less">Less</a></li>
+				
+	    		<li><a href="/blog/tags/mysql">MySQL</a></li>
+				
+	    		<li><a href="/blog/tags/writing">writing</a></li>
+				
+	    		<li><a href="/blog/tags/sitepoint">Sitepoint</a></li>
+				
+	    		<li><a href="/blog/tags/articles">articles</a></li>
+				
+	    		<li><a href="/blog/tags/spotify">Spotify</a></li>
+				
+	    		<li><a href="/blog/tags/drupal-commerce">Drupal Commerce</a></li>
+				
+	    		<li><a href="/blog/tags/bash">Bash</a></li>
+				
+	    		<li><a href="/blog/tags/git">Git</a></li>
+				
+	    		<li><a href="/blog/tags/apache">Apache</a></li>
+				
+	    		<li><a href="/blog/tags/workflow">Workflow</a></li>
+				
+	    		<li><a href="/blog/tags/foundation">Foundation</a></li>
+				
+	    		<li><a href="/blog/tags/gravatar">Gravatar</a></li>
+				
+	    		<li><a href="/blog/tags/jquery">JQuery</a></li>
+				
+	    		<li><a href="/blog/tags/geo">Geo</a></li>
+				
+	    		<li><a href="/blog/tags/backbone">Backbone</a></li>
+				
+	    		<li><a href="/blog/tags/homestead">Homestead</a></li>
+				
+	    		<li><a href="/blog/tags/elasticsearch">Elasticsearch</a></li>
+				
+	    		<li><a href="/blog/tags/jekyll">Jekyll</a></li>
+				
+	    		<li><a href="/blog/tags/grunt">Grunt</a></li>
+				
+				</ul>
+			</div>
+
+</aside>
+
+
+<script type="text/javascript">    
+	var disqus_shortname = 'lukaswhite';
+    
+	(function() {
+		var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+		dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+		(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+	})();
+</script>
+ 
+  </div>
+
+  <!-- Footer begins ========================================================================== -->
+  <footer id="footer">
+    <hr>
+    <div class="eight columns">
+      <ul id="footerLinks">
+        <li>&copy; 2014 Lukas White. All rights reserved.</li>        
+        <li><a href="http://www.twitter.com/lukaswhite" target="_blank">@lukaswhite</a></li>              
+      </ul>
+    </div>
+    <div class="eight columns right">
+      <ul class="social small">
+        <li><a class="linkedin" href="http://uk.linkedin.com/in/lukaswhite" target="_blank"><span>View my LinkedIn Profile</span></a></li>
+        <li><a class="twitter" href="http://www.twitter.com/lukaswhite" target="_blank"><span>Follow me on Twitter</span></a></li>
+        <li><a class="facebook" href="http://www.facebook.com/lukas.white.freelance.web.developer" target="_blank"><span>Find me on Facebook</span></a></li>
+        <li><a class="github" href="https://github.com/lukaswhite" target="_blank"><span>Find me on Github</span></a></li>
+      </ul>
+    </div>
+    <hr>
+    <div class="sixteen columns centered">
+      <p>Powered by <a href="http://www.typeandgrids.com" target="_blank">Type &amp; Grids</a>, <a href="http://jekyllrb.com/">Jekyll</a> and <a href="https://github.com/erikhuda/thor">Thor</a></p>
+    </div>
+  </footer>
+  <!-- Footer ends ============================================================================ -->
+    
+</div><!-- container -->
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-3485550-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</body>
+</html>

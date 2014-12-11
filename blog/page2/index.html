@@ -1,0 +1,807 @@
+<!doctype html>
+<!--[if lt IE 7 ]><html class="ie ie6" lang="en"> <![endif]-->
+<!--[if IE 7 ]><html class="ie ie7" lang="en"> <![endif]-->
+<!--[if IE 8 ]><html class="ie ie8" lang="en"> <![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!--><html lang="en"> <!--<![endif]-->
+<head>
+<meta charset="utf-8">
+
+<!--
+••••••••••••••••••••••••
+
+Powered by Type & Grids™
+www.typeandgrids.com
+
+••••••••••••••••••••••••
+-->
+
+<title>Lukas White // Web Developer // Blog</title>
+<meta name="description" content="The website of Lukas White, Manchester-based Freelance Web Designer and Developer">
+<meta name="author" content="Lukas White">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+<!-- CSS
+================================================================================================= -->
+<link rel="stylesheet" href="/dist/styles.min.css">
+
+<!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+
+<!-- Favicons
+================================================================================================= -->
+<link rel="shortcut icon" href="/favicon.ico">
+<link rel="apple-touch-icon" href="images/favicons/apple-touch-icon.png">
+<link rel="apple-touch-icon" sizes="72x72" href="images/favicons/apple-touch-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="114x114" href="images/favicons/apple-touch-icon-114x114.png">
+
+</head>
+<body>
+
+<div class="container">
+  
+  <!-- Header begins ========================================================================== -->
+  <header id="page-header" class="sixteen columns">
+    <div id="logo">
+      <a href="/">
+        <h1>Lukas White</h1>
+        <h2>Freelance Web Developer</h2>
+      </a>
+      <!--
+      <img src="images/logo.png" width="275" height="35" alt="Logo" />
+      -->
+    </div>
+    <nav>
+      <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/about">About</a></li>
+        <li><a href="/blog">Blog</a></li>
+        <li><a href="/work">Work</a></li>
+        <li><a href="/contact">Contact</a></li>        
+      </ul>
+    </nav>
+    <hr />
+  </header>
+  <!-- Header ends ============================================================================ -->
+  
+  <div id="content" class="content">
+  <div id="blog">  
+
+	<div class="eleven columns post">
+
+		<h2>Blog</h2>
+
+		
+		<article class="post clearfix">
+			<header>
+				<h3><a href="/blog/post/2013/bash-script-new-projects">A Bash Script for New projects</a></h3>		    		
+				<p class="meta"> &ndash; 22<sup>nd</sup> August, 2013</p>
+			</header>
+			<div class="body excerpt">      
+				<p>Whenever I start a new web project, the initial steps are pretty much the same:</p>
+
+<ul>
+<li>Create a new folder, in my case in <code>/var/www</code></li>
+<li>Change the ownership of the new folder</li>
+<li>Come up with a new hostname, e.g. <code>myproject.local</code></li>
+<li>Create an entry in <code>etc/hosts</code></li>
+<li>Create an Apache virtual host for it</li>
+<li>Create a new database</li>
+<li>Create a new Git repository</li>
+<li>Intialise the Git repository</li>
+<li>Create a new project in Sublime</li>
+</ul>
+
+<p>Not particularly hard, but pretty repetitive. And if something&#39;s repetitive, chances are it can be scripted!</p>
+
+<p>So here&#39;s what I came up with:</p>
+
+<p><script src='https://gist.github.com/9311300.js?file='></script><noscript><pre><code></code></pre></noscript></p>
+
+<p>A few notes:</p>
+
+<ul>
+<li>This script is designed for a Mac, but it should work on any OS provided you check / modify things like the paths</li>
+<li>Don&#39;t forget to set your MySQL / Bitbucket credentials at the top of the file</li>
+<li>You&#39;ll probably need to use <code>sudo</code> to run this</li>
+<li>The script asks for a &quot;friendly&quot; name, e.g. &quot;My Awesome Project&quot;. It then generates a slug, e.g. <code>my-awesome-project</code>.  The hostname becomes <code>my-awesome-project.local</code>, the directory gets named <code>my-awesome-project</code>, as does the Git repo, and the database ends up being called <code>myawesomeproject</code>. You can always modify the script to alter this behaviour</li>
+<li>You might want to expand the script to create a database user too, perhaps with a random password</li>
+<li>It creates a Git repository using Bitbucket&#39;s REST API. You may wish to alter the behaviour - in which case <a href="https://confluence.atlassian.com/display/BITBUCKET/Use+the+Bitbucket+REST+APIs">consult the documentation</a> - or you might be able to add Github support, which isn&#39;t something I tried.</li>
+</ul>
+
+			</div>
+			<footer>
+				<p class="readmore"><a href="/blog/post/2013/bash-script-new-projects">Read more &raquo;</a></p>
+			</footer>
+		</article>
+		
+		<article class="post clearfix">
+			<header>
+				<h3><a href="/blog/post/2013/website-redevelopment">Website Re-Development</a></h3>		    		
+				<p class="meta"> &ndash; 11<sup>th</sup> August, 2013</p>
+			</header>
+			<div class="body excerpt">      
+				<p>Until very recently, this website was powered by Drupal.  Now although Drupal&#39;s great in a whole raft of situations, there are times when either it&#39;s overkill for something small, or just doesn&#39;t fit into one&#39;s workflow.  I came to realise that both of these applied to this site, so when it came to re-developing, I decided to abandon Drupal for the site altogether.</p>
+
+<p>In the end, I decided to rebuild the site using Jekyll, along with a few other tools along the way.  </p>
+
+<p>This post explains the motivations behind the decision, what I did next and some of the challenges I faced along the way.</p>
+
+<h3>The Need for Re-development</h3>
+
+<p>There were several aspects that made re-developing my site something of a priority.</p>
+
+<p>First, it wasn&#39;t mobile-friendly.  I may have been able to get away with that some years ago when I first drafted the site, but now that&#39;s just not acceptable.  After weighing the pros and cons of a responsive vs a separate mobile site, I decided on the former - and the only way to do that would be to start the front end build again from scratch.</p>
+
+<p>Secondly, the site was running Drupal 6.  When I first built the site, Seven was in the offing, but not yet secure or stable enough for production.  Staying with Drupal would have meant an upgrade, and moving between versions 6 and 7 isn&#39;t trivial.</p>
+
+<p>Lastly, the structure of the site was no longer ideal.  My <a href="/work/portfolio">work</a> of late has included <a href="/work/open-source">open-source development</a> and <a href="/work/writing">lots of writing</a>, so a <a href="/work/portfolio">portfolio</a> only told half the story.</p>
+
+<h3>Other Factors</h3>
+
+<h4>Workflow</h4>
+
+<p>Though the entire site was content-managed, the vast majority of my time was spent on the blog - the rest rarely changed.  Although I had a WYSIWYG editor installed I was far more likely to use raw HTML, and often use the tools I use every day - such as Sublime Text - and then copying between applications, rather than editing in the browser.  As such, it made sense from a workflow point-of-view to switch to something that closer resembles my development process.</p>
+
+<p>I&#39;ve also become quite a fan of Markdown of late.</p>
+
+<h4>Bloat</h4>
+
+<p>For such a simple site, there sure was a lot of it.  </p>
+
+<h4>Performance</h4>
+
+<p>There were time when the site ran pretty slow.  Largely this was down to the fact that I have all sorts of projects running on the same box, and also because there have been times when the site has taken something of a hammering - particularly whe I release a new article.  I wanted my site to perform the best it possibly could, without throwing server resources at the problem.</p>
+
+<h3>Curiosity</h3>
+
+<p>Then there was the final motivation - I wanted to try something a little different.  There&#39;s no doubt that moving sites from a CMS to static is quite &quot;cool&quot; right now; maybe there was an element of that, but it&#39;s also true that the vast majority of the projects I&#39;m involved in use frameworks or CMS&#39;s, and I wanted to try stripping back the complexity of those, and try something new.  Enter Jekyll, which although I&#39;d looked at I hadn&#39;t really used.</p>
+
+<h3>What had to Go</h3>
+
+<p>In moving from a fully-featured CMS to a static site, there were a number of things that would have to go - or, at least, be re-thought.</p>
+
+<h4>Comments</h4>
+
+<p>Most of my posts attracted some excellent comments.  Clearly comments are something that aren&#39;t supported with a static site, at least without using something like Disqus.</p>
+
+<p>However, with comments you always have to weigh up the pros of inviting discussion and gaining useful insight, with the effort involved in fighting spam.  I used a number of the tools at my disposal to help the fight on my Drupal site - primarily, moderation and Mollom.  I deliberately opted against CAPTCHA - as well as being far from fool-proof, I personally find them a significant hinderance.  </p>
+
+<p>Despite my best efforts, the sheer amount of spam - including a week of sustained attacks that had led me to disable comments anyway - made the decision to put aisde the lack of a commenting system in my decision to move to a static site.</p>
+
+<h4>Dynamic Image Re-sizing</h4>
+
+<p>Drupal&#39;s image styles (formerly imagecache) enabled me to upload a single image for something, and have the CMS take care of any necessary resizing.  There are <a href="https://github.com/zroger/jekyll-minimagick">solutions for Jekyll</a>, but even then it became clear that this wasn&#39;t a priority.  I also found that images weren&#39;t always resized the way I wanted them, and setting the compression is something that varies according to the image - and can only, I feel, be done by eye.  As such, losing this particular piece of functionality wasn&#39;t a big deal.</p>
+
+<h4>Other Features</h4>
+
+<p>Of course Drupal provides many, many other features - either in core, via third-party modules, or by writing your own.  But I didn&#39;t <em>need</em> anything else.  I didn&#39;t <em>need</em> to be able to switch themes, to translate content, dynamic views or a hundred and one content types.  In fact, the sheer amount of unused functionality just added to the bloat.</p>
+
+<h3>Other Advantages</h3>
+
+<p>One of the problems with a CMS is that as well as having to keep a backup - preferably in source control! - of all your code, there&#39;s also the database to worry about.  Indeed, with Drupal in addition to all the content being stored in the database, so too is much of the configuration (fortunately, Drupal 8 is changing this).  So that&#39;s two things to worry about, and with a database that means scheduled backups.  It&#39;s also much more complex to use version control with SQl sumps.  With a static site, there are no such problems - the whole thing; templates, code, and content is in one place and can be safely stored away in Git.</p>
+
+<p>I&#39;ve reworked the design slightly, replaced all the CSS and underlying HTML, and tidied up some of the visuals.  </p>
+
+<h3>Source-code Highlighting</h3>
+
+<p>I use a lot of code samples in my posts, so source-code highlighting was a must.  Fortunately, Jekyll supports it by default using <a href="http://pygments.org/">Pygments</a>.</p>
+
+<p>That said, there are a few steps required to make it work - the actual steps will depend on your system, and what you already have installed.</p>
+
+<p>First, I had to install Pygments.  I installed on a Mac, so I already had Python installed, so I simply had to do this:</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">sudo easy_install pygments
+</code></pre></div>
+<p>I also needed to ensure it was installed in my <code>_config.yml</code> file:</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">pygments: true
+</code></pre></div>
+<p>The next thing I needed to do was create the css file:</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">pygmentize -S default -f html &gt; css/pygments.css
+</code></pre></div>
+<p>And the step I forgot for a while, leading to much unecessary head-scratching - including the CSS in my layout!</p>
+
+<p>At first, I struggled to get PHP code to highlight.  Turns out that by default, Pygments expects <code>&lt;?php</code> tags, unless you use the <code>startinline</code> option:</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">{{% highlight php startinline %}}
+</code></pre></div>
+<p>Using Pygments - which formats source-code using CSS - solved one of the problems I had with my existing site, which was that the Javascript-based solution I was using was a little tempremental.  It also caused problems on mobile - though to be fair, I do find code quite difficult to read on mobiles regardless.  Using CSS to format the code seems much more natural than using a plugin.</p>
+
+<h3>Portfolio</h3>
+
+<p>To use CMS parlance, Jekyll only supports one &quot;content type&quot;, and that&#39;s blog posts.  In my old site, my portfolio was comprised of a &quot;project&quot; content type, and I felt it would be easier to manage if I had something similar in this version of the site.</p>
+
+<p>https://github.com/flatterline/jekyll-plugins</p>
+
+<h3>Blocks</h3>
+
+<p>http://stackoverflow.com/questions/8772404/jekyll-not-interpreting-markdown</p>
+
+<p>In <code>_plugins/unident.rb</code>:</p>
+
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="k">module</span> <span class="nn">Jekyll</span>
+  <span class="k">module</span> <span class="nn">UnindentFilter</span>
+    <span class="k">def</span> <span class="nf">unindent</span> <span class="n">input</span>
+      <span class="n">input</span><span class="o">.</span><span class="n">lstrip</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="no">Liquid</span><span class="o">::</span><span class="no">Template</span><span class="o">.</span><span class="n">register_filter</span> <span class="no">Jekyll</span><span class="o">::</span><span class="no">UnindentFilter</span></code></pre></div>
+
+<p>https://github.com/agelber/jekyll-rss</p>
+
+<h3>Twitter Feed</h3>
+
+<p>Another challenge I faced was the Twitter feed, that appears on the front page of the site.</p>
+
+<p>Because it was a static site and this involved dynamic content, it made sense to explore a client-side solutio; i.e., Javascript.  </p>
+
+<p>Only a few months previous, this would have been a doddle - however, my website redevelopment came shortly after Twitter finally retired the old REST API - requiring developers to use OAuth, even if all you want to do is fetch a public timeline.</p>
+
+<p>The problem with OAuth, of course, is that your credentials need to be kept well out of view - which makes things difficult if you&#39;re building a client-side application.</p>
+
+<p>My solution - as suggested by <a href="http://mikerogers.io/2013/02/25/how-use-twitter-oauth-1-1-javascriptjquery.html">this excellent article</a> - was to build a simple proxy.</p>
+
+<p>As such, instead of fetching the data from Twitter, my JQuery code simply needed to pass the required URL to my proxy, and then that would be responsible for making the call to Twitter, authenticating using OAuth.</p>
+
+<p>The next challenge was to format the tweets.  For this I found <a href="https://github.com/remy/twitterlib">Remy Sharp&#39;s twitterlib</a>.  However, the format method was unsuitable, because it added avatars - unecessary for one person&#39;s timeline, I feel - and the format didn&#39;t fit the site.  Instead, I used the method <code>twitterlib.ify.clean</code>.  Here&#39;s the code in full:</p>
+
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">$</span><span class="p">(</span><span class="nb">document</span><span class="p">).</span><span class="nx">ready</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="nx">$</span><span class="p">.</span><span class="nx">getJSON</span><span class="p">(</span><span class="s1">&#39;/twitter-proxy.php?url=&#39;</span><span class="o">+</span><span class="nb">encodeURIComponent</span><span class="p">(</span><span class="s1">&#39;statuses/user_timeline.json?screen_name=lukaswhite&amp;count=2&amp;include_rts=false&amp;exclude_replies=true&#39;</span><span class="p">),</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">){</span>
+        <span class="kd">var</span> <span class="nx">html</span> <span class="o">=</span> <span class="s1">&#39;&lt;ul&gt;&#39;</span><span class="p">;</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="nx">len</span><span class="o">=</span><span class="nx">d</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">&lt;</span><span class="nx">len</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span>
+        <span class="p">{</span> 
+            <span class="c1">//html += twitterlib.expandLinks(d[i]);</span>
+            <span class="nx">html</span> <span class="o">+=</span> <span class="s1">&#39;&lt;li&gt;&#39;</span> <span class="o">+</span> <span class="nx">twitterlib</span><span class="p">.</span><span class="nx">ify</span><span class="p">.</span><span class="nx">clean</span><span class="p">(</span><span class="nx">d</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">text</span><span class="p">);</span>
+            <span class="nx">html</span> <span class="o">+=</span> <span class="s1">&#39; &lt;span class=&quot;created&quot;&gt;&amp;mdash; &#39;</span> <span class="o">+</span> <span class="nx">twitterlib</span><span class="p">.</span><span class="nx">time</span><span class="p">.</span><span class="nx">datetime</span><span class="p">(</span><span class="nx">d</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">created_at</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;&lt;/span&gt;&#39;</span><span class="p">;</span> <span class="c1">// + &#39;&quot;&gt;&#39; + twitterlib.time.relative(d[i].created_at) + &#39;&lt;/span&gt;&lt;/a&gt;&#39;;</span>
+            <span class="nx">html</span> <span class="o">+=</span> <span class="s1">&#39;&lt;/li&gt;&#39;</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="nx">html</span> <span class="o">+=</span> <span class="s1">&#39;&lt;/ul&gt;&#39;</span><span class="p">;</span>
+        <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#tweets&#39;</span><span class="p">).</span><span class="nx">html</span><span class="p">(</span><span class="nx">html</span><span class="p">);</span>
+    <span class="p">});</span>
+<span class="p">});</span></code></pre></div>
+
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="nb">require</span> <span class="s1">&#39;date&#39;</span>
+
+<span class="k">module</span> <span class="nn">Jekyll</span>
+  <span class="k">module</span> <span class="nn">NiceDate</span>
+    <span class="k">def</span> <span class="nf">nice_date</span><span class="p">(</span><span class="n">input</span><span class="p">)</span>
+      <span class="n">d</span> <span class="o">=</span> <span class="n">input</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%e&quot;</span><span class="p">)</span>
+      <span class="nb">self</span><span class="o">.</span><span class="n">ordinalize</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">to_i</span><span class="p">)</span> <span class="o">+</span> <span class="n">input</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot; %B, %Y&quot;</span><span class="p">)</span>
+    <span class="k">end</span>
+    <span class="k">def</span> <span class="nf">ordinalize</span><span class="p">(</span><span class="n">number</span><span class="p">)</span>
+      <span class="k">if</span> <span class="p">(</span><span class="mi">11</span><span class="o">.</span><span class="n">.</span><span class="mi">13</span><span class="p">)</span><span class="o">.</span><span class="n">include?</span><span class="p">(</span><span class="n">number</span> <span class="o">%</span> <span class="mi">100</span><span class="p">)</span>
+        <span class="s2">&quot;</span><span class="si">#{</span><span class="n">number</span><span class="si">}</span><span class="s2">&lt;sup&gt;th&lt;/sup&gt;&quot;</span>
+      <span class="k">else</span>
+        <span class="k">case</span> <span class="n">number</span> <span class="o">%</span> <span class="mi">10</span>
+          <span class="k">when</span> <span class="mi">1</span><span class="p">;</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="n">number</span><span class="si">}</span><span class="s2">&lt;sup&gt;st&lt;/sup&gt;&quot;</span>
+          <span class="k">when</span> <span class="mi">2</span><span class="p">;</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="n">number</span><span class="si">}</span><span class="s2">&lt;sup&gt;nd&lt;/sup&gt;&quot;</span>
+          <span class="k">when</span> <span class="mi">3</span><span class="p">;</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="n">number</span><span class="si">}</span><span class="s2">&lt;sup&gt;rd&lt;/sup&gt;&quot;</span>
+          <span class="k">else</span>    <span class="s2">&quot;</span><span class="si">#{</span><span class="n">number</span><span class="si">}</span><span class="s2">&lt;sup&gt;th&lt;/sup&gt;&quot;</span>
+        <span class="k">end</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="no">Liquid</span><span class="o">::</span><span class="no">Template</span><span class="o">.</span><span class="n">register_filter</span><span class="p">(</span><span class="no">Jekyll</span><span class="o">::</span><span class="no">NiceDate</span><span class="p">)</span></code></pre></div>
+
+<p>http://truongtx.me/2013/01/09/display-liquid-code-in-jekyll/</p>
+
+			</div>
+			<footer>
+				<p class="readmore"><a href="/blog/post/2013/website-redevelopment">Read more &raquo;</a></p>
+			</footer>
+		</article>
+		
+		<article class="post clearfix">
+			<header>
+				<h3><a href="/blog/post/2013/gift-certificates-drupal-commerce">Gift Certificates in Drupal Commerce</a></h3>		    		
+				<p class="meta"> &ndash; 4<sup>th</sup> May, 2013</p>
+			</header>
+			<div class="body excerpt">      
+				<p>There isn&#39;t really an out-of-the-box solution for gift certificates in <a href="http://www.drupalcommerce.org/">Drupal Commerce</a>; there&#39;s no module (at time of writing) you can simply download, enable and forget about. Being Drupal, there are many ways to skin a cat, so to speak, so in this post I&#39;m going to outline how I got them working on a site I built.</p>
+
+			</div>
+			<footer>
+				<p class="readmore"><a href="/blog/post/2013/gift-certificates-drupal-commerce">Read more &raquo;</a></p>
+			</footer>
+		</article>
+		
+		<article class="post clearfix">
+			<header>
+				<h3><a href="/blog/post/2013/writing-book-markdown">Writing a Book in Markdown</a></h3>		    		
+				<p class="meta"> &ndash; 28<sup>th</sup> February, 2013</p>
+			</header>
+			<div class="body excerpt">      
+				<p>I&#39;m writing my first book at the moment. Lately I&#39;ve been doing all my writing in Markdown, but ultimately i&#39;ll need an alternative format. For word processing, such as it is, I tend to use Open Office - so really I wanted to be able to write in Markdown, but convert to Open Office (or indeed, any of a variety of formats). For one thing, it&#39;s nice to get an idea of the number of pages, which my Markown editor just can&#39;t do. Also, I prefer to work with separate files for each chapter - but I&#39;m not entirely sure what order the chapters will end up in. So, what I really wanted was a quick way to do two things - concatenate all my chapters, and then convert the lot to Open Office format.</p>
+
+<p>My solution to this is in two parts.</p>
+
+<p>First, a shell script to concatenate the files. It&#39;s important it&#39;s fairly easy to rearrange chapters, so the format of this was crucial.</p>
+
+<p>Second, the conversion. For this I turned to <a href="http://johnmacfarlane.net/pandoc/">Pandoc</a>, a small command-line utility which supports a huge raft of formats including Open Office, Markdown, Microsoft Word, HTML, ePub, LaTeX and so on.</p>
+
+<p>So without further ado, here&#39;s my shell script. Easy to reorganise, and does everything I need in minutes.</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">cat a_chapter_about_rabbits.md <span class="se">\</span>
+a_chapter_about_giraffes.md <span class="se">\</span>
+all_about_ocelots.md <span class="se">\</span>
+lets_talk_about_elephants.md <span class="se">\</span>
+wrapping_up.md <span class="se">\</span>
+&gt; concatenated.md
+
+pandoc concatenated.md -o book.odt
+rm concatenated.md</code></pre></div>
+
+<p>Now, when I add a new chapter I simply need to pop the filename in the appropriate place, I can see the chapter listing clearly, and rearranging is a basic cut &amp; paste job. Simple!</p>
+
+<p>(Note: the book&#39;s not <em>really</em> about ocelots.)</p>
+
+			</div>
+			<footer>
+				<p class="readmore"><a href="/blog/post/2013/writing-book-markdown">Read more &raquo;</a></p>
+			</footer>
+		</article>
+		
+		<article class="post clearfix">
+			<header>
+				<h3><a href="/blog/post/2012/getting-track-artwork-spotify-using-php">Getting Track Artwork from Spotify using PHP</a></h3>		    		
+				<p class="meta"> &ndash; 14<sup>th</sup> December, 2012</p>
+			</header>
+			<div class="body excerpt">      
+				<p>At time of writing, Spotify doesn’t provide a track’s artwork via its API.</p>
+
+<p>So, I’ve written a simple function to get the image; but please note, not only is it quick and dirty, but it’s horribly inefficient and should be used sparingly – at the very least, make sure you cache the results somewhere!</p>
+
+<p>You can access a public-facing web-page about a particular track using the following URL:</p>
+
+<p><strong><code>http://open.spotify.com/track/[TRACK-ID]</code></strong></p>
+
+<p>...where [TRACK-ID] is the last part of the track’s URI – so for example, for the track represented by the URI <strong><code>spotify:track:5fpizYGbi5IQoEraj6FP0R</code></strong>, the track ID would be <strong><code>5fpizYGbi5IQoEraj6FP0R</code></strong>, and thus the URL to the page would be:</p>
+
+<p><a href="http://open.spotify.com/track/5fpizYGbi5IQoEraj6FP0R"><strong><code>http://open.spotify.com/track/5fpizYGbi5IQoEraj6FP0R</code></strong></a></p>
+
+<p>If you take a look at the HTML source, you’ll see a fair few <code>&lt;meta&gt;</code> tags, like so:</p>
+
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;meta</span> <span class="na">charset=</span><span class="s">&quot;utf-8&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;title&gt;</span>Intergalactic by Beastie Boys on Spotify<span class="nt">&lt;/title&gt;</span>
+<span class="nt">&lt;meta</span> <span class="na">http-equiv=</span><span class="s">&quot;X-UA-Compatible&quot;</span> <span class="na">content=</span><span class="s">&quot;IE=9&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;meta</span> <span class="na">name=</span><span class="s">&quot;viewport&quot;</span> <span class="na">content=</span><span class="s">&quot;width=device-width, initial-scale=1, maximum-scale=1&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;meta</span> <span class="na">name=</span><span class="s">&quot;apple-itunes-app&quot;</span> <span class="na">content=</span><span class="s">&quot;app-id=324684580&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;meta</span> <span class="na">property=</span><span class="s">&quot;og:site_name&quot;</span> <span class="na">content=</span><span class="s">&quot;Spotify&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;meta</span> <span class="na">property=</span><span class="s">&quot;fb:app_id&quot;</span> <span class="na">content=</span><span class="s">&quot;174829003346&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;meta</span> <span class="na">property=</span><span class="s">&quot;og:title&quot;</span> <span class="na">content=</span><span class="s">&quot;Intergalactic&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;meta</span> <span class="na">property=</span><span class="s">&quot;og:description&quot;</span> <span class="na">content=</span><span class="s">&quot;Intergalactic, a song by Beastie Boys on Spotify.&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;meta</span> <span class="na">property=</span><span class="s">&quot;og:url&quot;</span> <span class="na">content=</span><span class="s">&quot;http://open.spotify.com/track/5fpizYGbi5IQoEraj6FP0R&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;meta</span> <span class="na">property=</span><span class="s">&quot;og:image&quot;</span> <span class="na">content=</span><span class="s">&quot;http://o.scdn.co/image/97092f295b383b1c59445ef9525051655ffa78e3&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;meta</span> <span class="na">property=</span><span class="s">&quot;og:type&quot;</span> <span class="na">content=</span><span class="s">&quot;music.song&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;meta</span> <span class="na">property=</span><span class="s">&quot;og:audio&quot;</span> <span class="na">content=</span><span class="s">&quot;spotify:track:5fpizYGbi5IQoEraj6FP0R&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;meta</span> <span class="na">property=</span><span class="s">&quot;og:audio:type&quot;</span> <span class="na">content=</span><span class="s">&quot;audio/vnd.facebook.bridge&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;meta</span> <span class="na">property=</span><span class="s">&quot;music:duration&quot;</span> <span class="na">content=</span><span class="s">&quot;231&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;meta</span> <span class="na">property=</span><span class="s">&quot;music:album&quot;</span> <span class="na">content=</span><span class="s">&quot;http://open.spotify.com/album/6eGYLONkDMja0MNtZWnRRB&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;meta</span> <span class="na">property=</span><span class="s">&quot;music:album:track&quot;</span> <span class="na">content=</span><span class="s">&quot;7&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;meta</span> <span class="na">property=</span><span class="s">&quot;music:musician&quot;</span> <span class="na">content=</span><span class="s">&quot;http://open.spotify.com/artist/03r4iKL2g2442PT9n2UKsx&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;meta</span> <span class="na">property=</span><span class="s">&quot;music:release_date&quot;</span> <span class="na">content=</span><span class="s">&quot;2009-09-22&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;meta</span> <span class="na">property=</span><span class="s">&quot;twitter:card&quot;</span> <span class="na">content=</span><span class="s">&quot;summary&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;meta</span> <span class="na">property=</span><span class="s">&quot;twitter:url&quot;</span> <span class="na">content=</span><span class="s">&quot;http://open.spotify.com/track/5fpizYGbi5IQoEraj6FP0R&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;meta</span> <span class="na">property=</span><span class="s">&quot;twitter:image&quot;</span> <span class="na">content=</span><span class="s">&quot;http://o.scdn.co/image/97092f295b383b1c59445ef9525051655ffa78e3&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;meta</span> <span class="na">property=</span><span class="s">&quot;twitter:description&quot;</span> <span class="na">content=</span><span class="s">&quot;A song by Beastie Boys on Spotify.&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;meta</span> <span class="na">property=</span><span class="s">&quot;twitter:title&quot;</span> <span class="na">content=</span><span class="s">&quot;Intergalactic&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;meta</span> <span class="na">property=</span><span class="s">&quot;twitter:site&quot;</span> <span class="na">content=</span><span class="s">&quot;@spotify&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;meta</span> <span class="na">property=</span><span class="s">&quot;description&quot;</span> <span class="na">content=</span><span class="s">&quot;Intergalactic, a song by Beastie Boys on Spotify. Don&amp;#39;t have Spotify? Get it at Spotify.com – it&amp;#39;s free!&quot;</span><span class="nt">&gt;</span></code></pre></div>
+
+<p>There’s loads of useful info in there, but this is the line I’m interested in:</p>
+
+<p><meta property="og:image" content="http://o.scdn.co/image/97092f295b383b1c59445ef9525051655ffa78e3" /></p>
+
+<p>I’m going to use <a href="http://code.google.com/p/phpquery/">phpQuery</a> to parse the HTML and extract the line I want – it provides a JQuery-like syntax for parsing an HTML document. It’s available as a PEAR package, though for the purposes of this post, I simply downloaded it as a single file – here is a <a href="http://code.google.com/p/phpquery/downloads/detail?name=phpQuery-0.9.5.386-onefile.zip&amp;can=2&amp;q=">direct download link</a> to the version I used.</p>
+
+<p>The code starts with a very simple function for fetching a document using cURL:</p>
+
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="k">function</span> <span class="nf">_fetch_url</span><span class="p">(</span><span class="nv">$url</span><span class="p">){</span>
+     <span class="nv">$ch</span> <span class="o">=</span> <span class="nb">curl_init</span><span class="p">();</span>
+     <span class="nb">curl_setopt</span><span class="p">(</span><span class="nv">$ch</span><span class="p">,</span> <span class="nx">CURLOPT_URL</span><span class="p">,</span> <span class="nv">$url</span><span class="p">);</span>
+     <span class="nb">curl_setopt</span><span class="p">(</span><span class="nv">$ch</span><span class="p">,</span> <span class="nx">CURLOPT_RETURNTRANSFER</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+     <span class="nb">curl_setopt</span><span class="p">(</span><span class="nv">$ch</span><span class="p">,</span> <span class="nx">CURLOPT_TIMEOUT</span><span class="p">,</span> <span class="mi">20</span><span class="p">);</span>
+      
+     <span class="nv">$ret_data</span> <span class="o">=</span> <span class="nb">curl_exec</span><span class="p">(</span><span class="nv">$ch</span><span class="p">);</span>
+     <span class="nb">curl_close</span><span class="p">(</span><span class="nv">$ch</span><span class="p">);</span> 
+     <span class="k">return</span> <span class="nv">$re_data</span><span class="p">;</span>
+<span class="p">}</span></code></pre></div>
+
+<p>There are plenty of other ways of doing this, including <code>file_get_contents</code>, so use whatever you prefer.</p>
+
+<p>Here’s the example of a function, <code>get_track_artwork</code> which given a track ID, will return the artwork from Spotify – I’ve commented it heavily, so it should be self-explanatory:</p>
+
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="k">function</span> <span class="nf">get_track_artwork</span><span class="p">(</span><span class="nv">$track_id</span><span class="p">)</span>
+<span class="p">{</span>
+     <span class="c1">// require the phpQuery library</span>
+     <span class="k">require_once</span><span class="p">(</span><span class="s1">&#39;libraries/phpquery/phpQuery-onefile.php&#39;</span><span class="p">);</span>
+
+     <span class="c1">// Get the URL to the page for this track</span>
+     <span class="nv">$track_url</span> <span class="o">=</span> <span class="s1">&#39;http://open.spotify.com/track/&#39;</span> <span class="o">.</span> <span class="nv">$track_id</span><span class="p">;</span>  
+
+     <span class="c1">// Grab the HTML</span>
+     <span class="nv">$html</span> <span class="o">=</span> <span class="nx">fetch_url</span><span class="p">(</span><span class="nv">$track_url</span><span class="p">);</span><span class="c1">//load album cover info from track</span>
+
+     <span class="c1">// Create a phpQuery document</span>
+     <span class="nx">phpQuery</span><span class="o">::</span><span class="na">newDocument</span><span class="p">(</span><span class="nv">$html</span><span class="p">);</span>
+
+     <span class="c1">// Get the meta tag og:image using phpQuery</span>
+     <span class="nv">$image_url</span> <span class="o">=</span> <span class="nx">pq</span><span class="p">(</span><span class="s1">&#39;meta[property=og:image&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">attr</span><span class="p">(</span><span class="s1">&#39;content&#39;</span><span class="p">);</span>
+
+     <span class="c1">// Optionally, get the thumbnail instead of the larger image, by simply substituting the relevant part of the URL</span>
+     <span class="nv">$image_url</span> <span class="o">=</span> <span class="nb">str_replace</span><span class="p">(</span><span class="s1">&#39;image&#39;</span><span class="p">,</span> <span class="s1">&#39;thumb&#39;</span><span class="p">,</span> <span class="nv">$image_url</span><span class="p">);</span>
+
+     <span class="k">return</span> <span class="nv">$image_url</span><span class="p">;</span>
+<span class="p">}</span></code></pre></div>
+
+<p>Usage is extremely simple:</p>
+
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="nv">$track_id</span> <span class="o">=</span> <span class="s1">&#39;5fpizYGbi5IQoEraj6FP0R&#39;</span><span class="p">;</span>
+
+<span class="nv">$image_url</span> <span class="o">=</span> <span class="nx">get_track_artwork</span><span class="p">(</span><span class="nv">$track_id</span><span class="p">);</span></code></pre></div>
+
+<p>Of course if you’re starting with a Spotify URI, you&#39;ll need to extract the ID, like so:</p>
+
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="nv">$track_uri</span> <span class="o">=</span> <span class="s1">&#39;spotify:track:5fpizYGbi5IQoEraj6FP0R&#39;</span><span class="p">;</span>
+<span class="nv">$track_id</span> <span class="o">=</span> <span class="nb">substr</span><span class="p">(</span><span class="nv">$track_uri</span><span class="p">,</span> <span class="nb">strripos</span><span class="p">(</span><span class="nv">$track_uri</span><span class="p">,</span> <span class="s1">&#39;:&#39;</span><span class="p">));</span></code></pre></div>
+
+<p>Again, please use this function with caution – and cache the results!</p>
+
+			</div>
+			<footer>
+				<p class="readmore"><a href="/blog/post/2012/getting-track-artwork-spotify-using-php">Read more &raquo;</a></p>
+			</footer>
+		</article>
+		
+		<article class="post clearfix">
+			<header>
+				<h3><a href="/blog/post/2012/using-laravels-pagination-class-jquery-masonry-and-infinite-scroll">Using Laravel's Pagination Class with JQuery Masonry and Infinite Scroll</a></h3>		    		
+				<p class="meta"> &ndash; 25<sup>th</sup> July, 2012</p>
+			</header>
+			<div class="body excerpt">      
+				<p>Just a quick one, but it’s something that I got stuck with for a while.</p>
+
+			</div>
+			<footer>
+				<p class="readmore"><a href="/blog/post/2012/using-laravels-pagination-class-jquery-masonry-and-infinite-scroll">Read more &raquo;</a></p>
+			</footer>
+		</article>
+		
+		<article class="post clearfix">
+			<header>
+				<h3><a href="/blog/post/2011/targetted-geolocation-geonames-phpmaster">Targetted Geolocation with Geonames on PHPMaster</a></h3>		    		
+				<p class="meta"> &ndash; 26<sup>th</sup> December, 2011</p>
+			</header>
+			<div class="body excerpt">      
+				<p>I haven’t blogged for a while, but I have been writing. I recently wrote an article for PHP Master (part of the Sitepoint family) on geolocation, called <a href="http://phpmaster.com/targeted-geolocation-with-geonames">Targetted Geolocation with Geonames</a>.</p>
+
+			</div>
+			<footer>
+				<p class="readmore"><a href="/blog/post/2011/targetted-geolocation-geonames-phpmaster">Read more &raquo;</a></p>
+			</footer>
+		</article>
+		
+		<article class="post clearfix">
+			<header>
+				<h3><a href="/blog/post/2011/migrating-concrete5-site-windows-linux-and-mysql-case-sensitivity-hell">Migrating a Concrete5 Site from Windows to Linux, and MySQL Case Sensitivity Hell</a></h3>		    		
+				<p class="meta"> &ndash; 21<sup>st</sup> October, 2011</p>
+			</header>
+			<div class="body excerpt">      
+				<p>If, like me, you often develop on a Windows platform and then host using a *Nix-based server, Concrete5 has a gotcha which will probably hit you when you come to publish your site. At some point no doubt you’ll reach the point where you’ve copied the codebase to your server, created a database dump and imported it into the MySQL instance on your *Nix-based server. Try browsing to your site at this point, though, and you’ll get a message a lot like this: </p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">Fatal error: Uncaught exception &#39;ADODB_Exception&#39; with message &#39;mysql error: [1146: Table &#39;mysite.Config&#39; doesn&#39;t exist] in EXECUTE(&quot;select * from Config where uID = 0 order by cfKey asc&quot;) &#39; in /var/www/mysite/htdocs/concrete/libraries/3rdparty/adodb/adodb-exceptions.inc.php:78 Stack trace: #0 /var/www/mysite/htdocs/concrete/libraries/3rdparty/adodb/adodb.inc.php(1037): adodb_throw(&#39;mysql&#39;, &#39;EXECUTE&#39;, 1146, &#39;Table &#39;mysite...&#39;, &#39;select * from C...&#39;, false, Object(ADODB_mysql)) #1 /var/www/mysite/htdocs/concrete/libraries/3rdparty/adodb/adodb.inc.php(1012): ADOConnection-&gt;_Execute(&#39;select * from C...&#39;, false) #2 /var/www/mysite/htdocs/concrete/libraries/database.php(75): ADOConnection-&gt;Execute(&#39;select * from C...&#39;) #3 /var/www/mysite/htdocs/concrete/models/config.php(151): Database-&gt;__call(&#39;Execute&#39;, Array) #4 /var/www/mysite/htdocs/concrete/models/config.php(151): Database-&gt;Execute(&#39;select * from C...&#39;) #5 /var/www/mysite in /var/www/mysite/htdocs/concrete/libraries/3rdparty/adodb/adodb-exceptions.inc.php on line 78
+</code></pre></div>
+<p>The reason for this is simple – although it might not be apparent. Concrete5 uses CamelCase table names such as <code>BlockTypes</code>, <code>CollectionAttributeValues</code> and <code>FileSearchIndexAttributes</code>. As soon as you install Concrete5 on Windows (under a default configuration) these table names are converted to lowercase – so in those specific examples, you’ll get table names such as <code>blocktypes</code>, <code>collectionattributevalues</code> and <code>filesearchindexattributes</code>. On Windows, MySQL table names are not case sensitive, but it’s set up such that rather than ignore capitalisation, it does away with it altogether. Linux and Unix on the other hand, are case sensitive and so in this instance, the table <code>Config</code> can’t be found because you’ll have unwittingly imported the table <code>config</code> – and you have Windows to thank. There is an option in MySQL which allows you to turn off this feature of converting table names to lowercase. In your <code>my.ini</code>, adding or amending the line: <code>set-variable=lower_case_table_names=0</code> However, the <a href="http://mysql2.mirrors-r-us.net/doc/refman/5.1/en/identifier-case-sensitivity.html">MySQL documentation</a> reccomends that this value be set to 1 if you’re using InnoDB. Also bear in mind that changing this value will only affect newly created tables. You would of course find that this method is useless if you find yourself in the situation above, as the conversion has already been done. Your best option, therefore, is to convert the table names on your *Nix database sever back to CamelCase. To do so you can run the following SQL script (it’s based on Concrete5 5.4.2.2, and do bear in mind that any tables created by third-party add-ons won’t be included): </p>
+
+<div class="highlight"><pre><code class="language-sql" data-lang="sql"><span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">areagroupblocktypes</span> <span class="k">TO</span> <span class="n">AreaGroupBlockTypes</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">areagroups</span> <span class="k">TO</span> <span class="n">AreaGroups</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">areas</span> <span class="k">TO</span> <span class="n">Areas</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">atdefault</span> <span class="k">TO</span> <span class="n">atDefault</span><span class="p">;</span>
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">attributesetkeys</span> <span class="k">TO</span> <span class="n">AttributeSetKeys</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">attributesets</span> <span class="k">TO</span> <span class="n">AttributeSets</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">attributekeys</span> <span class="k">TO</span> <span class="n">AttributeKeys</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">attributekeycategories</span> <span class="k">TO</span> <span class="n">AttributeKeyCategories</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">attributetypecategories</span> <span class="k">TO</span> <span class="n">AttributeTypeCategories</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">attributetypes</span> <span class="k">TO</span> <span class="n">AttributeTypes</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">attributevalues</span> <span class="k">TO</span> <span class="n">AttributeValues</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">blockrelations</span> <span class="k">TO</span> <span class="n">BlockRelations</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">blocktypes</span> <span class="k">TO</span> <span class="n">BlockTypes</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">blocks</span> <span class="k">TO</span> <span class="n">Blocks</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">collectionattributevalues</span> <span class="k">TO</span> <span class="n">CollectionAttributeValues</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">collectionversionblockpermissions</span> <span class="k">TO</span> <span class="n">CollectionVersionBlockPermissions</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">collectionversionblocks</span> <span class="k">TO</span> <span class="n">CollectionVersionBlocks</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">collectionversionblockstyles</span> <span class="k">TO</span> <span class="n">CollectionVersionBlockStyles</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">collectionversionarealayouts</span> <span class="k">TO</span> <span class="n">CollectionVersionAreaLayouts</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">collectionversionareastyles</span> <span class="k">TO</span> <span class="n">CollectionVersionAreaStyles</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">collectionversions</span> <span class="k">TO</span> <span class="n">CollectionVersions</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">collections</span> <span class="k">TO</span> <span class="n">Collections</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">composercontentlayout</span> <span class="k">TO</span> <span class="n">ComposerContentLayout</span><span class="p">;</span>
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">composerdrafts</span> <span class="k">TO</span> <span class="n">ComposerDrafts</span><span class="p">;</span>
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">composertypes</span> <span class="k">TO</span> <span class="n">ComposerTypes</span><span class="p">;</span>
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">config</span> <span class="k">TO</span> <span class="n">Config</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">dashboardhomepage</span> <span class="k">TO</span> <span class="n">DashboardHomepage</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">downloadstatistics</span> <span class="k">TO</span> <span class="n">DownloadStatistics</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">fileattributevalues</span> <span class="k">TO</span> <span class="n">FileAttributeValues</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">filepermissionfiletypes</span> <span class="k">TO</span> <span class="n">FilePermissionFileTypes</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">customstylepresets</span> <span class="k">TO</span> <span class="n">CustomStylePresets</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">customstylerules</span> <span class="k">TO</span> <span class="n">CustomStyleRules</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">filepermissions</span> <span class="k">TO</span> <span class="n">FilePermissions</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">taskpermissionusergroups</span> <span class="k">TO</span> <span class="n">TaskPermissionUserGroups</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">taskpermissions</span> <span class="k">TO</span> <span class="n">TaskPermissions</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">filesetpermissions</span> <span class="k">TO</span> <span class="n">FileSetPermissions</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">fileversions</span> <span class="k">TO</span> <span class="n">FileVersions</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">fileversionlog</span> <span class="k">TO</span> <span class="n">FileVersionLog</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">filestoragelocations</span> <span class="k">TO</span> <span class="n">FileStorageLocations</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">files</span> <span class="k">TO</span> <span class="n">Files</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">groups</span> <span class="k">TO</span> <span class="n">Groups</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">jobs</span> <span class="k">TO</span> <span class="n">Jobs</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">jobslog</span> <span class="k">TO</span> <span class="n">JobsLog</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">layouts</span> <span class="k">TO</span> <span class="n">Layouts</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">layoutpresets</span> <span class="k">TO</span> <span class="n">LayoutPresets</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">systemnotifications</span> <span class="k">TO</span> <span class="n">SystemNotifications</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">packages</span> <span class="k">TO</span> <span class="n">Packages</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">pagepaths</span> <span class="k">TO</span> <span class="n">PagePaths</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">pagesearchindex</span> <span class="k">TO</span> <span class="n">PageSearchIndex</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">pagepermissionpagetypes</span> <span class="k">TO</span> <span class="n">PagePermissionPageTypes</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">pagepermissions</span> <span class="k">TO</span> <span class="n">PagePermissions</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">pagestatistics</span> <span class="k">TO</span> <span class="n">PageStatistics</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">pagethemes</span> <span class="k">TO</span> <span class="n">PageThemes</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">pagethemestyles</span> <span class="k">TO</span> <span class="n">PageThemeStyles</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">pagetypeattributes</span> <span class="k">TO</span> <span class="n">PageTypeAttributes</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">pagetypes</span> <span class="k">TO</span> <span class="n">PageTypes</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">pages</span> <span class="k">TO</span> <span class="n">Pages</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">pilecontents</span> <span class="k">TO</span> <span class="n">PileContents</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">piles</span> <span class="k">TO</span> <span class="n">Piles</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">userattributekeys</span> <span class="k">TO</span> <span class="n">UserAttributeKeys</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">userattributevalues</span> <span class="k">TO</span> <span class="n">UserAttributeValues</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">userprivatemessages</span> <span class="k">TO</span> <span class="n">UserPrivateMessages</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">userprivatemessagesto</span> <span class="k">TO</span> <span class="n">UserPrivateMessagesTo</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">userbannedips</span> <span class="k">TO</span> <span class="n">UserBannedIPs</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">usergroups</span> <span class="k">TO</span> <span class="n">UserGroups</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">uservalidationhashes</span> <span class="k">TO</span> <span class="n">UserValidationHashes</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">logs</span> <span class="k">TO</span> <span class="n">Logs</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">mailimporters</span> <span class="k">TO</span> <span class="n">MailImporters</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">mailvalidationhashes</span> <span class="k">TO</span> <span class="n">MailValidationHashes</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">useropenids</span> <span class="k">TO</span> <span class="n">UserOpenIDs</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">users</span> <span class="k">TO</span> <span class="n">Users</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">usersfriends</span> <span class="k">TO</span> <span class="n">UsersFriends</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">signuprequests</span> <span class="k">TO</span> <span class="n">SignupRequests</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">filesets</span> <span class="k">TO</span> <span class="n">FileSets</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">filesetsavedsearches</span> <span class="k">TO</span> <span class="n">FileSetSavedSearches</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">filesetfiles</span> <span class="k">TO</span> <span class="n">FileSetFiles</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">atboolean</span> <span class="k">TO</span> <span class="n">atBoolean</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">atbooleansettings</span> <span class="k">TO</span> <span class="n">atBooleanSettings</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">atdatetimesettings</span> <span class="k">TO</span> <span class="n">atDateTimeSettings</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">atdatetime</span> <span class="k">TO</span> <span class="n">atDateTime</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">atfile</span> <span class="k">TO</span> <span class="n">atFile</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">atnumber</span> <span class="k">TO</span> <span class="n">atNumber</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">atselectsettings</span> <span class="k">TO</span> <span class="n">atSelectSettings</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">attextareasettings</span> <span class="k">TO</span> <span class="n">atTextareaSettings</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">atselectoptions</span> <span class="k">TO</span> <span class="n">atSelectOptions</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">atselectoptionsselected</span> <span class="k">TO</span> <span class="n">atSelectOptionsSelected</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">ataddress</span> <span class="k">TO</span> <span class="n">atAddress</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">ataddresscustomcountries</span> <span class="k">TO</span> <span class="n">atAddressCustomCountries</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">ataddresssettings</span> <span class="k">TO</span> <span class="n">atAddressSettings</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">btnavigation</span> <span class="k">TO</span> <span class="n">btNavigation</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">btdatenav</span> <span class="k">TO</span> <span class="n">btDateNav</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">btexternalform</span> <span class="k">TO</span> <span class="n">btExternalForm</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">btcontentfile</span> <span class="k">TO</span> <span class="n">btContentFile</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">btflashcontent</span> <span class="k">TO</span> <span class="n">btFlashContent</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">btform</span> <span class="k">TO</span> <span class="n">btForm</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">btformquestions</span> <span class="k">TO</span> <span class="n">btFormQuestions</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">btformanswerset</span> <span class="k">TO</span> <span class="n">btFormAnswerSet</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">btformanswers</span> <span class="k">TO</span> <span class="n">btFormAnswers</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">btgooglemap</span> <span class="k">TO</span> <span class="n">btGoogleMap</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">btguestbook</span> <span class="k">TO</span> <span class="n">btGuestBook</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">btguestbookentries</span> <span class="k">TO</span> <span class="n">btGuestBookEntries</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">btcontentlocal</span> <span class="k">TO</span> <span class="n">btContentLocal</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">btcontentimage</span> <span class="k">TO</span> <span class="n">btContentImage</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">btfile</span> <span class="k">TO</span> <span class="n">btFile</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">btnextprevious</span> <span class="k">TO</span> <span class="n">btNextPrevious</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">btpagelist</span> <span class="k">TO</span> <span class="n">btPageList</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">btrssdisplay</span> <span class="k">TO</span> <span class="n">btRssDisplay</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">btsearch</span> <span class="k">TO</span> <span class="n">btSearch</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">btslideshow</span> <span class="k">TO</span> <span class="n">btSlideshow</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">btslideshowimg</span> <span class="k">TO</span> <span class="n">btSlideshowImg</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">btsurvey</span> <span class="k">TO</span> <span class="n">btSurvey</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">btsurveyoptions</span> <span class="k">TO</span> <span class="n">btSurveyOptions</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">btsurveyresults</span> <span class="k">TO</span> <span class="n">btSurveyResults</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">bttags</span> <span class="k">TO</span> <span class="n">btTags</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">btvideo</span> <span class="k">TO</span> <span class="n">btVideo</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">btyoutube</span> <span class="k">TO</span> <span class="n">btYouTube</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">collectionsearchindexattributes</span> <span class="k">TO</span> <span class="n">CollectionSearchIndexAttributes</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">filesearchindexattributes</span> <span class="k">TO</span> <span class="n">FileSearchIndexAttributes</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">usersearchindexattributes</span> <span class="k">TO</span> <span class="n">UserSearchIndexAttributes</span><span class="p">;</span>
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">btcorescrapbookdisplay</span> <span class="k">TO</span> <span class="n">btCoreScrapbookDisplay</span><span class="p">;</span>
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">btcorestackdisplay</span> <span class="k">TO</span> <span class="n">btCoreStackDisplay</span><span class="p">;</span>
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">btdashboardnewsflowlatest</span> <span class="k">TO</span> <span class="n">btDashboardNewsflowLatest</span><span class="p">;</span>
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">collectionversionrelatededits</span> <span class="k">TO</span> <span class="n">CollectionVersionRelatedEdits</span><span class="p">;</span>
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">stacks</span> <span class="k">TO</span> <span class="n">Stacks</span><span class="p">;</span>
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">systemantispamlibraries</span> <span class="k">TO</span> <span class="n">SystemAntispamLibraries</span><span class="p">;</span>
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">systemcaptchalibraries</span> <span class="k">TO</span> <span class="n">SystemCaptchaLibraries</span><span class="p">;</span></code></pre></div>
+
+			</div>
+			<footer>
+				<p class="readmore"><a href="/blog/post/2011/migrating-concrete5-site-windows-linux-and-mysql-case-sensitivity-hell">Read more &raquo;</a></p>
+			</footer>
+		</article>
+		
+		<article class="post clearfix">
+			<header>
+				<h3><a href="/blog/post/2011/extending-drupal-7-block-permissions">Extending Drupal 7 Block Permissions</a></h3>		    		
+				<p class="meta"> &ndash; 4<sup>th</sup> September, 2011</p>
+			</header>
+			<div class="body excerpt">      
+				<p>Drupal 7’s block module can be a little limited in its permissions; “Administer Blocks” is a rather sweeping capability, and often it’s useful to be able to make it that bit more granular. For example, you may have a number of blocks throughout the site but once they have been placed in the correct region and the visibility correctly configured (which often isn’t the simplest of processes), you don’t want content managers to change those settings. You do, however, need to allow them to change the title as it appears to site visitors, and of course the content. This isn’t possible out-of-the-box; luckily, it’s not that hard to do. Inspired by <a href="http://drupal.stackexchange.com/users/199/kiamlaluno">kiamlaluno&#39;s</a> post <a href="http://drupal.stackexchange.com/questions/1581/restricting-block-changes">on Drupal Answers</a> along these lines, I’ve knocked up a simple module to make permissions granular enough for just a situation. It’s incredibly simple and somewhat limited, but it does enable to you to grant or deny access to each part of a block’s configuration, i.e.: 
+*   the <strong>title</strong> as it appears to users
+*   the <strong>description</strong> as it appears in the back-end
+*   <strong>block content</strong>
+*   the <strong>regions</strong> the block is assigned to
+*   <strong>visibility</strong> settings </p>
+
+			</div>
+			<footer>
+				<p class="readmore"><a href="/blog/post/2011/extending-drupal-7-block-permissions">Read more &raquo;</a></p>
+			</footer>
+		</article>
+		
+		<article class="post clearfix">
+			<header>
+				<h3><a href="/blog/post/2011/using-less-dynamic-stylesheet-language-concrete5">Using Less, the Dynamic Stylesheet Language, in Concrete5</a></h3>		    		
+				<p class="meta"> &ndash; 2<sup>nd</sup> September, 2011</p>
+			</header>
+			<div class="body excerpt">      
+				<p><img src="http://www.lukaswhite.com/images/blogs/2011/concrete5/less.png" width="199" height="81" alt="Less, the dynamic styesheet language" style="float:right;margin:0 10px 10px 0;" /></p>
+
+			</div>
+			<footer>
+				<p class="readmore"><a href="/blog/post/2011/using-less-dynamic-stylesheet-language-concrete5">Read more &raquo;</a></p>
+			</footer>
+		</article>
+		
+
+		<!-- Pagination links -->
+		<div class="pagination">
+			
+				  
+				<a href="/blog" class="previous">Previous</a>
+				
+			
+			<span class="page_number ">Page 2 of 4</span>
+			
+			<a href="/blog/page3" class="next">Next</a>
+			
+		</div>
+
+	</div>
+		 <aside class="five columns">		 	
+			
+			<h4>About Me</h4>
+
+<p>I&#39;m a web developer based in Manchester, England. I also design websites.  I generally favour open-source technologies such as PHP, MySQL and JQuery, and I have extensive experience using Drupal.</p>
+		 	
+		 </aside>
+
+		 <aside class="five columns">
+			<div class="block tag-cloud">
+			 	<h4>Tags</h4>
+			 	<ul class="tags">
+				
+	    		<li><a href="/blog/tags/drupal">Drupal</a></li>
+				
+	    		<li><a href="/blog/tags/mobile">mobile</a></li>
+				
+	    		<li><a href="/blog/tags/rwd">RWD</a></li>
+				
+	    		<li><a href="/blog/tags/responsive-web-design">responsive web design</a></li>
+				
+	    		<li><a href="/blog/tags/deployment">deployment</a></li>
+				
+	    		<li><a href="/blog/tags/prowl">Prowl</a></li>
+				
+	    		<li><a href="/blog/tags/push-notifications">push notifications</a></li>
+				
+	    		<li><a href="/blog/tags/concrete5">Concrete5</a></li>
+				
+	    		<li><a href="/blog/tags/cms">CMS</a></li>
+				
+	    		<li><a href="/blog/tags/tutorials">tutorials</a></li>
+				
+	    		<li><a href="/blog/tags/php">PHP</a></li>
+				
+	    		<li><a href="/blog/tags/laravel">Laravel</a></li>
+				
+	    		<li><a href="/blog/tags/frameworks">frameworks</a></li>
+				
+	    		<li><a href="/blog/tags/facebook">Facebook</a></li>
+				
+	    		<li><a href="/blog/tags/drupal-7">Drupal 7</a></li>
+				
+	    		<li><a href="/blog/tags/ux">UX</a></li>
+				
+	    		<li><a href="/blog/tags/less">Less</a></li>
+				
+	    		<li><a href="/blog/tags/mysql">MySQL</a></li>
+				
+	    		<li><a href="/blog/tags/writing">writing</a></li>
+				
+	    		<li><a href="/blog/tags/sitepoint">Sitepoint</a></li>
+				
+	    		<li><a href="/blog/tags/articles">articles</a></li>
+				
+	    		<li><a href="/blog/tags/spotify">Spotify</a></li>
+				
+	    		<li><a href="/blog/tags/drupal-commerce">Drupal Commerce</a></li>
+				
+	    		<li><a href="/blog/tags/bash">Bash</a></li>
+				
+	    		<li><a href="/blog/tags/git">Git</a></li>
+				
+	    		<li><a href="/blog/tags/apache">Apache</a></li>
+				
+	    		<li><a href="/blog/tags/workflow">Workflow</a></li>
+				
+	    		<li><a href="/blog/tags/foundation">Foundation</a></li>
+				
+	    		<li><a href="/blog/tags/gravatar">Gravatar</a></li>
+				
+	    		<li><a href="/blog/tags/jquery">JQuery</a></li>
+				
+	    		<li><a href="/blog/tags/geo">Geo</a></li>
+				
+	    		<li><a href="/blog/tags/backbone">Backbone</a></li>
+				
+	    		<li><a href="/blog/tags/homestead">Homestead</a></li>
+				
+	    		<li><a href="/blog/tags/elasticsearch">Elasticsearch</a></li>
+				
+	    		<li><a href="/blog/tags/jekyll">Jekyll</a></li>
+				
+	    		<li><a href="/blog/tags/grunt">Grunt</a></li>
+				
+				</ul>
+			</div>
+		 </aside>
+</div>  
+ 
+  </div>
+
+  <!-- Footer begins ========================================================================== -->
+  <footer id="footer">
+    <hr>
+    <div class="eight columns">
+      <ul id="footerLinks">
+        <li>&copy; 2014 Lukas White. All rights reserved.</li>        
+        <li><a href="http://www.twitter.com/lukaswhite" target="_blank">@lukaswhite</a></li>              
+      </ul>
+    </div>
+    <div class="eight columns right">
+      <ul class="social small">
+        <li><a class="linkedin" href="http://uk.linkedin.com/in/lukaswhite" target="_blank"><span>View my LinkedIn Profile</span></a></li>
+        <li><a class="twitter" href="http://www.twitter.com/lukaswhite" target="_blank"><span>Follow me on Twitter</span></a></li>
+        <li><a class="facebook" href="http://www.facebook.com/lukas.white.freelance.web.developer" target="_blank"><span>Find me on Facebook</span></a></li>
+        <li><a class="github" href="https://github.com/lukaswhite" target="_blank"><span>Find me on Github</span></a></li>
+      </ul>
+    </div>
+    <hr>
+    <div class="sixteen columns centered">
+      <p>Powered by <a href="http://www.typeandgrids.com" target="_blank">Type &amp; Grids</a>, <a href="http://jekyllrb.com/">Jekyll</a> and <a href="https://github.com/erikhuda/thor">Thor</a></p>
+    </div>
+  </footer>
+  <!-- Footer ends ============================================================================ -->
+    
+</div><!-- container -->
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-3485550-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</body>
+</html>

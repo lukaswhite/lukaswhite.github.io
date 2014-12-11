@@ -1,0 +1,665 @@
+
+body {
+    background: #fcfcfc url(../images/tile.jpg);
+}
+
+@media only screen and (max-width: 479px) {
+  nav ul li {
+    padding-left: 20px;
+  }
+}
+
+.ss-base-body {
+	background: none !important;
+}
+
+.banner-container {	
+	border-bottom: solid 1px #ccc;	
+}
+
+#home-banner {
+	margin-bottom: 0;
+}
+
+.banner {
+	height: 285px;
+}
+
+.banner img {
+	max-width: 100%;
+}
+
+.overview h1 {
+	margin-top: 25%;
+	font-size: 36px;
+}
+
+.overview h2 {
+	font-size: 24px;
+	font-style: italic;
+}
+
+#home-banner .banner img {
+	margin-top: 5px;
+}
+
+.post {
+
+}
+
+.post .meta {
+	font-style: italic;
+}
+
+
+#blog article header h3 a {
+	text-decoration: none;
+}
+
+pre {
+	margin-bottom: 1em;
+	white-space: pre-wrap;       /* css-3 */
+	white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+	white-space: -pre-wrap;      /* Opera 4-6 */
+	white-space: -o-pre-wrap;    /* Opera 7 */
+	word-wrap: break-word;       /* Internet Explorer 5.5+ */
+}
+
+pre code {
+	background: none;
+	font-size: 14px;
+}
+
+#content ul {
+	
+}
+
+#footerLinks li {
+	color: #666;
+	font-weight: normal;
+}
+
+#tweets ul {
+	list-style: none;
+}
+
+#tweets ul li {
+	list-style-type: none;
+	margin-left: 0;
+}
+
+.bottom-panel-links {
+	display: inherit;
+}
+
+@media only screen and (max-width: 767px) {
+	.bottom-panel-links {
+		display: none;
+	}	
+}
+
+@media only screen and (min-width: 767px) {
+	#home-cols .mid-panels .more {
+		display: none;
+	}
+	#home-banner, #about-banner, #contact-banner {
+		background: url(../images/light3.png) -20px 160px no-repeat;
+	}
+}
+
+#home-cols h4 {
+	margin-top: 1em;
+}
+
+figure,
+figcaption {
+	display: block;
+}
+
+figure.captioned-image {
+	text-align: left;
+	margin-bottom: 15px;
+}
+
+figure.captioned-image img {
+	display: block;
+	padding: 9px;
+	border: 1px solid #ccc;
+	margin-bottom: 5px;
+	background: white;
+}
+
+figure.captioned-image figcaption {
+	font-size: 11px;
+	border-bottom: 1px solid #ccc;
+	padding-bottom: 5px;
+	color: #666;
+	width: 100%;
+}
+
+.highlight {
+	border: solid 1px #ececec;
+	padding: 0.25em;
+	background: #f8f8f8;
+	margin-bottom: 1em;
+}
+
+#work-writing h3 a {
+	text-decoration: none;
+}
+
+ul.technologythumbs {
+    list-style: none !important;
+    margin: 0;
+    padding: 0;
+}
+
+ul.technologythumbs li {
+    list-style-type: none !important;
+    float: left;
+    margin: 0 10px 10px 5px;
+    height: 50px;
+}
+
+ul.technologythumbs div {
+    display: block;
+    overflow: hidden;
+    background-position: left;
+    width: 60px;
+    height: 60px;
+}
+
+ul.technologythumbs div:hover {
+    background-position: right;
+}
+
+ul.technologythumbs div small {
+    display: none;
+}
+
+ul.technologythumbs div.drupal {
+    background-image: url(../images/technologies/drupal.png);
+}
+
+ul.technologythumbs div.php {
+    background-image: url(../images/technologies/php.png);
+}
+
+ul.technologythumbs div.jquery {
+    background-image: url(../images/technologies/jquery.png);
+}
+
+ul.technologythumbs div.zend-framework {
+    background-image: url(../images/technologies/zend-framework.png);
+}
+
+ul.technologythumbs div.java {
+    background-image: url(../images/technologies/java.png);
+}
+
+ul.technologythumbs div.mysql {
+    background-image: url(../images/technologies/mysql.png);
+}
+
+ul.technologythumbs div.laravel {
+    background-image: url(../images/technologies/laravel.png);
+}
+
+ul.technologythumbs div.backbone {
+    background-image: url(../images/technologies/backbone.png);
+}
+
+ul.technologythumbssmall {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+ul.technologythumbssmall li {
+    list-style-type: none;
+    float: left;
+    margin: 0 5px 0 0;
+    height: 50px;
+}
+
+ul.technologythumbssmall div {
+    display: block;
+    overflow: hidden;
+    background-position: left;
+    width: 30px;
+    height: 30px;
+}
+
+ul.technologythumbssmall div:hover {
+    background-position: right;
+}
+
+ul.technologythumbssmall div small {
+    display: none;
+}
+
+ul.technologythumbssmall div.drupal {
+    background-image: url(../images/technologies/small/drupal.png);
+}
+
+ul.technologythumbssmall div.php {
+    background-image: url(../images/technologies/small/php.png);
+}
+
+ul.technologythumbssmall div.jquery {
+    background-image: url(../images/technologies/small/jquery.png);
+}
+
+ul.technologythumbssmall div.zend-framework {
+    background-image: url(../images/technologies/small/zend-framework.png);
+}
+
+ul.technologythumbssmall div.java {
+    background-image: url(../images/technologies/small/java.png);
+}
+
+ul.technologythumbssmall div.mysql {
+    background-image: url(../images/technologies/small/mysql.png);
+}
+
+ul.technologythumbsmedium {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+ul.technologythumbsmedium li {
+    list-style-type: none;
+    float: left;
+    margin: 0 5px 0 0;
+    height: 45px;
+}
+
+ul.technologythumbsmedium a {
+    display: block;
+    overflow: hidden;
+    background-position: left;
+    width: 45px;
+    height: 45px;
+}
+
+ul.technologythumbsmedium a:hover {
+    background-position: right;
+}
+
+ul.technologythumbsmedium a span {
+    display: none;
+}
+
+ul.technologythumbsmedium a.drupal {
+    background-image: url(../images/technologies/medium/drupal.png);
+}
+
+ul.technologythumbsmedium a.php {
+    background-image: url(../images/technologies/medium/php.png);
+}
+
+ul.technologythumbsmedium a.jquery {
+    background-image: url(../images/technologies/medium/jquery.png);
+}
+
+ul.technologythumbsmedium a.zend-framework {
+    background-image: url(../images/technologies/medium/zend-framework.png);
+}
+
+ul.technologythumbsmedium a.java {
+    background-image: url(../images/technologies/medium/java.png);
+}
+
+ul.technologythumbsmedium a.mysql {
+    background-image: url(../images/technologies/medium/mysql.png);
+}
+
+.networks a {
+
+}
+
+@media only screen and (max-width: 767px) {
+
+    .networks a {
+        margin-bottom: 20px;
+    }
+
+}
+
+a.linkedinbutton,a.twitterbutton,a.facebookbutton,a.forrstbutton,a.githubbutton {
+    display: block;
+    height: 33px;
+    overflow: hidden;
+    background: transparent no-repeat right;
+}
+
+a.linkedinbutton:hover,a.twitterbutton:hover,a.facebookbutton:hover,a.forrstbutton:hover,a.githubbutton:hover {
+    background-position: left;
+}
+
+a.linkedinbutton span,a.twitterbutton span,a.facebookbutton span,a.forrstbutton span, a.githubbutton span {
+    display: none;
+}
+
+a.linkedinbutton {
+    width: 160px;
+    background-image: url(../images/linkedin.png);
+}
+
+a.linkedinbuttonsmall {
+    width: 75px;
+    height: 16px;
+    background-image: url(../images/linkedin_small.png);
+}
+
+a.twitterbutton {
+    width: 140px;
+    background-image: url(../images/twitter.png);
+}
+
+a.twitterbuttonsmall {
+    width: 68px;
+    height: 16px;
+    background-image: url(../images/twitter_small.png);
+}
+
+a.facebookbutton {
+    width: 124px;
+    background-image: url(../images/facebook.png);
+}
+
+a.facebookbuttonsmall {
+    width: 60px;
+    height: 16px;
+    background-image: url(../images/facebook_small.png);
+}
+
+a.forrstbutton {
+    width: 100px;
+    background-image: url(../images/forrst.png);
+}
+
+a.forrstbuttonsmall {
+    width: 49px;
+    height: 16px;
+    background-image: url(../images/forrst_small.png);
+}
+
+#footer ul.social {
+    margin: 0;
+    padding: 0;
+}
+
+#footer ul.social li {
+    float: left;
+    list-style: none;
+    margin-right: 10px;
+}
+
+.logos {
+    margin-top: 20px;
+}
+
+.logos a {
+    display: block;
+    overflow: hidden;
+    background: transparent no-repeat right;
+    float: left;
+    margin: 20px 0 20px 10px;
+}
+
+.logos a:hover {
+    background-position: left;
+}
+
+.logos a span {
+    display: none;
+}
+
+.logos a#tietoenator {
+    width: 100px;
+    height: 20px;
+    background-image: url(../images/companies/tietoenator.png);
+}
+
+.logos a#uniman {
+    width: 98px;
+    height: 30px;
+    background-image: url(../images/companies/university-of-manchester.png);
+}
+
+.logos a#logica {
+    width: 100px;
+    height: 39px;
+    background-image: url(../images/companies/logica.png);
+}
+
+.logos a#ahold {
+    width: 100px;
+    height: 30px;
+    background-image: url(../images/companies/ahold.png);
+}
+
+.logos a#bp {
+    width: 75px;
+    height: 100px;
+    background-image: url(../images/companies/bp.png);
+}
+
+.logos a#bp_small {
+    width: 60px;
+    height: 80px;
+    background-image: url(../images/companies/bp_small.png);
+}
+
+.logos a#shell {
+    width: 90px;
+    height: 84px;
+    background-image: url(../images/companies/shell.png);
+}
+
+.logos a#shell_small {
+    width: 65px;
+    height: 61px;
+    background-image: url(../images/companies/shell_small.png);
+}
+
+.logos a#vale {
+    width: 100px;
+    height: 66px;
+    background-image: url(../images/companies/vale-holiday-parks.png);
+}
+
+.logos a#letinthesun {
+    width: 120px;
+    height: 35px;
+    background-image: url(../images/companies/letinthesun.png);
+}
+
+.logos a#cti {
+    width: 120px;
+    height: 49px;
+    background-image: url(../images/companies/cti.png);
+}
+
+.logos a#bliss {
+    width: 110px;
+    height: 48px;
+    background-image: url(../images/companies/bliss.png);
+}
+
+.logos a#cube {
+    width: 120px;
+    height: 29px;
+    background-image: url(../images/companies/cube.png);
+}
+
+.logos a#flamedigital {
+    width: 110px;
+    height: 39px;
+    background-image: url(../images/companies/flame.png);
+}
+
+.logos a#bp {
+}
+
+.logos a#bp_small {
+}
+
+.logos a#shell {
+}
+
+.logos a#shell_small {
+    margin-top: 35px;
+}
+
+.logos a#vale {
+}
+
+.logos #ahold {
+    margin-top: 35px;
+}
+
+.logos a#cti {
+    margin-top: 35px;
+}
+
+.logos a#bliss {
+}
+
+.logos a#cube {
+    margin-top: 37px;
+}
+
+.logos a#flamedigital {
+    margin-top: 36px;
+}
+
+a.githubbutton {
+    background-image: url(../images/github.png);
+    width: 140px;
+    height: 43px;
+}
+
+ul.networks {
+    list-style: none !important;
+    margin: 0;
+    padding: 0;
+}
+
+ul.networks li {
+    list-style-type: none !important;
+    margin: 0 0 1em 0 !important;
+}
+	
+#home-cols .panel-latest-posts {
+
+}
+
+#home-cols .panel-latest-posts ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;    
+}
+
+#home-cols .panel-latest-posts ul li {
+    list-style-type: none;
+    padding-left: 0;
+    margin-left: 0;
+}
+
+.writing {
+    
+}
+
+.writing article {
+    margin-bottom: 1em;
+}
+
+.writing article .meta {
+
+}
+
+.writing article .meta .publisher {
+    font-weight: bold;
+}
+
+.writing article .content img {
+    float: left;
+    margin: 0 10px 10px 0;
+}
+
+.tag-cloud {
+
+}
+
+.tag-cloud ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.tag-cloud ul li {
+  display: inline;  
+  margin: 0 10px 10px 0 !important;
+}
+
+.block {
+  margin-bottom: 2em;
+}
+
+.block.technologies {
+
+}
+
+.block.technologies ul {
+  
+}
+
+.block.technologies ul li, article.project ul.technologythumbs li {
+  margin-left: 0 !important;
+}
+
+ul.social {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  li {
+    display: inline-block;
+    a {
+      display:block;
+      height:33px;
+      overflow:hidden;
+      background:transparent no-repeat right;      
+      &:hover {
+        background-position: left;
+      }
+      &.linkedin {
+        width:160px;
+        background-image:url(/images/linkedin.png);
+      }
+      &.twitter {
+        width:140px;
+        background-image:url(/images/twitter.png);
+      }
+      &.facebook {
+        width:124px;
+        background-image:url(/images/facebook.png);
+      }
+      &.forrst {
+        width:100px;
+        background-image:url(/images/forrst.png);
+      }
+      &.github {
+        width:140px;
+        height: 43px;
+        background-image:url(/images/github.png);
+      }
+
+      span {
+        display: none;
+      }
+    }
+  }
+}

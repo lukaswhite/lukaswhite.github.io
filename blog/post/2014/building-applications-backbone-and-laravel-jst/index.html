@@ -1,0 +1,364 @@
+<!doctype html>
+<!--[if lt IE 7 ]><html class="ie ie6" lang="en"> <![endif]-->
+<!--[if IE 7 ]><html class="ie ie7" lang="en"> <![endif]-->
+<!--[if IE 8 ]><html class="ie ie8" lang="en"> <![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!--><html lang="en"> <!--<![endif]-->
+<head>
+<meta charset="utf-8">
+
+<!--
+••••••••••••••••••••••••
+
+Powered by Type & Grids™
+www.typeandgrids.com
+
+••••••••••••••••••••••••
+-->
+
+<title>Building Applications with Backbone and Laravel: JST</title>
+<meta name="description" content="The website of Lukas White, Manchester-based Freelance Web Designer and Developer">
+<meta name="author" content="Lukas White">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+<!-- CSS
+================================================================================================= -->
+<link rel="stylesheet" href="/dist/styles.min.css">
+
+<!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+
+<!-- Favicons
+================================================================================================= -->
+<link rel="shortcut icon" href="/favicon.ico">
+<link rel="apple-touch-icon" href="images/favicons/apple-touch-icon.png">
+<link rel="apple-touch-icon" sizes="72x72" href="images/favicons/apple-touch-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="114x114" href="images/favicons/apple-touch-icon-114x114.png">
+
+</head>
+<body>
+
+<div class="container">
+  
+  <!-- Header begins ========================================================================== -->
+  <header id="page-header" class="sixteen columns">
+    <div id="logo">
+      <a href="/">
+        <h1>Lukas White</h1>
+        <h2>Freelance Web Developer</h2>
+      </a>
+      <!--
+      <img src="images/logo.png" width="275" height="35" alt="Logo" />
+      -->
+    </div>
+    <nav>
+      <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/about">About</a></li>
+        <li><a href="/blog">Blog</a></li>
+        <li><a href="/work">Work</a></li>
+        <li><a href="/contact">Contact</a></li>        
+      </ul>
+    </nav>
+    <hr />
+  </header>
+  <!-- Header ends ============================================================================ -->
+  
+  <div id="content" class="content">
+  <article class="eleven columns post">
+	<h2>Building Applications with Backbone and Laravel: JST</h2>
+	<p class="meta"> &ndash; <time datetime="2014-04-13">13<sup>th</sup> April, 2014</time></p>
+
+	<div class="body">
+		<p>You might well be used to developing Backbone views like this:</p>
+
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">MyApp</span><span class="p">.</span><span class="nx">Views</span><span class="p">.</span><span class="nx">SomeView</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">View</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>    
+  <span class="nx">template</span><span class="o">:</span> <span class="nx">_</span><span class="p">.</span><span class="nx">template</span><span class="p">(</span><span class="s1">&#39;&lt;ul&gt;&lt;% _.each(items, function(item){ %&gt;&lt;li&gt;&lt;%= item %&gt;&lt;/li&gt;&lt;% }); %&gt;&lt;/ul&gt;&#39;</span><span class="p">),</span>    
+  <span class="nx">el</span><span class="o">:</span> <span class="s1">&#39;#some-element&#39;</span><span class="p">,</span></code></pre></div>
+
+<p>This is all fine and well for simple structures, but can quickly get unwieldly if you&#39;re building markup of any significant size or complexity. It can also lead to all sorts of issues around readability.</p>
+
+<p>One alternative is to put more complex templates into separate HTML files:</p>
+
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="c1">// file: folder/template.html</span>
+
+<span class="o">&lt;</span><span class="nx">ul</span><span class="o">&gt;</span>
+ <span class="o">&lt;%</span> <span class="nx">_</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">items</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">item</span><span class="p">){</span> <span class="o">%&gt;</span>
+ <span class="o">&lt;</span><span class="nx">li</span><span class="o">&gt;</span> <span class="o">&lt;%=</span> <span class="nx">item</span> <span class="o">%&gt;</span> <span class="o">&lt;</span><span class="err">/li&gt;</span>
+ <span class="o">&lt;%</span> <span class="p">});</span> <span class="o">%&gt;</span>
+<span class="o">&lt;</span><span class="err">/ul&gt;</span></code></pre></div>
+
+<p>Each time you want to render a template, you can load in the template via AJAX or use RequireJS&#39;s <a href="http://requirejs.org/docs/api.html#text">text plugin</a>. Great for development, but pretty atrocious for performance, as it&#39;ll fire off untold numbers of HTTP requests.</p>
+
+<p>Using <a href="http://ricostacruz.com/backbone-patterns/#jst_templates">JST</a> allows you to develop templates in this way - spreading templates across separate files, organised into a logical hierarchy - but &quot;collapse&quot; them into variables which are available via a single JS file. This file can then be minified, or incorporated into a larger Javascript file using, for example, the RequireJS optimiser or Google Closure Compiler.</p>
+
+<p>Such a file looks a little like this:</p>
+
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="c1">// file: jst.js</span>
+
+<span class="kd">var</span> <span class="nx">JST</span> <span class="o">=</span> <span class="nx">JST</span> <span class="o">||</span> <span class="p">{};</span>
+<span class="nx">JST</span><span class="p">[</span><span class="s1">&#39;app/templates/folder/template.html&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nx">_</span><span class="p">.</span><span class="nx">template</span><span class="p">(</span><span class="s1">&#39;&lt;ul&gt;&lt;% _.each(items, function(item){ %&gt;&lt;li&gt;&lt;%= item %&gt;&lt;/li&gt;&lt;% }); %&gt;&lt;/ul&gt;&#39;</span><span class="p">);</span>
+<span class="nx">JST</span><span class="p">[</span><span class="s1">&#39;app/templates/folder/template2.html&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nx">_</span><span class="p">.</span><span class="nx">template</span><span class="p">(</span><span class="s1">&#39;...&#39;</span><span class="p">);</span>
+<span class="nx">JST</span><span class="p">[</span><span class="s1">&#39;app/templates/folder2/template.html&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nx">_</span><span class="p">.</span><span class="nx">template</span><span class="p">(</span><span class="s1">&#39;...&#39;</span><span class="p">);</span>
+<span class="c1">// etc...</span></code></pre></div>
+
+<h2>JST and Laravel</h2>
+
+<p>If your Backbone application&#39;s back-end uses Laravel, I&#39;ve <a href="https://github.com/lukaswhite/laravel-jst">written a package</a> to generate such a file.</p>
+
+<h3>Usage</h3>
+
+<p>Generate your JST file by entering the following command in your terminal:</p>
+
+<p><code>php artisan jst:generate</code></p>
+
+<p>Or alternatively, you can have it &quot;watch&quot; your templates directory (and any sub-directories) for changes, and recompile the file for you:</p>
+
+<p><code>php artisan jst:watch</code></p>
+
+<p>Back to your Backbone application:</p>
+
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="c1">// file: namespace.js</span>
+ 
+<span class="nx">define</span><span class="p">([</span>
+    <span class="c1">// Libs</span>
+    <span class="s2">&quot;jquery&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;use!underscore&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;use!backbone&quot;</span>
+<span class="p">],</span>
+
+<span class="kd">function</span><span class="p">(</span><span class="nx">$</span><span class="p">,</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">Backbone</span><span class="p">)</span> <span class="p">{</span>
+ <span class="c1">// Put application wide code here</span>
+
+ <span class="k">return</span> <span class="p">{</span>
+  <span class="c1">// This is useful when developing if you don&#39;t want to use a</span>
+  <span class="c1">// build process every time you change a template.</span>
+  <span class="c1">//</span>
+  <span class="c1">// Delete if you are using a different template loading method.</span>
+  <span class="nx">fetchTemplate</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">path</span><span class="p">,</span> <span class="nx">done</span><span class="p">)</span> <span class="p">{</span>
+   <span class="kd">var</span> <span class="nx">JST</span> <span class="o">=</span> <span class="nb">window</span><span class="p">.</span><span class="nx">JST</span> <span class="o">=</span> <span class="nb">window</span><span class="p">.</span><span class="nx">JST</span> <span class="o">||</span> <span class="p">{};</span>
+   <span class="kd">var</span> <span class="nx">def</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">$</span><span class="p">.</span><span class="nx">Deferred</span><span class="p">();</span>
+
+   <span class="c1">// Should be an instant synchronous way of getting the template, if it</span>
+   <span class="c1">// exists in the JST object.</span>
+   <span class="k">if</span> <span class="p">(</span><span class="nx">JST</span><span class="p">[</span><span class="nx">path</span><span class="p">])</span> <span class="p">{</span>        
+    <span class="k">if</span> <span class="p">(</span><span class="nx">_</span><span class="p">.</span><span class="nx">isFunction</span><span class="p">(</span><span class="nx">done</span><span class="p">))</span> <span class="p">{</span>
+     <span class="nx">done</span><span class="p">(</span><span class="nx">JST</span><span class="p">[</span><span class="nx">path</span><span class="p">]);</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="nx">def</span><span class="p">.</span><span class="nx">resolve</span><span class="p">(</span><span class="nx">JST</span><span class="p">[</span><span class="nx">path</span><span class="p">]);</span>
+   <span class="p">}</span>
+
+   <span class="c1">// Fetch it asynchronously if not available from JST, ensure that</span>
+   <span class="c1">// template requests are never cached and prevent global ajax event</span>
+   <span class="c1">// handlers from firing.</span>
+   <span class="nx">$</span><span class="p">.</span><span class="nx">ajax</span><span class="p">({</span>
+    <span class="nx">url</span><span class="o">:</span> <span class="nx">path</span><span class="p">,</span>
+    <span class="nx">type</span><span class="o">:</span> <span class="s2">&quot;get&quot;</span><span class="p">,</span>
+    <span class="nx">dataType</span><span class="o">:</span> <span class="s2">&quot;text&quot;</span><span class="p">,</span>
+    <span class="nx">cache</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+    <span class="nx">global</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+
+    <span class="nx">success</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">contents</span><span class="p">)</span> <span class="p">{</span>
+     <span class="nx">JST</span><span class="p">[</span><span class="nx">path</span><span class="p">]</span> <span class="o">=</span> <span class="nx">_</span><span class="p">.</span><span class="nx">template</span><span class="p">(</span><span class="nx">contents</span><span class="p">);</span>
+
+     <span class="c1">// Set the global JST cache and return the template</span>
+     <span class="k">if</span> <span class="p">(</span><span class="nx">_</span><span class="p">.</span><span class="nx">isFunction</span><span class="p">(</span><span class="nx">done</span><span class="p">))</span> <span class="p">{</span>
+      <span class="nx">done</span><span class="p">(</span><span class="nx">JST</span><span class="p">[</span><span class="nx">path</span><span class="p">]);</span>
+     <span class="p">}</span>
+
+     <span class="c1">// Resolve the template deferred</span>
+     <span class="nx">def</span><span class="p">.</span><span class="nx">resolve</span><span class="p">(</span><span class="nx">JST</span><span class="p">[</span><span class="nx">path</span><span class="p">]);</span>
+    <span class="p">}</span>
+   <span class="p">});</span>
+
+   <span class="c1">// Ensure a normalized return value (Promise)</span>
+   <span class="k">return</span> <span class="nx">def</span><span class="p">.</span><span class="nx">promise</span><span class="p">();</span>
+  <span class="p">},</span>
+
+ <span class="p">};</span>
+<span class="p">});</span></code></pre></div>
+
+<p>As you can see, this provides a method which tries to load a template from a global variable called JST, but if that&#39;s not available - i.e., during development - then it loads it in as an HTML file using AJAX.</p>
+
+<p>Now you can create a view like this, to take advantage of it:</p>
+
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">MyApp</span><span class="p">.</span><span class="nx">Views</span><span class="p">.</span><span class="nx">SomeView</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">View</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+ <span class="nx">template</span><span class="o">:</span> <span class="s2">&quot;app/templates/folder/someview.html&quot;</span><span class="p">,</span>        
+    <span class="nx">render</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">done</span><span class="p">)</span> <span class="p">{</span>      
+  <span class="nx">namespace</span><span class="p">.</span><span class="nx">fetchTemplate</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">template</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">tmpl</span><span class="p">)</span> <span class="p">{</span>        
+   <span class="nx">view</span><span class="p">.</span><span class="nx">el</span><span class="p">.</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="nx">tmpl</span><span class="p">({</span><span class="nx">model</span><span class="o">:</span> <span class="nx">view</span><span class="p">.</span><span class="nx">model</span><span class="p">.</span><span class="nx">toJSON</span><span class="p">()</span> <span class="p">});</span>
+   <span class="k">if</span> <span class="p">(</span><span class="nx">_</span><span class="p">.</span><span class="nx">isFunction</span><span class="p">(</span><span class="nx">done</span><span class="p">))</span> <span class="p">{</span>
+    <span class="nx">done</span><span class="p">(</span><span class="nx">view</span><span class="p">.</span><span class="nx">el</span><span class="p">);</span>
+   <span class="p">}</span>  
+  <span class="p">});</span>
+ <span class="p">}</span>
+<span class="c1">// …</span></code></pre></div>
+
+<h2>Using it Outside of Laravel</h2>
+
+<p>There&#39;s no reason why this code can&#39;t be re-purposed to work outside of Laravel - perhaps I&#39;ll get a chance at some point, but feel free to have a stab at it. All the dependencies are managed via Composer.</p>
+
+	</div>
+
+	
+	<p class="tags">Tagged with:
+	
+  <a href="/tag/laravel">Laravel</a> 
+	
+  <a href="/tag/backbone">Backbone</a> 
+	
+	</p>
+	
+
+	<!--
+	<div class="author">
+		<a href="https://twitter.com/lukaswhite" title="Twitter">Twitter</a>
+		<a href="https://plus.google.com/+LukasWhiteWebDeveloper" title="My Google+ Profile">Google+</a>
+	</div>	
+-->
+
+	<div id="disqus_thread"></div>
+	<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">Comments powered by Disqus.</a></noscript>
+	<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+</article>
+
+<aside class="five columns">
+	
+	<h4>About Me</h4>
+
+<p>I&#39;m a web developer based in Manchester, England. I also design websites.  I generally favour open-source technologies such as PHP, MySQL and JQuery, and I have extensive experience using Drupal.</p>
+
+
+	<div class="block tag-cloud">
+			 	<h4>Tags</h4>
+			 	<ul class="tags">
+				
+	    		<li><a href="/blog/tags/drupal">Drupal</a></li>
+				
+	    		<li><a href="/blog/tags/mobile">mobile</a></li>
+				
+	    		<li><a href="/blog/tags/rwd">RWD</a></li>
+				
+	    		<li><a href="/blog/tags/responsive-web-design">responsive web design</a></li>
+				
+	    		<li><a href="/blog/tags/deployment">deployment</a></li>
+				
+	    		<li><a href="/blog/tags/prowl">Prowl</a></li>
+				
+	    		<li><a href="/blog/tags/push-notifications">push notifications</a></li>
+				
+	    		<li><a href="/blog/tags/concrete5">Concrete5</a></li>
+				
+	    		<li><a href="/blog/tags/cms">CMS</a></li>
+				
+	    		<li><a href="/blog/tags/tutorials">tutorials</a></li>
+				
+	    		<li><a href="/blog/tags/php">PHP</a></li>
+				
+	    		<li><a href="/blog/tags/laravel">Laravel</a></li>
+				
+	    		<li><a href="/blog/tags/frameworks">frameworks</a></li>
+				
+	    		<li><a href="/blog/tags/facebook">Facebook</a></li>
+				
+	    		<li><a href="/blog/tags/drupal-7">Drupal 7</a></li>
+				
+	    		<li><a href="/blog/tags/ux">UX</a></li>
+				
+	    		<li><a href="/blog/tags/less">Less</a></li>
+				
+	    		<li><a href="/blog/tags/mysql">MySQL</a></li>
+				
+	    		<li><a href="/blog/tags/writing">writing</a></li>
+				
+	    		<li><a href="/blog/tags/sitepoint">Sitepoint</a></li>
+				
+	    		<li><a href="/blog/tags/articles">articles</a></li>
+				
+	    		<li><a href="/blog/tags/spotify">Spotify</a></li>
+				
+	    		<li><a href="/blog/tags/drupal-commerce">Drupal Commerce</a></li>
+				
+	    		<li><a href="/blog/tags/bash">Bash</a></li>
+				
+	    		<li><a href="/blog/tags/git">Git</a></li>
+				
+	    		<li><a href="/blog/tags/apache">Apache</a></li>
+				
+	    		<li><a href="/blog/tags/workflow">Workflow</a></li>
+				
+	    		<li><a href="/blog/tags/foundation">Foundation</a></li>
+				
+	    		<li><a href="/blog/tags/gravatar">Gravatar</a></li>
+				
+	    		<li><a href="/blog/tags/jquery">JQuery</a></li>
+				
+	    		<li><a href="/blog/tags/geo">Geo</a></li>
+				
+	    		<li><a href="/blog/tags/backbone">Backbone</a></li>
+				
+	    		<li><a href="/blog/tags/homestead">Homestead</a></li>
+				
+	    		<li><a href="/blog/tags/elasticsearch">Elasticsearch</a></li>
+				
+	    		<li><a href="/blog/tags/jekyll">Jekyll</a></li>
+				
+	    		<li><a href="/blog/tags/grunt">Grunt</a></li>
+				
+				</ul>
+			</div>
+
+</aside>
+
+
+<script type="text/javascript">    
+	var disqus_shortname = 'lukaswhite';
+    
+	(function() {
+		var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+		dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+		(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+	})();
+</script>
+ 
+  </div>
+
+  <!-- Footer begins ========================================================================== -->
+  <footer id="footer">
+    <hr>
+    <div class="eight columns">
+      <ul id="footerLinks">
+        <li>&copy; 2014 Lukas White. All rights reserved.</li>        
+        <li><a href="http://www.twitter.com/lukaswhite" target="_blank">@lukaswhite</a></li>              
+      </ul>
+    </div>
+    <div class="eight columns right">
+      <ul class="social small">
+        <li><a class="linkedin" href="http://uk.linkedin.com/in/lukaswhite" target="_blank"><span>View my LinkedIn Profile</span></a></li>
+        <li><a class="twitter" href="http://www.twitter.com/lukaswhite" target="_blank"><span>Follow me on Twitter</span></a></li>
+        <li><a class="facebook" href="http://www.facebook.com/lukas.white.freelance.web.developer" target="_blank"><span>Find me on Facebook</span></a></li>
+        <li><a class="github" href="https://github.com/lukaswhite" target="_blank"><span>Find me on Github</span></a></li>
+      </ul>
+    </div>
+    <hr>
+    <div class="sixteen columns centered">
+      <p>Powered by <a href="http://www.typeandgrids.com" target="_blank">Type &amp; Grids</a>, <a href="http://jekyllrb.com/">Jekyll</a> and <a href="https://github.com/erikhuda/thor">Thor</a></p>
+    </div>
+  </footer>
+  <!-- Footer ends ============================================================================ -->
+    
+</div><!-- container -->
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-3485550-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</body>
+</html>

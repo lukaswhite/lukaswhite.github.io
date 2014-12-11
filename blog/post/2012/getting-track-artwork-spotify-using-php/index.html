@@ -1,0 +1,335 @@
+<!doctype html>
+<!--[if lt IE 7 ]><html class="ie ie6" lang="en"> <![endif]-->
+<!--[if IE 7 ]><html class="ie ie7" lang="en"> <![endif]-->
+<!--[if IE 8 ]><html class="ie ie8" lang="en"> <![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!--><html lang="en"> <!--<![endif]-->
+<head>
+<meta charset="utf-8">
+
+<!--
+••••••••••••••••••••••••
+
+Powered by Type & Grids™
+www.typeandgrids.com
+
+••••••••••••••••••••••••
+-->
+
+<title>Getting Track Artwork from Spotify using PHP</title>
+<meta name="description" content="The website of Lukas White, Manchester-based Freelance Web Designer and Developer">
+<meta name="author" content="Lukas White">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+<!-- CSS
+================================================================================================= -->
+<link rel="stylesheet" href="/dist/styles.min.css">
+
+<!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+
+<!-- Favicons
+================================================================================================= -->
+<link rel="shortcut icon" href="/favicon.ico">
+<link rel="apple-touch-icon" href="images/favicons/apple-touch-icon.png">
+<link rel="apple-touch-icon" sizes="72x72" href="images/favicons/apple-touch-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="114x114" href="images/favicons/apple-touch-icon-114x114.png">
+
+</head>
+<body>
+
+<div class="container">
+  
+  <!-- Header begins ========================================================================== -->
+  <header id="page-header" class="sixteen columns">
+    <div id="logo">
+      <a href="/">
+        <h1>Lukas White</h1>
+        <h2>Freelance Web Developer</h2>
+      </a>
+      <!--
+      <img src="images/logo.png" width="275" height="35" alt="Logo" />
+      -->
+    </div>
+    <nav>
+      <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/about">About</a></li>
+        <li><a href="/blog">Blog</a></li>
+        <li><a href="/work">Work</a></li>
+        <li><a href="/contact">Contact</a></li>        
+      </ul>
+    </nav>
+    <hr />
+  </header>
+  <!-- Header ends ============================================================================ -->
+  
+  <div id="content" class="content">
+  <article class="eleven columns post">
+	<h2>Getting Track Artwork from Spotify using PHP</h2>
+	<p class="meta"> &ndash; <time datetime="2012-12-14">14<sup>th</sup> December, 2012</time></p>
+
+	<div class="body">
+		<p>At time of writing, Spotify doesn’t provide a track’s artwork via its API.</p>
+
+<p>So, I’ve written a simple function to get the image; but please note, not only is it quick and dirty, but it’s horribly inefficient and should be used sparingly – at the very least, make sure you cache the results somewhere!</p>
+
+<p>You can access a public-facing web-page about a particular track using the following URL:</p>
+
+<p><strong><code>http://open.spotify.com/track/[TRACK-ID]</code></strong></p>
+
+<p>...where [TRACK-ID] is the last part of the track’s URI – so for example, for the track represented by the URI <strong><code>spotify:track:5fpizYGbi5IQoEraj6FP0R</code></strong>, the track ID would be <strong><code>5fpizYGbi5IQoEraj6FP0R</code></strong>, and thus the URL to the page would be:</p>
+
+<p><a href="http://open.spotify.com/track/5fpizYGbi5IQoEraj6FP0R"><strong><code>http://open.spotify.com/track/5fpizYGbi5IQoEraj6FP0R</code></strong></a></p>
+
+<p>If you take a look at the HTML source, you’ll see a fair few <code>&lt;meta&gt;</code> tags, like so:</p>
+
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;meta</span> <span class="na">charset=</span><span class="s">&quot;utf-8&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;title&gt;</span>Intergalactic by Beastie Boys on Spotify<span class="nt">&lt;/title&gt;</span>
+<span class="nt">&lt;meta</span> <span class="na">http-equiv=</span><span class="s">&quot;X-UA-Compatible&quot;</span> <span class="na">content=</span><span class="s">&quot;IE=9&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;meta</span> <span class="na">name=</span><span class="s">&quot;viewport&quot;</span> <span class="na">content=</span><span class="s">&quot;width=device-width, initial-scale=1, maximum-scale=1&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;meta</span> <span class="na">name=</span><span class="s">&quot;apple-itunes-app&quot;</span> <span class="na">content=</span><span class="s">&quot;app-id=324684580&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;meta</span> <span class="na">property=</span><span class="s">&quot;og:site_name&quot;</span> <span class="na">content=</span><span class="s">&quot;Spotify&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;meta</span> <span class="na">property=</span><span class="s">&quot;fb:app_id&quot;</span> <span class="na">content=</span><span class="s">&quot;174829003346&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;meta</span> <span class="na">property=</span><span class="s">&quot;og:title&quot;</span> <span class="na">content=</span><span class="s">&quot;Intergalactic&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;meta</span> <span class="na">property=</span><span class="s">&quot;og:description&quot;</span> <span class="na">content=</span><span class="s">&quot;Intergalactic, a song by Beastie Boys on Spotify.&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;meta</span> <span class="na">property=</span><span class="s">&quot;og:url&quot;</span> <span class="na">content=</span><span class="s">&quot;http://open.spotify.com/track/5fpizYGbi5IQoEraj6FP0R&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;meta</span> <span class="na">property=</span><span class="s">&quot;og:image&quot;</span> <span class="na">content=</span><span class="s">&quot;http://o.scdn.co/image/97092f295b383b1c59445ef9525051655ffa78e3&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;meta</span> <span class="na">property=</span><span class="s">&quot;og:type&quot;</span> <span class="na">content=</span><span class="s">&quot;music.song&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;meta</span> <span class="na">property=</span><span class="s">&quot;og:audio&quot;</span> <span class="na">content=</span><span class="s">&quot;spotify:track:5fpizYGbi5IQoEraj6FP0R&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;meta</span> <span class="na">property=</span><span class="s">&quot;og:audio:type&quot;</span> <span class="na">content=</span><span class="s">&quot;audio/vnd.facebook.bridge&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;meta</span> <span class="na">property=</span><span class="s">&quot;music:duration&quot;</span> <span class="na">content=</span><span class="s">&quot;231&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;meta</span> <span class="na">property=</span><span class="s">&quot;music:album&quot;</span> <span class="na">content=</span><span class="s">&quot;http://open.spotify.com/album/6eGYLONkDMja0MNtZWnRRB&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;meta</span> <span class="na">property=</span><span class="s">&quot;music:album:track&quot;</span> <span class="na">content=</span><span class="s">&quot;7&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;meta</span> <span class="na">property=</span><span class="s">&quot;music:musician&quot;</span> <span class="na">content=</span><span class="s">&quot;http://open.spotify.com/artist/03r4iKL2g2442PT9n2UKsx&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;meta</span> <span class="na">property=</span><span class="s">&quot;music:release_date&quot;</span> <span class="na">content=</span><span class="s">&quot;2009-09-22&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;meta</span> <span class="na">property=</span><span class="s">&quot;twitter:card&quot;</span> <span class="na">content=</span><span class="s">&quot;summary&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;meta</span> <span class="na">property=</span><span class="s">&quot;twitter:url&quot;</span> <span class="na">content=</span><span class="s">&quot;http://open.spotify.com/track/5fpizYGbi5IQoEraj6FP0R&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;meta</span> <span class="na">property=</span><span class="s">&quot;twitter:image&quot;</span> <span class="na">content=</span><span class="s">&quot;http://o.scdn.co/image/97092f295b383b1c59445ef9525051655ffa78e3&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;meta</span> <span class="na">property=</span><span class="s">&quot;twitter:description&quot;</span> <span class="na">content=</span><span class="s">&quot;A song by Beastie Boys on Spotify.&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;meta</span> <span class="na">property=</span><span class="s">&quot;twitter:title&quot;</span> <span class="na">content=</span><span class="s">&quot;Intergalactic&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;meta</span> <span class="na">property=</span><span class="s">&quot;twitter:site&quot;</span> <span class="na">content=</span><span class="s">&quot;@spotify&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;meta</span> <span class="na">property=</span><span class="s">&quot;description&quot;</span> <span class="na">content=</span><span class="s">&quot;Intergalactic, a song by Beastie Boys on Spotify. Don&amp;#39;t have Spotify? Get it at Spotify.com – it&amp;#39;s free!&quot;</span><span class="nt">&gt;</span></code></pre></div>
+
+<p>There’s loads of useful info in there, but this is the line I’m interested in:</p>
+
+<p><meta property="og:image" content="http://o.scdn.co/image/97092f295b383b1c59445ef9525051655ffa78e3" /></p>
+
+<p>I’m going to use <a href="http://code.google.com/p/phpquery/">phpQuery</a> to parse the HTML and extract the line I want – it provides a JQuery-like syntax for parsing an HTML document. It’s available as a PEAR package, though for the purposes of this post, I simply downloaded it as a single file – here is a <a href="http://code.google.com/p/phpquery/downloads/detail?name=phpQuery-0.9.5.386-onefile.zip&amp;can=2&amp;q=">direct download link</a> to the version I used.</p>
+
+<p>The code starts with a very simple function for fetching a document using cURL:</p>
+
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="k">function</span> <span class="nf">_fetch_url</span><span class="p">(</span><span class="nv">$url</span><span class="p">){</span>
+     <span class="nv">$ch</span> <span class="o">=</span> <span class="nb">curl_init</span><span class="p">();</span>
+     <span class="nb">curl_setopt</span><span class="p">(</span><span class="nv">$ch</span><span class="p">,</span> <span class="nx">CURLOPT_URL</span><span class="p">,</span> <span class="nv">$url</span><span class="p">);</span>
+     <span class="nb">curl_setopt</span><span class="p">(</span><span class="nv">$ch</span><span class="p">,</span> <span class="nx">CURLOPT_RETURNTRANSFER</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+     <span class="nb">curl_setopt</span><span class="p">(</span><span class="nv">$ch</span><span class="p">,</span> <span class="nx">CURLOPT_TIMEOUT</span><span class="p">,</span> <span class="mi">20</span><span class="p">);</span>
+      
+     <span class="nv">$ret_data</span> <span class="o">=</span> <span class="nb">curl_exec</span><span class="p">(</span><span class="nv">$ch</span><span class="p">);</span>
+     <span class="nb">curl_close</span><span class="p">(</span><span class="nv">$ch</span><span class="p">);</span> 
+     <span class="k">return</span> <span class="nv">$re_data</span><span class="p">;</span>
+<span class="p">}</span></code></pre></div>
+
+<p>There are plenty of other ways of doing this, including <code>file_get_contents</code>, so use whatever you prefer.</p>
+
+<p>Here’s the example of a function, <code>get_track_artwork</code> which given a track ID, will return the artwork from Spotify – I’ve commented it heavily, so it should be self-explanatory:</p>
+
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="k">function</span> <span class="nf">get_track_artwork</span><span class="p">(</span><span class="nv">$track_id</span><span class="p">)</span>
+<span class="p">{</span>
+     <span class="c1">// require the phpQuery library</span>
+     <span class="k">require_once</span><span class="p">(</span><span class="s1">&#39;libraries/phpquery/phpQuery-onefile.php&#39;</span><span class="p">);</span>
+
+     <span class="c1">// Get the URL to the page for this track</span>
+     <span class="nv">$track_url</span> <span class="o">=</span> <span class="s1">&#39;http://open.spotify.com/track/&#39;</span> <span class="o">.</span> <span class="nv">$track_id</span><span class="p">;</span>  
+
+     <span class="c1">// Grab the HTML</span>
+     <span class="nv">$html</span> <span class="o">=</span> <span class="nx">fetch_url</span><span class="p">(</span><span class="nv">$track_url</span><span class="p">);</span><span class="c1">//load album cover info from track</span>
+
+     <span class="c1">// Create a phpQuery document</span>
+     <span class="nx">phpQuery</span><span class="o">::</span><span class="na">newDocument</span><span class="p">(</span><span class="nv">$html</span><span class="p">);</span>
+
+     <span class="c1">// Get the meta tag og:image using phpQuery</span>
+     <span class="nv">$image_url</span> <span class="o">=</span> <span class="nx">pq</span><span class="p">(</span><span class="s1">&#39;meta[property=og:image&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">attr</span><span class="p">(</span><span class="s1">&#39;content&#39;</span><span class="p">);</span>
+
+     <span class="c1">// Optionally, get the thumbnail instead of the larger image, by simply substituting the relevant part of the URL</span>
+     <span class="nv">$image_url</span> <span class="o">=</span> <span class="nb">str_replace</span><span class="p">(</span><span class="s1">&#39;image&#39;</span><span class="p">,</span> <span class="s1">&#39;thumb&#39;</span><span class="p">,</span> <span class="nv">$image_url</span><span class="p">);</span>
+
+     <span class="k">return</span> <span class="nv">$image_url</span><span class="p">;</span>
+<span class="p">}</span></code></pre></div>
+
+<p>Usage is extremely simple:</p>
+
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="nv">$track_id</span> <span class="o">=</span> <span class="s1">&#39;5fpizYGbi5IQoEraj6FP0R&#39;</span><span class="p">;</span>
+
+<span class="nv">$image_url</span> <span class="o">=</span> <span class="nx">get_track_artwork</span><span class="p">(</span><span class="nv">$track_id</span><span class="p">);</span></code></pre></div>
+
+<p>Of course if you’re starting with a Spotify URI, you&#39;ll need to extract the ID, like so:</p>
+
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="nv">$track_uri</span> <span class="o">=</span> <span class="s1">&#39;spotify:track:5fpizYGbi5IQoEraj6FP0R&#39;</span><span class="p">;</span>
+<span class="nv">$track_id</span> <span class="o">=</span> <span class="nb">substr</span><span class="p">(</span><span class="nv">$track_uri</span><span class="p">,</span> <span class="nb">strripos</span><span class="p">(</span><span class="nv">$track_uri</span><span class="p">,</span> <span class="s1">&#39;:&#39;</span><span class="p">));</span></code></pre></div>
+
+<p>Again, please use this function with caution – and cache the results!</p>
+
+	</div>
+
+	
+	<p class="tags">Tagged with:
+	
+  <a href="/tag/spotify">Spotify</a> 
+	
+  <a href="/tag/php">PHP</a> 
+	
+	</p>
+	
+
+	<!--
+	<div class="author">
+		<a href="https://twitter.com/lukaswhite" title="Twitter">Twitter</a>
+		<a href="https://plus.google.com/+LukasWhiteWebDeveloper" title="My Google+ Profile">Google+</a>
+	</div>	
+-->
+
+	<div id="disqus_thread"></div>
+	<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">Comments powered by Disqus.</a></noscript>
+	<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+</article>
+
+<aside class="five columns">
+	
+	<h4>About Me</h4>
+
+<p>I&#39;m a web developer based in Manchester, England. I also design websites.  I generally favour open-source technologies such as PHP, MySQL and JQuery, and I have extensive experience using Drupal.</p>
+
+
+	<div class="block tag-cloud">
+			 	<h4>Tags</h4>
+			 	<ul class="tags">
+				
+	    		<li><a href="/blog/tags/drupal">Drupal</a></li>
+				
+	    		<li><a href="/blog/tags/mobile">mobile</a></li>
+				
+	    		<li><a href="/blog/tags/rwd">RWD</a></li>
+				
+	    		<li><a href="/blog/tags/responsive-web-design">responsive web design</a></li>
+				
+	    		<li><a href="/blog/tags/deployment">deployment</a></li>
+				
+	    		<li><a href="/blog/tags/prowl">Prowl</a></li>
+				
+	    		<li><a href="/blog/tags/push-notifications">push notifications</a></li>
+				
+	    		<li><a href="/blog/tags/concrete5">Concrete5</a></li>
+				
+	    		<li><a href="/blog/tags/cms">CMS</a></li>
+				
+	    		<li><a href="/blog/tags/tutorials">tutorials</a></li>
+				
+	    		<li><a href="/blog/tags/php">PHP</a></li>
+				
+	    		<li><a href="/blog/tags/laravel">Laravel</a></li>
+				
+	    		<li><a href="/blog/tags/frameworks">frameworks</a></li>
+				
+	    		<li><a href="/blog/tags/facebook">Facebook</a></li>
+				
+	    		<li><a href="/blog/tags/drupal-7">Drupal 7</a></li>
+				
+	    		<li><a href="/blog/tags/ux">UX</a></li>
+				
+	    		<li><a href="/blog/tags/less">Less</a></li>
+				
+	    		<li><a href="/blog/tags/mysql">MySQL</a></li>
+				
+	    		<li><a href="/blog/tags/writing">writing</a></li>
+				
+	    		<li><a href="/blog/tags/sitepoint">Sitepoint</a></li>
+				
+	    		<li><a href="/blog/tags/articles">articles</a></li>
+				
+	    		<li><a href="/blog/tags/spotify">Spotify</a></li>
+				
+	    		<li><a href="/blog/tags/drupal-commerce">Drupal Commerce</a></li>
+				
+	    		<li><a href="/blog/tags/bash">Bash</a></li>
+				
+	    		<li><a href="/blog/tags/git">Git</a></li>
+				
+	    		<li><a href="/blog/tags/apache">Apache</a></li>
+				
+	    		<li><a href="/blog/tags/workflow">Workflow</a></li>
+				
+	    		<li><a href="/blog/tags/foundation">Foundation</a></li>
+				
+	    		<li><a href="/blog/tags/gravatar">Gravatar</a></li>
+				
+	    		<li><a href="/blog/tags/jquery">JQuery</a></li>
+				
+	    		<li><a href="/blog/tags/geo">Geo</a></li>
+				
+	    		<li><a href="/blog/tags/backbone">Backbone</a></li>
+				
+	    		<li><a href="/blog/tags/homestead">Homestead</a></li>
+				
+	    		<li><a href="/blog/tags/elasticsearch">Elasticsearch</a></li>
+				
+	    		<li><a href="/blog/tags/jekyll">Jekyll</a></li>
+				
+	    		<li><a href="/blog/tags/grunt">Grunt</a></li>
+				
+				</ul>
+			</div>
+
+</aside>
+
+
+<script type="text/javascript">    
+	var disqus_shortname = 'lukaswhite';
+    
+	(function() {
+		var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+		dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+		(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+	})();
+</script>
+ 
+  </div>
+
+  <!-- Footer begins ========================================================================== -->
+  <footer id="footer">
+    <hr>
+    <div class="eight columns">
+      <ul id="footerLinks">
+        <li>&copy; 2014 Lukas White. All rights reserved.</li>        
+        <li><a href="http://www.twitter.com/lukaswhite" target="_blank">@lukaswhite</a></li>              
+      </ul>
+    </div>
+    <div class="eight columns right">
+      <ul class="social small">
+        <li><a class="linkedin" href="http://uk.linkedin.com/in/lukaswhite" target="_blank"><span>View my LinkedIn Profile</span></a></li>
+        <li><a class="twitter" href="http://www.twitter.com/lukaswhite" target="_blank"><span>Follow me on Twitter</span></a></li>
+        <li><a class="facebook" href="http://www.facebook.com/lukas.white.freelance.web.developer" target="_blank"><span>Find me on Facebook</span></a></li>
+        <li><a class="github" href="https://github.com/lukaswhite" target="_blank"><span>Find me on Github</span></a></li>
+      </ul>
+    </div>
+    <hr>
+    <div class="sixteen columns centered">
+      <p>Powered by <a href="http://www.typeandgrids.com" target="_blank">Type &amp; Grids</a>, <a href="http://jekyllrb.com/">Jekyll</a> and <a href="https://github.com/erikhuda/thor">Thor</a></p>
+    </div>
+  </footer>
+  <!-- Footer ends ============================================================================ -->
+    
+</div><!-- container -->
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-3485550-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</body>
+</html>

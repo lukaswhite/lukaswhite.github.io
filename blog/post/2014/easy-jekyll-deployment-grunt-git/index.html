@@ -1,0 +1,388 @@
+<!doctype html>
+<!--[if lt IE 7 ]><html class="ie ie6" lang="en"> <![endif]-->
+<!--[if IE 7 ]><html class="ie ie7" lang="en"> <![endif]-->
+<!--[if IE 8 ]><html class="ie ie8" lang="en"> <![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!--><html lang="en"> <!--<![endif]-->
+<head>
+<meta charset="utf-8">
+
+<!--
+••••••••••••••••••••••••
+
+Powered by Type & Grids™
+www.typeandgrids.com
+
+••••••••••••••••••••••••
+-->
+
+<title>Easy Jekyll Deployment with Grunt and Git</title>
+<meta name="description" content="The website of Lukas White, Manchester-based Freelance Web Designer and Developer">
+<meta name="author" content="Lukas White">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+<!-- CSS
+================================================================================================= -->
+<link rel="stylesheet" href="/dist/styles.min.css">
+
+<!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+
+<!-- Favicons
+================================================================================================= -->
+<link rel="shortcut icon" href="/favicon.ico">
+<link rel="apple-touch-icon" href="images/favicons/apple-touch-icon.png">
+<link rel="apple-touch-icon" sizes="72x72" href="images/favicons/apple-touch-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="114x114" href="images/favicons/apple-touch-icon-114x114.png">
+
+</head>
+<body>
+
+<div class="container">
+  
+  <!-- Header begins ========================================================================== -->
+  <header id="page-header" class="sixteen columns">
+    <div id="logo">
+      <a href="/">
+        <h1>Lukas White</h1>
+        <h2>Freelance Web Developer</h2>
+      </a>
+      <!--
+      <img src="images/logo.png" width="275" height="35" alt="Logo" />
+      -->
+    </div>
+    <nav>
+      <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/about">About</a></li>
+        <li><a href="/blog">Blog</a></li>
+        <li><a href="/work">Work</a></li>
+        <li><a href="/contact">Contact</a></li>        
+      </ul>
+    </nav>
+    <hr />
+  </header>
+  <!-- Header ends ============================================================================ -->
+  
+  <div id="content" class="content">
+  <article class="eleven columns post">
+	<h2>Easy Jekyll Deployment with Grunt and Git</h2>
+	<p class="meta"> &ndash; <time datetime="2014-09-12">12<sup>th</sup> September, 2014</time></p>
+
+	<div class="body">
+		<p>I&#39;ve recently re-built this site using <a href="http://jekyllrb.com/">Jekyll</a>, for reasons I&#39;ll go into in another blog post. I wanted to make deploying changes really, really easy. In this post, I&#39;m going to detail my approach.</p>
+
+<h3>Hosting</h3>
+
+<p>Jekyll plays nicely with Github Pages. However, I haven&#39;t taken advantage of it, for two reasons. The first is that I have a number of unsupported plugins, so I can&#39;t take advantage of their automatic Jekyll building process. That&#39;s not necessarily an impediment to using Github Pages, since there are workarounds. A bigger issue is that you currently cannot use HTTPS with a custom domain, which is suddenly really important as far as search rankings go, following <a href="http://googlewebmastercentral.blogspot.co.uk/2014/08/https-as-ranking-signal.html">Google&#39;s recent announcement</a>.</p>
+
+<p>One of the great things about using Jekyll is that because it&#39;s all static files, hosting requirements are nominal. So, I decided to keep my <a href="https://www.digitalocean.com/?refcode=4bb9d458bcc0">Digital Ocean</a> droplet (disclaimer: that&#39;s an affiliate link). It&#39;s pretty low-spec, but if it comes to it, resizing a Droplet is a piece of cake.</p>
+
+<p>So that&#39;s the hosting, now I&#39;ll go through the steps involved in my deployment process.</p>
+
+<h3>Overview of the Deployment Steps</h3>
+
+<h4>Grunt</h4>
+
+<p>I&#39;m using <a href="http://gruntjs.com/">Grunt</a> to perform a number of tasks:</p>
+
+<ul>
+<li>Compiling some SASS files</li>
+<li>Concatenating the CSS</li>
+<li>Minifying all my CSS</li>
+</ul>
+
+<p>I&#39;ve configured a default task for these, so I simply need to run <code>grunt</code>. There are no Javascript-related tasks, such as linting or minifying, simply because there isn&#39;t any Javascript.</p>
+
+<p>I&#39;ve also added a task to optimize all my images, but haven&#39;t included it in my default Grunt configuration, simply because it takes a while - I just run it as and when I need to.</p>
+
+<h4>Jekyll</h4>
+
+<p>The next step is of course to run <code>jekyll build</code>. This regenerates the website in the <code>_site</code> directory. I&#39;ve set up Git so that this directory is included in the repository. This is contrary to a lot of setups, which deliberately ignore the built version of the site - but since I&#39;m building it locally, it&#39;s necessary to include it.</p>
+
+<h4>Git</h4>
+
+<p>The next step in my deployment process is to commit any changes to Git. Then, I&#39;m pushing those changes to the master branch on Bitbucket, as well as the &quot;live&quot; site by using a Git remote. I&#39;ll go through that part of the process shortly.</p>
+
+<h3>The Deployment Process</h3>
+
+<p>The first thing I did was add my SSH key to the Droplet, so I wouldn&#39;t need to enter a password everytime I deploy. This is really easy:</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nb">cd</span> ~
+cat .ssh/id_rsa.pub <span class="p">|</span> ssh me@example.com <span class="s1">&#39;cat &gt;&gt; .ssh/authorized_keys&#39;</span></code></pre></div>
+
+<p>The next step was to create a new directory on the remote server:</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nb">cd</span> /var/www
+mkdir example.com</code></pre></div>
+
+<p>Then I created a new, empty Git repository:</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nb">cd </span>example.com
+git init</code></pre></div>
+
+<p>I set the <code>receive.denyCurrent</code> Git setting to <code>ignore</code> for the repository - here&#39;s the complete file (<code>.git/config</code>) for demonstration:</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="o">[</span>core<span class="o">]</span>
+    <span class="nv">repositoryformatversion</span> <span class="o">=</span> 0
+    <span class="nv">filemode</span> <span class="o">=</span> <span class="nb">true</span>
+<span class="nb">   </span><span class="nv">bare</span> <span class="o">=</span> <span class="nb">false</span>
+<span class="nb">   </span><span class="nv">logallrefupdates</span> <span class="o">=</span> <span class="nb">true</span>
+<span class="o">[</span>receive<span class="o">]</span>
+    <span class="nv">denyCurrentBranch</span> <span class="o">=</span> ignore</code></pre></div>
+
+<p>Next, I configured Apache to point to <code>/var/www/example.com/_site</code>. </p>
+
+<p>Then I added a remote to my <strong>local</strong> Git repository:</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">git remote add production ssh://me@example.com/var/www/example.com</code></pre></div>
+
+<p>Next, I created a post-receive hook on the web server:</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">nano /var/www/example.com/.git/hooks/post-receive</code></pre></div>
+
+<p>Here are the contents of that file:</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="c">#!/bin/sh</span>
+<span class="nb">cd</span> ..
+<span class="nv">GIT_DIR</span><span class="o">=</span><span class="s1">&#39;.git&#39;</span>
+<span class="nv">GIT_WORK_TREE</span><span class="o">=</span>/var/www/example.com git checkout -f
+<span class="nb">umask </span><span class="m">002</span> <span class="o">&amp;&amp;</span> git reset --hard</code></pre></div>
+
+<p>Essentially, this synchronises the remote server (i.e. my web host)&#39;s copy of the Git repository which holds the site, whenever I do a <code>git push</code>.</p>
+
+<p>Note that this file needs to be made executable:</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">chmod +x /var/www/example.com/.git/hooks/post-receive</code></pre></div>
+
+<p>Next, my local deployment script. I created a file named simply <code>deploy</code> with the following contents:</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="c">#!/bin/bash</span>
+grunt
+jekyll build
+git add . -A
+git commit -am <span class="s2">&quot;Updated website&quot;</span>
+git push production master</code></pre></div>
+
+<p>This does the following:</p>
+
+<ol>
+<li>Runs my Grunt tasks (compiling SASS, concatenating and then minifying the CSS)</li>
+<li>Builds the site</li>
+<li>Adds any newly created files to Git. The -A flag (all) also ensures any deleted files are removed from Git (see <a href="http://www.geekgumbo.com/2010/05/16/removing-deleted-files-from-your-git-working-directory/">this post</a> for further explanation)</li>
+<li>Commits the changes to Git</li>
+<li>Pushes up to the remote server, where the Git hook takes care of updating the &quot;live site&quot;</li>
+</ol>
+
+<p>With all this in place, all I need to do to deploy my site is this:</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">./deploy</code></pre></div>
+
+<h3>Extending for Multiple Environments</h3>
+
+<p>If you have multiple environments - for example production and staging - you can expand this script to ask which one to push to. Here&#39;s the modified script:</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="c">#!/bin/bash</span>
+<span class="nv">prompt</span><span class="o">=</span><span class="s2">&quot;Pick an option: &quot;</span>
+<span class="nv">options</span><span class="o">=(</span><span class="s2">&quot;Production&quot;</span> <span class="s2">&quot;Staging&quot;</span><span class="o">)</span>
+
+<span class="nv">PS3</span><span class="o">=</span><span class="s2">&quot;$prompt &quot;</span>
+<span class="k">select</span> opt in <span class="s2">&quot;${options[@]}&quot;</span> <span class="s2">&quot;Quit&quot;</span><span class="p">;</span> <span class="k">do</span> 
+
+    <span class="k">case</span> <span class="s2">&quot;$REPLY&quot;</span> in
+
+    <span class="m">1</span> <span class="o">)</span> <span class="nv">env</span><span class="o">=</span><span class="s2">&quot;production&quot;</span><span class="p">;;</span>
+    <span class="m">2</span> <span class="o">)</span> <span class="nv">env</span><span class="o">=</span><span class="s2">&quot;staging&quot;</span><span class="p">;;</span>
+
+    <span class="k">$((</span> <span class="k">${#</span><span class="nv">options</span><span class="p">[@]</span><span class="k">}</span><span class="o">+</span><span class="m">1</span> <span class="k">))</span> <span class="o">)</span> <span class="nb">echo</span> <span class="s2">&quot;Exiting.&quot;</span><span class="p">;</span> <span class="nb">exit</span><span class="p">;;</span>
+    *<span class="o">)</span> <span class="nb">echo</span> <span class="s2">&quot;Invalid option. Try another one.&quot;</span><span class="p">;</span><span class="k">continue</span><span class="p">;;</span>
+
+    <span class="k">esac</span>
+    <span class="nb">break</span>
+
+<span class="k">done</span>
+
+<span class="nb">echo</span> <span class="s2">&quot;Pushing to $env&quot;</span>
+
+grunt
+jekyll build
+git add . -A
+git commit -am <span class="s2">&quot;Updated website&quot;</span>
+git push <span class="nv">$env</span> master</code></pre></div>
+
+<p>Now when you run it, you get the following:</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">&gt; ./deploy
+&gt; 1<span class="o">)</span> Production
+&gt; 2<span class="o">)</span> Staging
+&gt; 3<span class="o">)</span> Quit
+&gt; Pick an option:  1
+&gt; Pushing to production</code></pre></div>
+
+<p>That&#39;s it - deploying is now a piece of cake.</p>
+
+	</div>
+
+	
+	<p class="tags">Tagged with:
+	
+  <a href="/tag/jekyll">Jekyll</a> 
+	
+  <a href="/tag/grunt">Grunt</a> 
+	
+  <a href="/tag/deployment">deployment</a> 
+	
+	</p>
+	
+
+	<!--
+	<div class="author">
+		<a href="https://twitter.com/lukaswhite" title="Twitter">Twitter</a>
+		<a href="https://plus.google.com/+LukasWhiteWebDeveloper" title="My Google+ Profile">Google+</a>
+	</div>	
+-->
+
+	<div id="disqus_thread"></div>
+	<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">Comments powered by Disqus.</a></noscript>
+	<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+</article>
+
+<aside class="five columns">
+	
+	<h4>About Me</h4>
+
+<p>I&#39;m a web developer based in Manchester, England. I also design websites.  I generally favour open-source technologies such as PHP, MySQL and JQuery, and I have extensive experience using Drupal.</p>
+
+
+	<div class="block tag-cloud">
+			 	<h4>Tags</h4>
+			 	<ul class="tags">
+				
+	    		<li><a href="/blog/tags/drupal">Drupal</a></li>
+				
+	    		<li><a href="/blog/tags/mobile">mobile</a></li>
+				
+	    		<li><a href="/blog/tags/rwd">RWD</a></li>
+				
+	    		<li><a href="/blog/tags/responsive-web-design">responsive web design</a></li>
+				
+	    		<li><a href="/blog/tags/deployment">deployment</a></li>
+				
+	    		<li><a href="/blog/tags/prowl">Prowl</a></li>
+				
+	    		<li><a href="/blog/tags/push-notifications">push notifications</a></li>
+				
+	    		<li><a href="/blog/tags/concrete5">Concrete5</a></li>
+				
+	    		<li><a href="/blog/tags/cms">CMS</a></li>
+				
+	    		<li><a href="/blog/tags/tutorials">tutorials</a></li>
+				
+	    		<li><a href="/blog/tags/php">PHP</a></li>
+				
+	    		<li><a href="/blog/tags/laravel">Laravel</a></li>
+				
+	    		<li><a href="/blog/tags/frameworks">frameworks</a></li>
+				
+	    		<li><a href="/blog/tags/facebook">Facebook</a></li>
+				
+	    		<li><a href="/blog/tags/drupal-7">Drupal 7</a></li>
+				
+	    		<li><a href="/blog/tags/ux">UX</a></li>
+				
+	    		<li><a href="/blog/tags/less">Less</a></li>
+				
+	    		<li><a href="/blog/tags/mysql">MySQL</a></li>
+				
+	    		<li><a href="/blog/tags/writing">writing</a></li>
+				
+	    		<li><a href="/blog/tags/sitepoint">Sitepoint</a></li>
+				
+	    		<li><a href="/blog/tags/articles">articles</a></li>
+				
+	    		<li><a href="/blog/tags/spotify">Spotify</a></li>
+				
+	    		<li><a href="/blog/tags/drupal-commerce">Drupal Commerce</a></li>
+				
+	    		<li><a href="/blog/tags/bash">Bash</a></li>
+				
+	    		<li><a href="/blog/tags/git">Git</a></li>
+				
+	    		<li><a href="/blog/tags/apache">Apache</a></li>
+				
+	    		<li><a href="/blog/tags/workflow">Workflow</a></li>
+				
+	    		<li><a href="/blog/tags/foundation">Foundation</a></li>
+				
+	    		<li><a href="/blog/tags/gravatar">Gravatar</a></li>
+				
+	    		<li><a href="/blog/tags/jquery">JQuery</a></li>
+				
+	    		<li><a href="/blog/tags/geo">Geo</a></li>
+				
+	    		<li><a href="/blog/tags/backbone">Backbone</a></li>
+				
+	    		<li><a href="/blog/tags/homestead">Homestead</a></li>
+				
+	    		<li><a href="/blog/tags/elasticsearch">Elasticsearch</a></li>
+				
+	    		<li><a href="/blog/tags/jekyll">Jekyll</a></li>
+				
+	    		<li><a href="/blog/tags/grunt">Grunt</a></li>
+				
+				</ul>
+			</div>
+
+</aside>
+
+
+<script type="text/javascript">    
+	var disqus_shortname = 'lukaswhite';
+    
+	(function() {
+		var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+		dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+		(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+	})();
+</script>
+ 
+  </div>
+
+  <!-- Footer begins ========================================================================== -->
+  <footer id="footer">
+    <hr>
+    <div class="eight columns">
+      <ul id="footerLinks">
+        <li>&copy; 2014 Lukas White. All rights reserved.</li>        
+        <li><a href="http://www.twitter.com/lukaswhite" target="_blank">@lukaswhite</a></li>              
+      </ul>
+    </div>
+    <div class="eight columns right">
+      <ul class="social small">
+        <li><a class="linkedin" href="http://uk.linkedin.com/in/lukaswhite" target="_blank"><span>View my LinkedIn Profile</span></a></li>
+        <li><a class="twitter" href="http://www.twitter.com/lukaswhite" target="_blank"><span>Follow me on Twitter</span></a></li>
+        <li><a class="facebook" href="http://www.facebook.com/lukas.white.freelance.web.developer" target="_blank"><span>Find me on Facebook</span></a></li>
+        <li><a class="github" href="https://github.com/lukaswhite" target="_blank"><span>Find me on Github</span></a></li>
+      </ul>
+    </div>
+    <hr>
+    <div class="sixteen columns centered">
+      <p>Powered by <a href="http://www.typeandgrids.com" target="_blank">Type &amp; Grids</a>, <a href="http://jekyllrb.com/">Jekyll</a> and <a href="https://github.com/erikhuda/thor">Thor</a></p>
+    </div>
+  </footer>
+  <!-- Footer ends ============================================================================ -->
+    
+</div><!-- container -->
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-3485550-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</body>
+</html>

@@ -1,0 +1,327 @@
+<!doctype html>
+<!--[if lt IE 7 ]><html class="ie ie6" lang="en"> <![endif]-->
+<!--[if IE 7 ]><html class="ie ie7" lang="en"> <![endif]-->
+<!--[if IE 8 ]><html class="ie ie8" lang="en"> <![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!--><html lang="en"> <!--<![endif]-->
+<head>
+<meta charset="utf-8">
+
+<!--
+••••••••••••••••••••••••
+
+Powered by Type & Grids™
+www.typeandgrids.com
+
+••••••••••••••••••••••••
+-->
+
+<title>Incorporating Gravatar into the Signin (or Registration) Process</title>
+<meta name="description" content="The website of Lukas White, Manchester-based Freelance Web Designer and Developer">
+<meta name="author" content="Lukas White">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+<!-- CSS
+================================================================================================= -->
+<link rel="stylesheet" href="/dist/styles.min.css">
+
+<!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+
+<!-- Favicons
+================================================================================================= -->
+<link rel="shortcut icon" href="/favicon.ico">
+<link rel="apple-touch-icon" href="images/favicons/apple-touch-icon.png">
+<link rel="apple-touch-icon" sizes="72x72" href="images/favicons/apple-touch-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="114x114" href="images/favicons/apple-touch-icon-114x114.png">
+
+</head>
+<body>
+
+<div class="container">
+  
+  <!-- Header begins ========================================================================== -->
+  <header id="page-header" class="sixteen columns">
+    <div id="logo">
+      <a href="/">
+        <h1>Lukas White</h1>
+        <h2>Freelance Web Developer</h2>
+      </a>
+      <!--
+      <img src="images/logo.png" width="275" height="35" alt="Logo" />
+      -->
+    </div>
+    <nav>
+      <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/about">About</a></li>
+        <li><a href="/blog">Blog</a></li>
+        <li><a href="/work">Work</a></li>
+        <li><a href="/contact">Contact</a></li>        
+      </ul>
+    </nav>
+    <hr />
+  </header>
+  <!-- Header ends ============================================================================ -->
+  
+  <div id="content" class="content">
+  <article class="eleven columns post">
+	<h2>Incorporating Gravatar into the Signin (or Registration) Process</h2>
+	<p class="meta"> &ndash; <time datetime="2014-02-26">26<sup>th</sup> February, 2014</time></p>
+
+	<div class="body">
+		<p>I signed up for an online service the other day (<a href="https://commando.io/%22">Commando.io</a>), and they had a really nice little interaction during the signup and signin processes. As soon as you enter your email address, it automatically displays your <a href="http://en.gravatar.com">Gravatar</a>. Nice little touch.</p>
+
+<p>So, I thought I&#39;d write a quick tutorial on how to replicate the effect.</p>
+
+<p>There is a <a href="http://demos.lukaswhite.com/gravatar-signin">demo here</a>.</p>
+
+<h3>Getting Started</h3>
+
+<p>For simplicity, I based the form on one of the <a href="http://getbootstrap.com/examples/signin">example templates</a> for the <a href="http://getbootstrap.com">Bootstrap framework</a>.</p>
+
+<p>It&#39;s pretty straightforward to download the Bootstrap framework using <a href="http://bower.io">Bower</a>:</p>
+
+<p><code>bower install bootstrap</code></p>
+
+<p>Because Bootstrap&#39;s JS - not that it&#39;s used for this tutorial - has JQuery has a dependency, Bower will download it automatically - so no need to download it separately.</p>
+
+<p>Next up, a little additional markup for the form:</p>
+
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;html&gt;</span>
+<span class="nt">&lt;form</span> <span class="na">id=</span><span class="s">&quot;login&quot;</span> <span class="na">class=</span><span class="s">&quot;form-signin&quot;</span> <span class="na">role=</span><span class="s">&quot;form&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;h2</span> <span class="na">class=</span><span class="s">&quot;form-signin-heading&quot;</span><span class="nt">&gt;</span>Please sign in<span class="nt">&lt;/h2&gt;</span>
+        <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;avatar-holder&quot;</span><span class="nt">&gt;</span>
+          <span class="nt">&lt;img</span> <span class="na">src=</span><span class="s">&quot;./img/avatar.png&quot;</span> <span class="na">width=</span><span class="s">&quot;64&quot;</span> <span class="na">height=</span><span class="s">&quot;64&quot;</span> <span class="na">id=</span><span class="s">&quot;avatar&quot;</span> <span class="nt">/&gt;</span>
+        <span class="nt">&lt;/div&gt;</span>
+<span class="c">&lt;!-- ...rest of the form goes here... --&gt;</span>
+<span class="nt">&lt;/html&gt;</span></code></pre></div>
+
+<p>A few CSS styles - I&#39;ve just put them in the HEAD for simplicity:</p>
+
+<div class="highlight"><pre><code class="language-css" data-lang="css"><span class="nc">.avatar-holder</span> <span class="p">{</span>
+    <span class="k">text-align</span><span class="o">:</span> <span class="k">center</span><span class="p">;</span>
+    <span class="k">padding</span><span class="o">:</span> <span class="m">1em</span> <span class="m">0</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="nf">#avatar</span> <span class="p">{</span>
+    <span class="k">width</span><span class="o">:</span> <span class="m">64px</span><span class="p">;</span>
+    <span class="k">height</span><span class="o">:</span> <span class="m">64px</span><span class="p">;</span>
+    <span class="k">border</span><span class="o">-</span><span class="n">radius</span><span class="o">:</span> <span class="m">32px</span><span class="p">;</span>
+    <span class="k">border</span><span class="o">:</span> <span class="k">solid</span> <span class="m">2px</span> <span class="m">#ddd</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="nc">.note</span> <span class="p">{</span>
+    <span class="k">margin-top</span><span class="o">:</span> <span class="m">2em</span><span class="p">;</span>
+    <span class="k">text-align</span><span class="o">:</span> <span class="k">center</span><span class="p">;</span>        
+<span class="p">}</span>
+<span class="nc">.note</span> <span class="nt">p</span> <span class="p">{</span>
+    <span class="k">font-size</span><span class="o">:</span> <span class="m">0.8em</span><span class="p">;</span>
+    <span class="k">color</span><span class="o">:</span> <span class="m">#666</span><span class="p">;</span>
+<span class="p">}</span></code></pre></div>
+
+<p>That&#39;s the basic structure ready to go.</p>
+
+<h3>How to Use Gravatar</h3>
+
+<p>Generating a Gravatar is really easy. You simply create an image tag and point it to a specific URL, which you construct as follows:</p>
+
+<p><code style="font-size:1.5em">http://www.gravatar.com/avatar/HASH?s=64</code></p>
+
+<p>HASH is an MD5 hash of the user&#39;s email address, which should first be converted to lowercase. There are a few additional parameters you can use, which are <a href="http://en.gravatar.com/site/implement/images">detailed in the documentation</a>, but I&#39;m just setting the size here - indicated by the attribute <em>s</em>. In this case, I want the Gravatar to be 64px x 64px, to match the image.</p>
+
+<h3>Implementation</h3>
+
+<p>The first thing to note is that Javascript doesn&#39;t support MD5 hashing out-the-box. Fortunately there are libraries for that, such as <a href="https://github.com/blueimp/JavaScript-MD5">this one</a>.</p>
+
+<p>Again, this can be installed using Bower:</p>
+
+<p><code>bower install blueimp-md5</code></p>
+
+<p>Now the JQuery:</p>
+
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">$</span><span class="p">(</span><span class="nb">document</span><span class="p">).</span><span class="nx">ready</span><span class="p">(</span><span class="kd">function</span><span class="p">(){</span>
+
+    <span class="c1">// React to the email field (on the login form) having been filled out</span>
+    <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;form#login input[name=&quot;email&quot;]&#39;</span><span class="p">).</span><span class="nx">blur</span><span class="p">(</span><span class="kd">function</span><span class="p">(){</span>
+        <span class="kd">var</span> <span class="nx">email</span> <span class="o">=</span> <span class="nx">$</span><span class="p">(</span><span class="k">this</span><span class="p">).</span><span class="nx">val</span><span class="p">();</span>
+
+        <span class="c1">// Assuming an email has been provided...</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">email</span> <span class="o">!==</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="p">{</span>     
+
+            <span class="c1">// Construct the Gravatar URL</span>
+            <span class="kd">var</span> <span class="nx">gravatar_url</span> <span class="o">=</span> <span class="s1">&#39;http://www.gravatar.com/avatar/&#39;</span> <span class="o">+</span> <span class="nx">md5</span><span class="p">(</span><span class="nx">email</span><span class="p">.</span><span class="nx">trim</span><span class="p">().</span><span class="nx">toLowerCase</span><span class="p">())</span> <span class="o">+</span> <span class="s1">&#39;?s=64&#39;</span><span class="p">;</span>
+
+            <span class="c1">// Set the source of the avatar image.</span>
+            <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;img#avatar&#39;</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s1">&#39;src&#39;</span><span class="p">,</span> <span class="nx">gravatar_url</span><span class="p">);</span>
+        <span class="p">}</span>
+        
+    <span class="p">});</span>
+
+<span class="p">});</span></code></pre></div>
+
+<p>Most of this should be relatively straightforward. Because we want to grab the avatar after the user has entered their email address, it&#39;s set to fire on the <code>blur</code> event on the email input. After a quick check to ensure a value has been entered (we might also want to validate it here), we build the URL to the Gravatar. First we take the email address - the value of the input - trim any erroneous whitespace, convert it to lowercase, then obtain its MD5 hash. This is then used to generate the URL, which is set as the <code>src</code> attribute of the avatar image. Pretty simple effect, but it adds a little something to your forms.</p></p>
+
+<p><a href="http://demos.lukaswhite.com/gravatar-signin/">Demo</a> / <a href="https://github.com/lukaswhite/Gravatar-Signin">source code</a></p>
+
+	</div>
+
+	
+	<p class="tags">Tagged with:
+	
+  <a href="/tag/gravatar">Gravatar</a> 
+	
+  <a href="/tag/jquery">JQuery</a> 
+	
+	</p>
+	
+
+	<!--
+	<div class="author">
+		<a href="https://twitter.com/lukaswhite" title="Twitter">Twitter</a>
+		<a href="https://plus.google.com/+LukasWhiteWebDeveloper" title="My Google+ Profile">Google+</a>
+	</div>	
+-->
+
+	<div id="disqus_thread"></div>
+	<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">Comments powered by Disqus.</a></noscript>
+	<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+</article>
+
+<aside class="five columns">
+	
+	<h4>About Me</h4>
+
+<p>I&#39;m a web developer based in Manchester, England. I also design websites.  I generally favour open-source technologies such as PHP, MySQL and JQuery, and I have extensive experience using Drupal.</p>
+
+
+	<div class="block tag-cloud">
+			 	<h4>Tags</h4>
+			 	<ul class="tags">
+				
+	    		<li><a href="/blog/tags/drupal">Drupal</a></li>
+				
+	    		<li><a href="/blog/tags/mobile">mobile</a></li>
+				
+	    		<li><a href="/blog/tags/rwd">RWD</a></li>
+				
+	    		<li><a href="/blog/tags/responsive-web-design">responsive web design</a></li>
+				
+	    		<li><a href="/blog/tags/deployment">deployment</a></li>
+				
+	    		<li><a href="/blog/tags/prowl">Prowl</a></li>
+				
+	    		<li><a href="/blog/tags/push-notifications">push notifications</a></li>
+				
+	    		<li><a href="/blog/tags/concrete5">Concrete5</a></li>
+				
+	    		<li><a href="/blog/tags/cms">CMS</a></li>
+				
+	    		<li><a href="/blog/tags/tutorials">tutorials</a></li>
+				
+	    		<li><a href="/blog/tags/php">PHP</a></li>
+				
+	    		<li><a href="/blog/tags/laravel">Laravel</a></li>
+				
+	    		<li><a href="/blog/tags/frameworks">frameworks</a></li>
+				
+	    		<li><a href="/blog/tags/facebook">Facebook</a></li>
+				
+	    		<li><a href="/blog/tags/drupal-7">Drupal 7</a></li>
+				
+	    		<li><a href="/blog/tags/ux">UX</a></li>
+				
+	    		<li><a href="/blog/tags/less">Less</a></li>
+				
+	    		<li><a href="/blog/tags/mysql">MySQL</a></li>
+				
+	    		<li><a href="/blog/tags/writing">writing</a></li>
+				
+	    		<li><a href="/blog/tags/sitepoint">Sitepoint</a></li>
+				
+	    		<li><a href="/blog/tags/articles">articles</a></li>
+				
+	    		<li><a href="/blog/tags/spotify">Spotify</a></li>
+				
+	    		<li><a href="/blog/tags/drupal-commerce">Drupal Commerce</a></li>
+				
+	    		<li><a href="/blog/tags/bash">Bash</a></li>
+				
+	    		<li><a href="/blog/tags/git">Git</a></li>
+				
+	    		<li><a href="/blog/tags/apache">Apache</a></li>
+				
+	    		<li><a href="/blog/tags/workflow">Workflow</a></li>
+				
+	    		<li><a href="/blog/tags/foundation">Foundation</a></li>
+				
+	    		<li><a href="/blog/tags/gravatar">Gravatar</a></li>
+				
+	    		<li><a href="/blog/tags/jquery">JQuery</a></li>
+				
+	    		<li><a href="/blog/tags/geo">Geo</a></li>
+				
+	    		<li><a href="/blog/tags/backbone">Backbone</a></li>
+				
+	    		<li><a href="/blog/tags/homestead">Homestead</a></li>
+				
+	    		<li><a href="/blog/tags/elasticsearch">Elasticsearch</a></li>
+				
+	    		<li><a href="/blog/tags/jekyll">Jekyll</a></li>
+				
+	    		<li><a href="/blog/tags/grunt">Grunt</a></li>
+				
+				</ul>
+			</div>
+
+</aside>
+
+
+<script type="text/javascript">    
+	var disqus_shortname = 'lukaswhite';
+    
+	(function() {
+		var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+		dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+		(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+	})();
+</script>
+ 
+  </div>
+
+  <!-- Footer begins ========================================================================== -->
+  <footer id="footer">
+    <hr>
+    <div class="eight columns">
+      <ul id="footerLinks">
+        <li>&copy; 2014 Lukas White. All rights reserved.</li>        
+        <li><a href="http://www.twitter.com/lukaswhite" target="_blank">@lukaswhite</a></li>              
+      </ul>
+    </div>
+    <div class="eight columns right">
+      <ul class="social small">
+        <li><a class="linkedin" href="http://uk.linkedin.com/in/lukaswhite" target="_blank"><span>View my LinkedIn Profile</span></a></li>
+        <li><a class="twitter" href="http://www.twitter.com/lukaswhite" target="_blank"><span>Follow me on Twitter</span></a></li>
+        <li><a class="facebook" href="http://www.facebook.com/lukas.white.freelance.web.developer" target="_blank"><span>Find me on Facebook</span></a></li>
+        <li><a class="github" href="https://github.com/lukaswhite" target="_blank"><span>Find me on Github</span></a></li>
+      </ul>
+    </div>
+    <hr>
+    <div class="sixteen columns centered">
+      <p>Powered by <a href="http://www.typeandgrids.com" target="_blank">Type &amp; Grids</a>, <a href="http://jekyllrb.com/">Jekyll</a> and <a href="https://github.com/erikhuda/thor">Thor</a></p>
+    </div>
+  </footer>
+  <!-- Footer ends ============================================================================ -->
+    
+</div><!-- container -->
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-3485550-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</body>
+</html>

@@ -1,0 +1,384 @@
+<!doctype html>
+<!--[if lt IE 7 ]><html class="ie ie6" lang="en"> <![endif]-->
+<!--[if IE 7 ]><html class="ie ie7" lang="en"> <![endif]-->
+<!--[if IE 8 ]><html class="ie ie8" lang="en"> <![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!--><html lang="en"> <!--<![endif]-->
+<head>
+<meta charset="utf-8">
+
+<!--
+••••••••••••••••••••••••
+
+Powered by Type & Grids™
+www.typeandgrids.com
+
+••••••••••••••••••••••••
+-->
+
+<title>A Concrete5 Development Tutorial; Creating a Quote Block</title>
+<meta name="description" content="The website of Lukas White, Manchester-based Freelance Web Designer and Developer">
+<meta name="author" content="Lukas White">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+<!-- CSS
+================================================================================================= -->
+<link rel="stylesheet" href="/dist/styles.min.css">
+
+<!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+
+<!-- Favicons
+================================================================================================= -->
+<link rel="shortcut icon" href="/favicon.ico">
+<link rel="apple-touch-icon" href="images/favicons/apple-touch-icon.png">
+<link rel="apple-touch-icon" sizes="72x72" href="images/favicons/apple-touch-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="114x114" href="images/favicons/apple-touch-icon-114x114.png">
+
+</head>
+<body>
+
+<div class="container">
+  
+  <!-- Header begins ========================================================================== -->
+  <header id="page-header" class="sixteen columns">
+    <div id="logo">
+      <a href="/">
+        <h1>Lukas White</h1>
+        <h2>Freelance Web Developer</h2>
+      </a>
+      <!--
+      <img src="images/logo.png" width="275" height="35" alt="Logo" />
+      -->
+    </div>
+    <nav>
+      <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/about">About</a></li>
+        <li><a href="/blog">Blog</a></li>
+        <li><a href="/work">Work</a></li>
+        <li><a href="/contact">Contact</a></li>        
+      </ul>
+    </nav>
+    <hr />
+  </header>
+  <!-- Header ends ============================================================================ -->
+  
+  <div id="content" class="content">
+  <article class="eleven columns post">
+	<h2>A Concrete5 Development Tutorial; Creating a Quote Block</h2>
+	<p class="meta"> &ndash; <time datetime="2011-07-07">7<sup>th</sup> July, 2011</time></p>
+
+	<div class="body">
+		<p>I needed the means to add a quote to a website I was working on – a simple task, which could be acheieved by simply adding a text or HTML block. However this can be taken a step further by implementing a simple block type specifically for quotes, with the markup generated for you. </p>
+
+<p>To mark up a quote semantically, we’ll want a <code>blockquote</code> for the content and a <code>cite</code> for the source (or author), so the HTML needs to look something like this: </p>
+
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;blockquote&gt;</span>
+<span class="nt">&lt;p&gt;</span>It is the mark of an educated mind to be able to entertain a thought without accepting it.<span class="nt">&lt;/p&gt;</span>
+<span class="nt">&lt;p&gt;&lt;cite&gt;</span>Aristotle<span class="nt">&lt;/cite&gt;&lt;/p&gt;</span>
+<span class="nt">&lt;/blockquote&gt;</span></code></pre></div>
+
+<p>...which will give us something a little like this: </p>
+
+<figure class="captioned-image" style="width:600px;"><img src="/images/blogs/2011/concrete5/quotes/concrete5-tutorial-quote.png" width="580" height="225" alt="Concrete5 Module Development Tutorial: the final result" /><figcaption>Our quote will end up looking a little like this (subject to CSS styling!)</figcaption></figure> 
+
+<p>Of course we could just paste this structure into an HTML block, but a simple block containing two fields – content and source – is actually pretty easy to build. So, let’s begin. </p>
+
+<h3>First Steps</h3>
+
+<p>Let’s call the block – imaginatively enough – <strong>quote</strong>. Incorporating this block into a a package is pretty simple, but outside the scope of this tutorial (and I’ve <a href="/blog/post/2011/creating-concrete5-package-integrating-craftyslide-jquery-plugin">covered packages before</a>). So, simply create a directory named <code>quotes</code> in the <code>blocks</code> directory (not the <code>concrete</code> directory – this might mirror the top-level directory structure, but it’s reserved for the core, and would get overwritten with any upgrade). </p>
+
+<h3>The Database Schema</h3>
+
+<p>The first thing we’ll need is to define a new database table to hold our quotes. This simply needs an identifier (which becomes the table’s primary key), the text of the quote (i.e. the content) and the source. Let’s keep the <em>content</em> flexible and allow plenty of text if required, but the <em>source</em> is unlikely to require any more characters than a simple text-field will give us. The database schema in Concrete5 gets defined according to the <a href="http://phplens.com/lens/adodb/docs-datadict.htm">ADOdb XML schema</a>, so a table is defined by creating a simple XML file in your block’s directory which must be called <code>db.xml</code> – and it will look like this: <code>/blocks/quote/db.xml</code> </p>
+
+<div class="highlight"><pre><code class="language-xml" data-lang="xml"><span class="cp">&lt;?xml version=&quot;1.0&quot;?&gt;</span>
+<span class="nt">&lt;schema</span> <span class="na">version=</span><span class="s">&quot;0.3&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;table</span> <span class="na">name=</span><span class="s">&quot;btQuoteBlockContent&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;field</span> <span class="na">name=</span><span class="s">&quot;bID&quot;</span> <span class="na">type=</span><span class="s">&quot;I&quot;</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;key</span> <span class="nt">/&gt;</span>
+            <span class="nt">&lt;unsigned</span> <span class="nt">/&gt;</span>
+        <span class="nt">&lt;/field&gt;</span>
+        <span class="nt">&lt;field</span> <span class="na">name=</span><span class="s">&quot;content&quot;</span> <span class="na">type=</span><span class="s">&quot;C2&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;/field&gt;</span>
+        <span class="nt">&lt;field</span> <span class="na">name=</span><span class="s">&quot;source&quot;</span> <span class="na">type=</span><span class="s">&quot;C&quot;</span> <span class="na">size=</span><span class="s">&quot;255&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;/field&gt;</span>
+    <span class="nt">&lt;/table&gt;</span>
+<span class="nt">&lt;/schema&gt;</span></code></pre></div>
+
+<p>So, three fields – <code>bID</code> for the block identifier, which is an unsigned integer (represented by <code>I</code>) – which is the primary key – a <code>content</code> field, which is a Multibyte varchar (see <a href="http://phplens.com/lens/adodb/docs-datadict.htm">the documentation</a>) and the <code>source</code> is a 255-character field (a MySQL <code>varchar</code>, referenced using a <code>C</code>). </p>
+
+<h3>The Add / Edit Forms</h3>
+
+<p>Next up, we need the means to add a new quote. When adding a new block, the file <code>add.php</code> gets rendered, and all we need is a simple form. However since the form for adding a new quote is, to all intents and purposes, the same form as for editing an existing quote, what we can do is simply include a separate file which defines the form – which by convention is called <code>form_setup_html.php</code> – and use the same code for the forms for both adding and editing. So, both <code>add.php</code> and <code>edit.php</code> are identical, and look like this: <code>/blocks/quote/add.php</code> and <code>/blocks/quote/edit.php</code> </p>
+
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>   
+<span class="nb">defined</span><span class="p">(</span><span class="s1">&#39;C5_EXECUTE&#39;</span><span class="p">)</span> <span class="k">or</span> <span class="k">die</span><span class="p">(</span><span class="nx">_</span><span class="p">(</span><span class="s2">&quot;Access Denied.&quot;</span><span class="p">));</span>
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">inc</span><span class="p">(</span><span class="s1">&#39;form_setup_html.php&#39;</span><span class="p">);</span></code></pre></div>
+
+<p>The first line prevents the file from being accessed directly, the second includes the file which defines the form, which is shown below: </p>
+
+<p><code>/blocks/quote/form_setup_html.php</code> </p>
+
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span> <span class="nb">defined</span><span class="p">(</span><span class="s1">&#39;C5_EXECUTE&#39;</span><span class="p">)</span> <span class="k">or</span> <span class="k">die</span><span class="p">(</span><span class="nx">_</span><span class="p">(</span><span class="s2">&quot;Access Denied.&quot;</span><span class="p">));</span> <span class="cp">?&gt;</span><span class="x">  </span>
+<span class="x">&lt;div&gt;</span>
+<span class="x">&lt;h2&gt;</span><span class="cp">&lt;?php</span> <span class="k">echo</span> <span class="nx">t</span><span class="p">(</span><span class="s1">&#39;Quote Content&#39;</span><span class="p">)</span> <span class="cp">?&gt;</span><span class="x">&lt;/h2&gt;</span>
+<span class="x">&lt;textarea id=&quot;ccm-QuoteContent&quot; name=&quot;content&quot; style=&quot;width:98%; height:200px;&quot;&gt;</span>
+<span class="cp">&lt;?php</span> <span class="k">echo</span> <span class="nv">$content</span> <span class="cp">?&gt;</span><span class="x"></span>
+<span class="x">&lt;/textarea&gt;</span>
+<span class="x">&lt;h2&gt;</span><span class="cp">&lt;?php</span> <span class="k">echo</span> <span class="nx">t</span><span class="p">(</span><span class="s1">&#39;Quote Source&#39;</span><span class="p">)</span> <span class="cp">?&gt;</span><span class="x">&lt;/h2&gt;</span>
+<span class="x">&lt;textarea id=&quot;ccm-QuoteSource&quot; name=&quot;source&quot; style=&quot;width:98%; height:100px;&quot;&gt;</span>
+<span class="cp">&lt;?php</span> <span class="k">echo</span> <span class="nv">$source</span> <span class="cp">?&gt;</span><span class="x"></span>
+<span class="x">&lt;/textarea&gt;</span>
+<span class="x">&lt;/div&gt;</span></code></pre></div>
+
+<p>Nothing complicated here, just a form where any current value will have been made available as the variables <code>$content</code> and <code>$source</code> respectively – we’ll see these get populated by examing the next file we need to create, the block controller. </p>
+
+<h3>The Block Controller</h3>
+
+<p><code>/blocks/quote/controller.php</code> `</p>
+
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>   
+<span class="nb">defined</span><span class="p">(</span><span class="s1">&#39;C5_EXECUTE&#39;</span><span class="p">)</span> <span class="k">or</span> <span class="k">die</span><span class="p">(</span><span class="nx">_</span><span class="p">(</span><span class="s2">&quot;Access Denied.&quot;</span><span class="p">));</span>
+
+<span class="nx">Loader</span><span class="o">::</span><span class="na">block</span><span class="p">(</span><span class="s1">&#39;library_file&#39;</span><span class="p">);</span>
+
+<span class="k">class</span> <span class="nc">QuoteBlockController</span> <span class="k">extends</span> <span class="nx">BlockController</span> <span class="p">{</span>
+    
+    <span class="k">protected</span> <span class="nv">$btTable</span> <span class="o">=</span> <span class="s1">&#39;btQuoteBlockContent&#39;</span><span class="p">;</span>
+    <span class="k">protected</span> <span class="nv">$btInterfaceWidth</span> <span class="o">=</span> <span class="s2">&quot;600&quot;</span><span class="p">;</span>
+    <span class="k">protected</span> <span class="nv">$btInterfaceHeight</span> <span class="o">=</span> <span class="s2">&quot;400&quot;</span><span class="p">;</span>
+    
+    <span class="k">public</span> <span class="nv">$content</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">;</span>
+    <span class="k">public</span> <span class="nv">$source</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">;</span> 
+    
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">getBlockTypeDescription</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">t</span><span class="p">(</span><span class="s2">&quot;Add simple quotes to your website.&quot;</span><span class="p">);</span>
+    <span class="p">}</span>
+    
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">getBlockTypeName</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">t</span><span class="p">(</span><span class="s2">&quot;Quote&quot;</span><span class="p">);</span>
+    <span class="p">}</span>     
+    
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">__construct</span><span class="p">(</span><span class="nv">$obj</span> <span class="o">=</span> <span class="k">null</span><span class="p">)</span> <span class="p">{</span>     
+        <span class="k">parent</span><span class="o">::</span><span class="na">__construct</span><span class="p">(</span><span class="nv">$obj</span><span class="p">);</span> 
+    <span class="p">}</span>
+    
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">view</span><span class="p">(){</span> 
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">set</span><span class="p">(</span><span class="s1">&#39;content&#39;</span><span class="p">,</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">content</span><span class="p">);</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">set</span><span class="p">(</span><span class="s1">&#39;source&#39;</span><span class="p">,</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">source</span><span class="p">);</span> 
+    <span class="p">}</span> 
+    
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">save</span><span class="p">(</span><span class="nv">$data</span><span class="p">)</span> <span class="p">{</span> 
+        <span class="nv">$args</span><span class="p">[</span><span class="s1">&#39;content&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">isset</span><span class="p">(</span><span class="nv">$data</span><span class="p">[</span><span class="s1">&#39;content&#39;</span><span class="p">])</span> <span class="o">?</span> <span class="nv">$data</span><span class="p">[</span><span class="s1">&#39;content&#39;</span><span class="p">]</span> <span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+        <span class="nv">$args</span><span class="p">[</span><span class="s1">&#39;source&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">isset</span><span class="p">(</span><span class="nv">$data</span><span class="p">[</span><span class="s1">&#39;source&#39;</span><span class="p">])</span> <span class="o">?</span> <span class="nv">$data</span><span class="p">[</span><span class="s1">&#39;source&#39;</span><span class="p">]</span> <span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+        <span class="k">parent</span><span class="o">::</span><span class="na">save</span><span class="p">(</span><span class="nv">$args</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="cp">?&gt;</span><span class="x"></span></code></pre></div>
+
+<p>There’s quite a lot to go through here, but nothing too complicated. This file sub-classes the <code>BlockController</code> class, which we’ll call <code>QuoteBlockController</code> because our module is called, simply, <strong>quote</strong>. First up, the methods <code>getBlockTypeName()</code> and <code>getBlockTypeDescription()</code> expose information for the administrative interface. The name is used when choosing a block to add, and the description is used in addition to the name when adding new functionality in the dashboard. The line:</p>
+
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="k">protected</span> <span class="nv">$btTable</span> <span class="o">=</span> <span class="s1">&#39;btQuoteBlockContent&#39;</span><span class="p">;</span></code></pre></div>
+
+<p>...defines a property of our block controller which indicates what database table to use. Once an association is made with a table, operations can be performed on that table using methods such as <code>save</code> within the controller. Also, some functionality – such as querying the table when showing a block – is performed automatically, once the controller knows where to look. The properties <code>$btInterfaceWidth</code> and <code>$btInterfaceHeight</code> control the dimensions of the popup window in the adimistrative interface when adding or editing an instance of our new block. The <code>save</code> method is called when the add or edit forms are submitted, and gets passed an associative array of data from the form; you’ll recognise that the indexes <code>content</code> and <code>source</code> match the names of the form elements previously defined. Calling the parent’s <code>save</code> method with this data will store the information in the table we’ve previously created, because by referring to the table name in the <code>$btTable</code> property we’ve already told the controller where that data goes. Finally, the <code>view</code> method is automatically called when the block is rendered and simply needs to take the properties of the block,<code>content</code> and <code>source</code> – which, by harnessing the power of the blocks system have <em>already been loaded for us</em> are already available as properties of the controller – and assign them to the view. This is achieved using the <code>set</code> method, and as a consequence they will be made available as variables in the view template, <code>view.php</code>, which is shown below. </p>
+
+<h3>The View Template</h3>
+
+<p><code>/blocks/quote/view.php</code> `</p>
+
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span> <span class="nb">defined</span><span class="p">(</span><span class="s1">&#39;C5_EXECUTE&#39;</span><span class="p">)</span> <span class="k">or</span> <span class="k">die</span><span class="p">(</span><span class="nx">_</span><span class="p">(</span><span class="s2">&quot;Access Denied.&quot;</span><span class="p">));</span> <span class="cp">?&gt;</span><span class="x"></span>
+
+<span class="x">&lt;div id=&quot;QuoteBlock</span><span class="cp">&lt;?php</span>   <span class="k">echo</span> <span class="nb">intval</span><span class="p">(</span><span class="nv">$bID</span><span class="p">)</span><span class="cp">?&gt;</span><span class="x">&quot; class=&quot;QuoteBlock&quot;&gt;</span>
+<span class="x">    &lt;blockquote&gt;</span>
+<span class="x">    &lt;p&gt;</span><span class="cp">&lt;?php</span> <span class="k">print</span> <span class="nv">$content</span><span class="p">;</span> <span class="cp">?&gt;</span><span class="x">&lt;/p&gt;</span>
+<span class="x">    &lt;p&gt;&lt;cite&gt;</span><span class="cp">&lt;?php</span> <span class="k">print</span> <span class="nv">$source</span><span class="p">;</span> <span class="cp">?&gt;</span><span class="x">&lt;/cite&gt;&lt;/p&gt;</span>
+<span class="x">    &lt;/blockquote&gt;</span>
+<span class="x">&lt;/div&gt;</span></code></pre></div>
+
+<p>Pretty simple stuff – and by doing it this way, we ensure that our markup for the quote is exactly as we intended it. </p>
+
+<h3>Installing &amp; Configuring the New Block</h3>
+
+<p>So, if you browse to the Dashboard and select <strong>Add Functionality</strong>, you should see that the new block is available to install under the heading “Downloaded and Ready to Install”. </p>
+
+<figure class="captioned-image" style="width:600px;"><img src="/images/blogs/2011/concrete5/quotes/concrete5-install-module.jpg" width="580" height="200" alt="Concrete5 Module Development Tutorial: installing the new block" /><figcaption>Your new block will appear under the heading “Downloaded and Ready to Install” – click <strong>install</strong></figcaption></figure> 
+
+<p>(Note that the icon displayed alongside the new block type can be personalised; all I’ve done is create a simple 16x16px icon and call it <code>icon.png</code>.) You can now try adding a block; if you scroll to the bottom of the list of available blocks you should see the new block listed: </p>
+
+<figure class="captioned-image" style="width:600px;"><img src="/images/blogs/2011/concrete5/quotes/concrete5-tutorial-add-block.jpg" width="580" height="485" alt="Concrete5 Module Development Tutorial: Adding a block" /><figcaption>At the bottom of the list of available blocks, you’ll notice our new block – *quote* is now available</figcaption></figure> 
+
+<p>Selecting the quote block gives you the form we’ve just created: </p>
+
+<figure class="captioned-image" style="width:600px;"><img src="/images/blogs/2011/concrete5/quotes/concrete5-tutorial-add-quote.jpg" width="580" height="424" alt="Concrete5 Module Development Tutorial: the add / edit form" /><figcaption>This illustrates the form you’ll get when adding a block of type *quote* – enter the content of the quote and its source (author) in the fields provided</figcaption></figure> 
+
+<p>If you enter a quote and its source and then click <strong>add</strong> then, all being well, you should end up with something like the screenshot below. <figure class="captioned-image" style="width:600px;"><img src="/images/blogs/2011/concrete5/quotes/concrete5-tutorial-quote.png" width="580" height="225" alt="Concrete5 Module Development Tutorial: the final result" /><figcaption>The final result – a semantically correct quote</figcaption></figure></p>
+
+<p>(I’ve applied some very basic styling, I’m sure you can do better!) This is an extremely simple example, and I&amp;rsquo&#39;ve left out certain things – such as validation – for brevity, but hopefully it’s enough to give you an idea of how easy it is to create functionality like this and to get started developing for Concrete5.</p>
+
+	</div>
+
+	
+	<p class="tags">Tagged with:
+	
+  <a href="/tag/concrete5">Concrete5</a> 
+	
+  <a href="/tag/tutorials">tutorials</a> 
+	
+  <a href="/tag/php">PHP</a> 
+	
+	</p>
+	
+
+	<!--
+	<div class="author">
+		<a href="https://twitter.com/lukaswhite" title="Twitter">Twitter</a>
+		<a href="https://plus.google.com/+LukasWhiteWebDeveloper" title="My Google+ Profile">Google+</a>
+	</div>	
+-->
+
+	<div id="disqus_thread"></div>
+	<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">Comments powered by Disqus.</a></noscript>
+	<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+</article>
+
+<aside class="five columns">
+	
+	<h4>About Me</h4>
+
+<p>I&#39;m a web developer based in Manchester, England. I also design websites.  I generally favour open-source technologies such as PHP, MySQL and JQuery, and I have extensive experience using Drupal.</p>
+
+
+	<div class="block tag-cloud">
+			 	<h4>Tags</h4>
+			 	<ul class="tags">
+				
+	    		<li><a href="/blog/tags/drupal">Drupal</a></li>
+				
+	    		<li><a href="/blog/tags/mobile">mobile</a></li>
+				
+	    		<li><a href="/blog/tags/rwd">RWD</a></li>
+				
+	    		<li><a href="/blog/tags/responsive-web-design">responsive web design</a></li>
+				
+	    		<li><a href="/blog/tags/deployment">deployment</a></li>
+				
+	    		<li><a href="/blog/tags/prowl">Prowl</a></li>
+				
+	    		<li><a href="/blog/tags/push-notifications">push notifications</a></li>
+				
+	    		<li><a href="/blog/tags/concrete5">Concrete5</a></li>
+				
+	    		<li><a href="/blog/tags/cms">CMS</a></li>
+				
+	    		<li><a href="/blog/tags/tutorials">tutorials</a></li>
+				
+	    		<li><a href="/blog/tags/php">PHP</a></li>
+				
+	    		<li><a href="/blog/tags/laravel">Laravel</a></li>
+				
+	    		<li><a href="/blog/tags/frameworks">frameworks</a></li>
+				
+	    		<li><a href="/blog/tags/facebook">Facebook</a></li>
+				
+	    		<li><a href="/blog/tags/drupal-7">Drupal 7</a></li>
+				
+	    		<li><a href="/blog/tags/ux">UX</a></li>
+				
+	    		<li><a href="/blog/tags/less">Less</a></li>
+				
+	    		<li><a href="/blog/tags/mysql">MySQL</a></li>
+				
+	    		<li><a href="/blog/tags/writing">writing</a></li>
+				
+	    		<li><a href="/blog/tags/sitepoint">Sitepoint</a></li>
+				
+	    		<li><a href="/blog/tags/articles">articles</a></li>
+				
+	    		<li><a href="/blog/tags/spotify">Spotify</a></li>
+				
+	    		<li><a href="/blog/tags/drupal-commerce">Drupal Commerce</a></li>
+				
+	    		<li><a href="/blog/tags/bash">Bash</a></li>
+				
+	    		<li><a href="/blog/tags/git">Git</a></li>
+				
+	    		<li><a href="/blog/tags/apache">Apache</a></li>
+				
+	    		<li><a href="/blog/tags/workflow">Workflow</a></li>
+				
+	    		<li><a href="/blog/tags/foundation">Foundation</a></li>
+				
+	    		<li><a href="/blog/tags/gravatar">Gravatar</a></li>
+				
+	    		<li><a href="/blog/tags/jquery">JQuery</a></li>
+				
+	    		<li><a href="/blog/tags/geo">Geo</a></li>
+				
+	    		<li><a href="/blog/tags/backbone">Backbone</a></li>
+				
+	    		<li><a href="/blog/tags/homestead">Homestead</a></li>
+				
+	    		<li><a href="/blog/tags/elasticsearch">Elasticsearch</a></li>
+				
+	    		<li><a href="/blog/tags/jekyll">Jekyll</a></li>
+				
+	    		<li><a href="/blog/tags/grunt">Grunt</a></li>
+				
+				</ul>
+			</div>
+
+</aside>
+
+
+<script type="text/javascript">    
+	var disqus_shortname = 'lukaswhite';
+    
+	(function() {
+		var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+		dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+		(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+	})();
+</script>
+ 
+  </div>
+
+  <!-- Footer begins ========================================================================== -->
+  <footer id="footer">
+    <hr>
+    <div class="eight columns">
+      <ul id="footerLinks">
+        <li>&copy; 2014 Lukas White. All rights reserved.</li>        
+        <li><a href="http://www.twitter.com/lukaswhite" target="_blank">@lukaswhite</a></li>              
+      </ul>
+    </div>
+    <div class="eight columns right">
+      <ul class="social small">
+        <li><a class="linkedin" href="http://uk.linkedin.com/in/lukaswhite" target="_blank"><span>View my LinkedIn Profile</span></a></li>
+        <li><a class="twitter" href="http://www.twitter.com/lukaswhite" target="_blank"><span>Follow me on Twitter</span></a></li>
+        <li><a class="facebook" href="http://www.facebook.com/lukas.white.freelance.web.developer" target="_blank"><span>Find me on Facebook</span></a></li>
+        <li><a class="github" href="https://github.com/lukaswhite" target="_blank"><span>Find me on Github</span></a></li>
+      </ul>
+    </div>
+    <hr>
+    <div class="sixteen columns centered">
+      <p>Powered by <a href="http://www.typeandgrids.com" target="_blank">Type &amp; Grids</a>, <a href="http://jekyllrb.com/">Jekyll</a> and <a href="https://github.com/erikhuda/thor">Thor</a></p>
+    </div>
+  </footer>
+  <!-- Footer ends ============================================================================ -->
+    
+</div><!-- container -->
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-3485550-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</body>
+</html>

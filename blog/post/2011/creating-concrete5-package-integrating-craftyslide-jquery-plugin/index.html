@@ -1,0 +1,380 @@
+<!doctype html>
+<!--[if lt IE 7 ]><html class="ie ie6" lang="en"> <![endif]-->
+<!--[if IE 7 ]><html class="ie ie7" lang="en"> <![endif]-->
+<!--[if IE 8 ]><html class="ie ie8" lang="en"> <![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!--><html lang="en"> <!--<![endif]-->
+<head>
+<meta charset="utf-8">
+
+<!--
+••••••••••••••••••••••••
+
+Powered by Type & Grids™
+www.typeandgrids.com
+
+••••••••••••••••••••••••
+-->
+
+<title>Creating a Concrete5 Package: Integrating the Craftyslide JQuery Plugin</title>
+<meta name="description" content="The website of Lukas White, Manchester-based Freelance Web Designer and Developer">
+<meta name="author" content="Lukas White">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+<!-- CSS
+================================================================================================= -->
+<link rel="stylesheet" href="/dist/styles.min.css">
+
+<!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+
+<!-- Favicons
+================================================================================================= -->
+<link rel="shortcut icon" href="/favicon.ico">
+<link rel="apple-touch-icon" href="images/favicons/apple-touch-icon.png">
+<link rel="apple-touch-icon" sizes="72x72" href="images/favicons/apple-touch-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="114x114" href="images/favicons/apple-touch-icon-114x114.png">
+
+</head>
+<body>
+
+<div class="container">
+  
+  <!-- Header begins ========================================================================== -->
+  <header id="page-header" class="sixteen columns">
+    <div id="logo">
+      <a href="/">
+        <h1>Lukas White</h1>
+        <h2>Freelance Web Developer</h2>
+      </a>
+      <!--
+      <img src="images/logo.png" width="275" height="35" alt="Logo" />
+      -->
+    </div>
+    <nav>
+      <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/about">About</a></li>
+        <li><a href="/blog">Blog</a></li>
+        <li><a href="/work">Work</a></li>
+        <li><a href="/contact">Contact</a></li>        
+      </ul>
+    </nav>
+    <hr />
+  </header>
+  <!-- Header ends ============================================================================ -->
+  
+  <div id="content" class="content">
+  <article class="eleven columns post">
+	<h2>Creating a Concrete5 Package: Integrating the Craftyslide JQuery Plugin</h2>
+	<p class="meta"> &ndash; <time datetime="2011-07-05">5<sup>th</sup> July, 2011</time></p>
+
+	<div class="body">
+		<p>In this simple tutorial, I’m going to show how Concrete5 can be extended to integrate a third-party JQuery plugin to enhance an existing module, and then how this can be encapsulated in a package. I’m going to allow the <strong>slideshow</strong> module to display images using the clean &amp; lightweight <a href="http://projects.craftedpixelz.co.uk/craftyslide/index.php">Craftyslide</a> plugin, pictured below. </p>
+
+<figure class="captioned-image" style="width:600px;"><img src="/images/blogs/2011/concrete5/tutorial/craftyslide-jquery-slider-plugin.jpg" width="580" height="325" alt="The Craftyslide JQuery Slider plugin in action" /><figcaption>The Craftyslide plugin in action</figcaption></figure> 
+
+<p>Concrete5 comes shipped with simple slideshow functionality in the form of a block called, imaginatively enough, slideshow. As this is part of the core you can find it in <code>/concrete/blocks/slideshow</code>. It’s in the concrete directory to keep it separate from custom code. And some custom code is what we&#39;re going to produce – to override the output of that block, and then to encapsulate this into a package. </p>
+
+<h3>First Steps</h3>
+
+<p>Obviously you’ll need to <a href="http://www.concrete5.org/developers/downloads/">download</a> and <a href="http://www.concrete5.org/documentation/installation/installing_concrete5">install Concrete5</a>. Download Craftyslide from the <a href="http://projects.craftedpixelz.co.uk/craftyslide/index.php">project page</a> and unpack the archive somewhere. </p>
+
+<h3>Creating a Slideshow</h3>
+
+<p>Before starting the integration, let’s create a simple slideshow using this built-in functionality – once we’ve built our add-on this can then be re-configured to use Craftyslide. It’s probably most appropriate to create a slideshow from a set (rather than all the images in the site!) so let’s do that first. From the Dashboard, select File Manager from the left-hand menu. The File Manager lets you manage uploaded files, including images. </p>
+
+<figure class="captioned-image" style="width:600px;"><img src="/images/blogs/2011/concrete5/tutorial/concrete5-file-manager.jpg" width="580" height="480" alt="Concrete5's File Manager" /><figcaption>The File Manager in Concrete5</figcaption></figure> 
+
+<p>If you don’t have any images, add them now. Tick the boxes alongside the images you wish to group in a set, then select <strong>Sets</strong> in the drop-down at the top of the table of files. You’ll get the dialog pictured below. </p>
+
+<figure class="captioned-image" style="width:600px;"><img src="/images/blogs/2011/concrete5/tutorial/concrete5-sets.jpg" width="580" height="250" alt="Sets in Concrete5 allow you to group photos within the File Manager" /><figcaption>Sets in Concrete5 allow you to group photos within the File Manager</figcaption></figure> 
+
+<p>Click the checkbox under <em>Add to a New Set</em>, give the new set a name and click <strong>Add</strong> (of course, if you have previously added a set it will be available here). </p>
+
+<h3>Adding a Title</h3>
+
+<p>The Craftyslide plugin features a title control (see the picture which introduces this post), so we’ll need to assign these to the images in the set. Go back to the file manager, click an image and select <strong>Properties</strong>. You&#39;ll get the dialog shown below; click <strong>Title</strong>, assign one, click the icon to the right of the input and close the dialog. Repeat for each of your images. </p>
+
+<figure class="captioned-image" style="width:600px;"><img src="/images/blogs/2011/concrete5/tutorial/concrete5-file-properties.jpg" width="580" height="460" alt="Specifying file properties in Concrete5" /><figcaption>Enter a title for the file, to be displayed within the slider</figcaption></figure> 
+
+<h3>Adding a Slideshow Block</h3>
+
+<p>Now that you have a number of images organised into a set, you can use this as the basis for a slideshow block. Navigate to the website (<strong>Return to Website</strong> from the dashboard), click a region, then select <strong>Add Block</strong> to bring up the dialog below. </p>
+
+<figure class="captioned-image" style="width:600px;"><img src="/images/blogs/2011/concrete5/tutorial/concrete5-add-block.jpg" width="580" height="480" alt="Adding a Block in Concrete5" /><figcaption>Select <strong>Slideshow</strong></figcaption></figure> 
+
+<p>The slideshow block is available out-of-the-box, so select that and you’ll get the following dialog. </p>
+
+<figure class="captioned-image" style="width:600px;"><img src="/images/blogs/2011/concrete5/tutorial/concrete5-add-slideshow.jpg" width="580" height="260" alt="Configuring the new slideshow block" /><figcaption>Select <strong>Pictures from File Set</strong>, and then select the set you have just created.</figure>
+
+<p>Select the new set you’ve just created and click <strong>Add</strong>. At this point, if you go back to the page you added the slideshow to, you should see it in action; what we’re going to do now is re-work it so that it uses the Craftyslide plugin. </p>
+
+<h3>The Directory Structure</h3>
+
+<p>Before we start doing any editing, let’s look at the directory structure. The image below shows the structure we’re going to create. </p>
+
+<figure class="captioned-image" style="width:600px;"><img src="/images/blogs/2011/concrete5/tutorial/concrete5-craftyslide-directory-structure.png" width="580" height="485" alt="Directory structure for a Concrete5 Package" /><figcaption>This figure shows the directory structure required for our new Package</figcaption></figure> 
+
+<p>Going from the top-level directory down, here is an overview of the structure. First off, everything goes in the <code>packages</code> directory; not the one which is in <code>concrete</code> as this is reserved for the core files. The package is called <code>craftyslide</code> so that goes next. Our package is encapsulating block-related functionality, so we then have a directory called <code>blocks</code>. Rather than create a new block, however, we’re extending the <code>slideshow</code> block, and creating a template, so we put that in a directory named accordingly – <code>templates</code>. The template is going to be called <code>craftyslide</code> to match the name of the package, and it’s the name of this directory which is used in the back-end to reference the template, as we’ll see later. We create an <code>images</code> directory, and <code>js</code> is named as it is for a reason; any JavaScript files in a directory with that name are automatically included. The structure takes some getting used to, but looking at the structure under the <code>concrete</code> directory and at existing packages helps to understand how it’s all organised. </p>
+
+<h3>Integrating Craftyslide – Creating the Template</h3>
+
+<p>The output from the slideshow block is, by convention, rendered by the file <code>view.php</code> in the <code>/concrete/blocks/slideshow</code> directory. If you open that up you’ll notice – amongst a bunch of Javascript that powers it – there’s a loop which iterates through the images thus:</p>
+
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="k">foreach</span><span class="p">(</span><span class="nv">$images</span> <span class="k">as</span> <span class="nv">$imgInfo</span><span class="p">){</span></code></pre></div>
+
+<p>The default slideshow works by creating skeleton markup, then creating JavaScript code in which the filepaths of the images are embedded programmatically. The Craftyslide plugin, however, works by taking some markup and applying a JQuery function to that markup. As such, we want to do the following (this is saved as <code>/packages/craftyslide/blocks/slideshow/templates/craftyslide/view.php</code>): `</p>
+
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span> <span class="nb">defined</span><span class="p">(</span><span class="s1">&#39;C5_EXECUTE&#39;</span><span class="p">)</span> <span class="k">or</span> <span class="k">die</span><span class="p">(</span><span class="s2">&quot;Access Denied.&quot;</span><span class="p">);</span> <span class="cp">?&gt;</span><span class="x"></span>
+<span class="x">&lt;div id=&quot;slideshow</span><span class="cp">&lt;?php</span> <span class="k">print</span> <span class="nv">$bID</span> <span class="cp">?&gt;</span><span class="x">&quot;&gt;</span>
+<span class="x">    &lt;ul&gt;</span>
+<span class="x">    </span><span class="cp">&lt;?php</span> <span class="k">foreach</span><span class="p">(</span><span class="nv">$images</span> <span class="k">as</span> <span class="nv">$imgInfo</span><span class="p">)</span><span class="o">:</span> 
+        <span class="nv">$f</span> <span class="o">=</span> <span class="nx">File</span><span class="o">::</span><span class="na">getByID</span><span class="p">(</span><span class="nv">$imgInfo</span><span class="p">[</span><span class="s1">&#39;fID&#39;</span><span class="p">]);</span>
+        <span class="nv">$fp</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Permissions</span><span class="p">(</span><span class="nv">$f</span><span class="p">);</span>          
+        <span class="k">if</span> <span class="p">(</span><span class="nv">$fp</span><span class="o">-&gt;</span><span class="na">canRead</span><span class="p">())</span><span class="o">:</span>
+    <span class="cp">?&gt;</span><span class="x">           </span>
+<span class="x">    &lt;li&gt;</span>
+<span class="x">        &lt;img src=&quot;</span><span class="cp">&lt;?php</span> <span class="k">print</span> <span class="nv">$f</span><span class="o">-&gt;</span><span class="na">getRelativePath</span><span class="p">();</span> <span class="cp">?&gt;</span><span class="x">&quot; title=</span><span class="cp">&lt;?php</span> <span class="k">print</span> <span class="nv">$f</span><span class="o">-&gt;</span><span class="na">getTitle</span><span class="p">();</span> <span class="cp">?&gt;</span><span class="x">&quot; /&gt;</span>
+<span class="x">    &lt;/li&gt;</span>
+<span class="x">    </span><span class="cp">&lt;?php</span> <span class="k">endif</span><span class="p">;</span> <span class="cp">?&gt;</span><span class="x"></span>
+<span class="cp">&lt;?php</span> <span class="k">endforeach</span><span class="p">;</span> <span class="cp">?&gt;</span><span class="x"></span>
+<span class="x">    &lt;/ul&gt;</span>
+<span class="x">&lt;/div&gt;</span></code></pre></div>
+
+<p>I’ll go through the important lines. </p>
+
+<ul>
+<li>  <strong>line 1</strong> contains a quick check to ensure this file never gets run as standalone script. You’ll find this throughout the code.</li>
+<li>  In <strong>line 2</strong> we create a DIV with a name tied to the block, by appending the block ID – stored in the <code>$bID</code> variable.</li>
+<li>  In <strong>line 4</strong> we start to iterate through the images in our set</li>
+<li>  Each element in the array of images contains references to file objects, so <strong>line 5</strong> grabs the object that represents the file</li>
+<li>  In <strong>line 6</strong> we obtain an object which tells us about the permissions on the file object with respect to the current site user, so:</li>
+<li>  <strong>Line 7</strong> checks that the current user should be able to see this image. (Unpublished images should be hidden from a visitor, for example.)</li>
+<li>  In <strong>line 10</strong> we create an <code>img</code> tag, with the path to the image and the title taken from the current file object.</li>
+</ul>
+
+<h3>Integrating Craftyslide – Adding Styles</h3>
+
+<p>When creating a block there’s a simple convention for applying styles. A file named </p>
+
+<p><code>view.css</code> in the block’s directory will be automatically linked when rendering the block. Copy the file <code>css/craftslide.css</code> from the Craftyslide archive and rename it <code>view.css</code>. This file references one image – <code>pagination.png</code> – so copy that into the block’s directory and check that you’ve referenced it properly in your CSS. </p>
+
+<h3>Integrating Craftyslide – JavaScript</h3>
+
+<p>We now need to add some JavaScript to make Craftyslide work. There are two things which can help add JavaScript to a block. Similar to the style rules, a file named <code>view.js</code> will automatically be included. Then, any JavaScript files in a directory called <code>js</code> will get added automatically. It might make sense to include the library in the <code>js</code> folder and then initialise the slideshow in <code>view.js</code> – however this won’t work for two reasons: </p>
+
+<ol>
+<li> <code>view.js</code> gets included before the <code>js</code> directory, and therefore the Craftyslide plugin won’t be loaded in time.</li>
+<li> We created our DIV’s ID dynamically using PHP, so we’ll need to do the same again for the initialisation function </li>
+</ol>
+
+<p>What we’ll do, then, is simply add the code to initialise Craftyslide in the template (<code>view.php</code>), like this: `</p>
+
+<p><code>Note that we’re appending the Block ID</code>$bID<code>to create a matching ID. This is the most basic initialisation of Craftyslide, feel free to customise it accordingly. Then to make it work, copy *either*</code>js/craftyslide.js<code>or</code>js/craftyslide.min.js<code>into your block’s</code>js` directory. (You’re probably best using the minified version, as there is no minifcation out-of-the-box – however <a href="http://www.onehat.com/blog/2010/03/concrete5-mod-flexible-js-and-css-includes/">there are ways around that</a>.) </p>
+
+<h3>Applying the Template</h3>
+
+<p>Now that we’ve created a new template for the Craftyslide plugin, we need to go back to teh slidehsow block we created and apply the template to it, converting it from the out-of-the-box slideshow to a Craftyslide-powered slider. Go to the page you placed the slideshow on, enter edit mode and click the slideshow. From the menu select <strong>Custom Template</strong> to bring up the dialog shown below. </p>
+
+<figure class="captioned-image" style="width:600px;"><img src="/images/blogs/2011/concrete5/tutorial/concrete5-block-custom-template.jpg" width="580" height="345" alt="Specifying a Custom Template for a block in Concrete5" /><figcaption>Specifying a Custom Template for a block in Concrete5</figcaption></figure> 
+
+<p>Select <strong>Craftyslide</strong> and then <strong>Update</strong>. If you leave Edit mode, you should find that the slideshow block has been replaced by a Craftyslide slider. Let’&#39;s now wrap this up in a package, so that this functionality can be encapsulated for use on other projects. </p>
+
+<h3>Creating a Package</h3>
+
+<p>In order to tell Concrete5 about the package, we create a subclass of Package and save it – perhaps slightly misleadingly – as <code>controller.php</code> in <code>/packages/craftyslide</code>. The contents are shown below. `</p>
+
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
+<span class="nb">defined</span><span class="p">(</span><span class="s1">&#39;C5_EXECUTE&#39;</span><span class="p">)</span> <span class="k">or</span> <span class="k">die</span><span class="p">(</span><span class="nx">_</span><span class="p">(</span><span class="s2">&quot;Access Denied.&quot;</span><span class="p">));</span>
+
+<span class="k">class</span> <span class="nc">craftyslidePackage</span> <span class="k">extends</span> <span class="nx">Package</span> <span class="p">{</span>
+
+    <span class="k">protected</span> <span class="nv">$pkgHandle</span> <span class="o">=</span> <span class="s1">&#39;craftyslide&#39;</span><span class="p">;</span>
+    <span class="k">protected</span> <span class="nv">$appVersionRequired</span> <span class="o">=</span> <span class="s1">&#39;5.4.0&#39;</span><span class="p">;</span>
+    <span class="k">protected</span> <span class="nv">$pkgVersion</span> <span class="o">=</span> <span class="s1">&#39;1.0&#39;</span><span class="p">;</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">getPackageDescription</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">t</span><span class="p">(</span><span class="s2">&quot;Integrates the Craftyslide plugin for slideshows&quot;</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">getPackageName</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">t</span><span class="p">(</span><span class="s2">&quot;craftyslide&quot;</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">install</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nv">$pkg</span> <span class="o">=</span> <span class="k">parent</span><span class="o">::</span><span class="na">install</span><span class="p">();</span>
+    <span class="p">}</span>
+<span class="p">}</span></code></pre></div>
+
+<p>As you can see, the new package class defines a number of properties and methods.  These should all be self-explanatory.</p>
+
+<p>The <code>install()</code> method would typically carry out tasks such as defining new blocks or jobs, but isn’t necessary here – I’ve included it nonetheless to show where such tasks would go. </p>
+
+<h3>Final Steps</h3>
+
+<p>Finally, you may (but aren’t required to) create an icon which will be displayed in the administrative area (and in the Marketplace, should you wish to distribute your packages) – you simply need to ensure that it is <strong>97px x 97px</strong> square, has <strong>4px</strong> rounded corners, is named <strong>icon.png</strong> and is saved in the package&#39;s directory.</p>
+
+	</div>
+
+	
+	<p class="tags">Tagged with:
+	
+  <a href="/tag/concrete5">Concrete5</a> 
+	
+  <a href="/tag/tutorials">tutorials</a> 
+	
+  <a href="/tag/php">PHP</a> 
+	
+	</p>
+	
+
+	<!--
+	<div class="author">
+		<a href="https://twitter.com/lukaswhite" title="Twitter">Twitter</a>
+		<a href="https://plus.google.com/+LukasWhiteWebDeveloper" title="My Google+ Profile">Google+</a>
+	</div>	
+-->
+
+	<div id="disqus_thread"></div>
+	<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">Comments powered by Disqus.</a></noscript>
+	<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+</article>
+
+<aside class="five columns">
+	
+	<h4>About Me</h4>
+
+<p>I&#39;m a web developer based in Manchester, England. I also design websites.  I generally favour open-source technologies such as PHP, MySQL and JQuery, and I have extensive experience using Drupal.</p>
+
+
+	<div class="block tag-cloud">
+			 	<h4>Tags</h4>
+			 	<ul class="tags">
+				
+	    		<li><a href="/blog/tags/drupal">Drupal</a></li>
+				
+	    		<li><a href="/blog/tags/mobile">mobile</a></li>
+				
+	    		<li><a href="/blog/tags/rwd">RWD</a></li>
+				
+	    		<li><a href="/blog/tags/responsive-web-design">responsive web design</a></li>
+				
+	    		<li><a href="/blog/tags/deployment">deployment</a></li>
+				
+	    		<li><a href="/blog/tags/prowl">Prowl</a></li>
+				
+	    		<li><a href="/blog/tags/push-notifications">push notifications</a></li>
+				
+	    		<li><a href="/blog/tags/concrete5">Concrete5</a></li>
+				
+	    		<li><a href="/blog/tags/cms">CMS</a></li>
+				
+	    		<li><a href="/blog/tags/tutorials">tutorials</a></li>
+				
+	    		<li><a href="/blog/tags/php">PHP</a></li>
+				
+	    		<li><a href="/blog/tags/laravel">Laravel</a></li>
+				
+	    		<li><a href="/blog/tags/frameworks">frameworks</a></li>
+				
+	    		<li><a href="/blog/tags/facebook">Facebook</a></li>
+				
+	    		<li><a href="/blog/tags/drupal-7">Drupal 7</a></li>
+				
+	    		<li><a href="/blog/tags/ux">UX</a></li>
+				
+	    		<li><a href="/blog/tags/less">Less</a></li>
+				
+	    		<li><a href="/blog/tags/mysql">MySQL</a></li>
+				
+	    		<li><a href="/blog/tags/writing">writing</a></li>
+				
+	    		<li><a href="/blog/tags/sitepoint">Sitepoint</a></li>
+				
+	    		<li><a href="/blog/tags/articles">articles</a></li>
+				
+	    		<li><a href="/blog/tags/spotify">Spotify</a></li>
+				
+	    		<li><a href="/blog/tags/drupal-commerce">Drupal Commerce</a></li>
+				
+	    		<li><a href="/blog/tags/bash">Bash</a></li>
+				
+	    		<li><a href="/blog/tags/git">Git</a></li>
+				
+	    		<li><a href="/blog/tags/apache">Apache</a></li>
+				
+	    		<li><a href="/blog/tags/workflow">Workflow</a></li>
+				
+	    		<li><a href="/blog/tags/foundation">Foundation</a></li>
+				
+	    		<li><a href="/blog/tags/gravatar">Gravatar</a></li>
+				
+	    		<li><a href="/blog/tags/jquery">JQuery</a></li>
+				
+	    		<li><a href="/blog/tags/geo">Geo</a></li>
+				
+	    		<li><a href="/blog/tags/backbone">Backbone</a></li>
+				
+	    		<li><a href="/blog/tags/homestead">Homestead</a></li>
+				
+	    		<li><a href="/blog/tags/elasticsearch">Elasticsearch</a></li>
+				
+	    		<li><a href="/blog/tags/jekyll">Jekyll</a></li>
+				
+	    		<li><a href="/blog/tags/grunt">Grunt</a></li>
+				
+				</ul>
+			</div>
+
+</aside>
+
+
+<script type="text/javascript">    
+	var disqus_shortname = 'lukaswhite';
+    
+	(function() {
+		var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+		dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+		(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+	})();
+</script>
+ 
+  </div>
+
+  <!-- Footer begins ========================================================================== -->
+  <footer id="footer">
+    <hr>
+    <div class="eight columns">
+      <ul id="footerLinks">
+        <li>&copy; 2014 Lukas White. All rights reserved.</li>        
+        <li><a href="http://www.twitter.com/lukaswhite" target="_blank">@lukaswhite</a></li>              
+      </ul>
+    </div>
+    <div class="eight columns right">
+      <ul class="social small">
+        <li><a class="linkedin" href="http://uk.linkedin.com/in/lukaswhite" target="_blank"><span>View my LinkedIn Profile</span></a></li>
+        <li><a class="twitter" href="http://www.twitter.com/lukaswhite" target="_blank"><span>Follow me on Twitter</span></a></li>
+        <li><a class="facebook" href="http://www.facebook.com/lukas.white.freelance.web.developer" target="_blank"><span>Find me on Facebook</span></a></li>
+        <li><a class="github" href="https://github.com/lukaswhite" target="_blank"><span>Find me on Github</span></a></li>
+      </ul>
+    </div>
+    <hr>
+    <div class="sixteen columns centered">
+      <p>Powered by <a href="http://www.typeandgrids.com" target="_blank">Type &amp; Grids</a>, <a href="http://jekyllrb.com/">Jekyll</a> and <a href="https://github.com/erikhuda/thor">Thor</a></p>
+    </div>
+  </footer>
+  <!-- Footer ends ============================================================================ -->
+    
+</div><!-- container -->
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-3485550-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</body>
+</html>

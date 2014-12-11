@@ -1,0 +1,367 @@
+<!doctype html>
+<!--[if lt IE 7 ]><html class="ie ie6" lang="en"> <![endif]-->
+<!--[if IE 7 ]><html class="ie ie7" lang="en"> <![endif]-->
+<!--[if IE 8 ]><html class="ie ie8" lang="en"> <![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!--><html lang="en"> <!--<![endif]-->
+<head>
+<meta charset="utf-8">
+
+<!--
+••••••••••••••••••••••••
+
+Powered by Type & Grids™
+www.typeandgrids.com
+
+••••••••••••••••••••••••
+-->
+
+<title>Migrating a Concrete5 Site from Windows to Linux, and MySQL Case Sensitivity Hell</title>
+<meta name="description" content="The website of Lukas White, Manchester-based Freelance Web Designer and Developer">
+<meta name="author" content="Lukas White">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+<!-- CSS
+================================================================================================= -->
+<link rel="stylesheet" href="/dist/styles.min.css">
+
+<!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+
+<!-- Favicons
+================================================================================================= -->
+<link rel="shortcut icon" href="/favicon.ico">
+<link rel="apple-touch-icon" href="images/favicons/apple-touch-icon.png">
+<link rel="apple-touch-icon" sizes="72x72" href="images/favicons/apple-touch-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="114x114" href="images/favicons/apple-touch-icon-114x114.png">
+
+</head>
+<body>
+
+<div class="container">
+  
+  <!-- Header begins ========================================================================== -->
+  <header id="page-header" class="sixteen columns">
+    <div id="logo">
+      <a href="/">
+        <h1>Lukas White</h1>
+        <h2>Freelance Web Developer</h2>
+      </a>
+      <!--
+      <img src="images/logo.png" width="275" height="35" alt="Logo" />
+      -->
+    </div>
+    <nav>
+      <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/about">About</a></li>
+        <li><a href="/blog">Blog</a></li>
+        <li><a href="/work">Work</a></li>
+        <li><a href="/contact">Contact</a></li>        
+      </ul>
+    </nav>
+    <hr />
+  </header>
+  <!-- Header ends ============================================================================ -->
+  
+  <div id="content" class="content">
+  <article class="eleven columns post">
+	<h2>Migrating a Concrete5 Site from Windows to Linux, and MySQL Case Sensitivity Hell</h2>
+	<p class="meta"> &ndash; <time datetime="2011-10-21">21<sup>st</sup> October, 2011</time></p>
+
+	<div class="body">
+		<p>If, like me, you often develop on a Windows platform and then host using a *Nix-based server, Concrete5 has a gotcha which will probably hit you when you come to publish your site. At some point no doubt you’ll reach the point where you’ve copied the codebase to your server, created a database dump and imported it into the MySQL instance on your *Nix-based server. Try browsing to your site at this point, though, and you’ll get a message a lot like this: </p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">Fatal error: Uncaught exception &#39;ADODB_Exception&#39; with message &#39;mysql error: [1146: Table &#39;mysite.Config&#39; doesn&#39;t exist] in EXECUTE(&quot;select * from Config where uID = 0 order by cfKey asc&quot;) &#39; in /var/www/mysite/htdocs/concrete/libraries/3rdparty/adodb/adodb-exceptions.inc.php:78 Stack trace: #0 /var/www/mysite/htdocs/concrete/libraries/3rdparty/adodb/adodb.inc.php(1037): adodb_throw(&#39;mysql&#39;, &#39;EXECUTE&#39;, 1146, &#39;Table &#39;mysite...&#39;, &#39;select * from C...&#39;, false, Object(ADODB_mysql)) #1 /var/www/mysite/htdocs/concrete/libraries/3rdparty/adodb/adodb.inc.php(1012): ADOConnection-&gt;_Execute(&#39;select * from C...&#39;, false) #2 /var/www/mysite/htdocs/concrete/libraries/database.php(75): ADOConnection-&gt;Execute(&#39;select * from C...&#39;) #3 /var/www/mysite/htdocs/concrete/models/config.php(151): Database-&gt;__call(&#39;Execute&#39;, Array) #4 /var/www/mysite/htdocs/concrete/models/config.php(151): Database-&gt;Execute(&#39;select * from C...&#39;) #5 /var/www/mysite in /var/www/mysite/htdocs/concrete/libraries/3rdparty/adodb/adodb-exceptions.inc.php on line 78
+</code></pre></div>
+<p>The reason for this is simple – although it might not be apparent. Concrete5 uses CamelCase table names such as <code>BlockTypes</code>, <code>CollectionAttributeValues</code> and <code>FileSearchIndexAttributes</code>. As soon as you install Concrete5 on Windows (under a default configuration) these table names are converted to lowercase – so in those specific examples, you’ll get table names such as <code>blocktypes</code>, <code>collectionattributevalues</code> and <code>filesearchindexattributes</code>. On Windows, MySQL table names are not case sensitive, but it’s set up such that rather than ignore capitalisation, it does away with it altogether. Linux and Unix on the other hand, are case sensitive and so in this instance, the table <code>Config</code> can’t be found because you’ll have unwittingly imported the table <code>config</code> – and you have Windows to thank. There is an option in MySQL which allows you to turn off this feature of converting table names to lowercase. In your <code>my.ini</code>, adding or amending the line: <code>set-variable=lower_case_table_names=0</code> However, the <a href="http://mysql2.mirrors-r-us.net/doc/refman/5.1/en/identifier-case-sensitivity.html">MySQL documentation</a> reccomends that this value be set to 1 if you’re using InnoDB. Also bear in mind that changing this value will only affect newly created tables. You would of course find that this method is useless if you find yourself in the situation above, as the conversion has already been done. Your best option, therefore, is to convert the table names on your *Nix database sever back to CamelCase. To do so you can run the following SQL script (it’s based on Concrete5 5.4.2.2, and do bear in mind that any tables created by third-party add-ons won’t be included): </p>
+
+<div class="highlight"><pre><code class="language-sql" data-lang="sql"><span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">areagroupblocktypes</span> <span class="k">TO</span> <span class="n">AreaGroupBlockTypes</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">areagroups</span> <span class="k">TO</span> <span class="n">AreaGroups</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">areas</span> <span class="k">TO</span> <span class="n">Areas</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">atdefault</span> <span class="k">TO</span> <span class="n">atDefault</span><span class="p">;</span>
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">attributesetkeys</span> <span class="k">TO</span> <span class="n">AttributeSetKeys</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">attributesets</span> <span class="k">TO</span> <span class="n">AttributeSets</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">attributekeys</span> <span class="k">TO</span> <span class="n">AttributeKeys</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">attributekeycategories</span> <span class="k">TO</span> <span class="n">AttributeKeyCategories</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">attributetypecategories</span> <span class="k">TO</span> <span class="n">AttributeTypeCategories</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">attributetypes</span> <span class="k">TO</span> <span class="n">AttributeTypes</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">attributevalues</span> <span class="k">TO</span> <span class="n">AttributeValues</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">blockrelations</span> <span class="k">TO</span> <span class="n">BlockRelations</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">blocktypes</span> <span class="k">TO</span> <span class="n">BlockTypes</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">blocks</span> <span class="k">TO</span> <span class="n">Blocks</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">collectionattributevalues</span> <span class="k">TO</span> <span class="n">CollectionAttributeValues</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">collectionversionblockpermissions</span> <span class="k">TO</span> <span class="n">CollectionVersionBlockPermissions</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">collectionversionblocks</span> <span class="k">TO</span> <span class="n">CollectionVersionBlocks</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">collectionversionblockstyles</span> <span class="k">TO</span> <span class="n">CollectionVersionBlockStyles</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">collectionversionarealayouts</span> <span class="k">TO</span> <span class="n">CollectionVersionAreaLayouts</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">collectionversionareastyles</span> <span class="k">TO</span> <span class="n">CollectionVersionAreaStyles</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">collectionversions</span> <span class="k">TO</span> <span class="n">CollectionVersions</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">collections</span> <span class="k">TO</span> <span class="n">Collections</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">composercontentlayout</span> <span class="k">TO</span> <span class="n">ComposerContentLayout</span><span class="p">;</span>
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">composerdrafts</span> <span class="k">TO</span> <span class="n">ComposerDrafts</span><span class="p">;</span>
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">composertypes</span> <span class="k">TO</span> <span class="n">ComposerTypes</span><span class="p">;</span>
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">config</span> <span class="k">TO</span> <span class="n">Config</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">dashboardhomepage</span> <span class="k">TO</span> <span class="n">DashboardHomepage</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">downloadstatistics</span> <span class="k">TO</span> <span class="n">DownloadStatistics</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">fileattributevalues</span> <span class="k">TO</span> <span class="n">FileAttributeValues</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">filepermissionfiletypes</span> <span class="k">TO</span> <span class="n">FilePermissionFileTypes</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">customstylepresets</span> <span class="k">TO</span> <span class="n">CustomStylePresets</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">customstylerules</span> <span class="k">TO</span> <span class="n">CustomStyleRules</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">filepermissions</span> <span class="k">TO</span> <span class="n">FilePermissions</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">taskpermissionusergroups</span> <span class="k">TO</span> <span class="n">TaskPermissionUserGroups</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">taskpermissions</span> <span class="k">TO</span> <span class="n">TaskPermissions</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">filesetpermissions</span> <span class="k">TO</span> <span class="n">FileSetPermissions</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">fileversions</span> <span class="k">TO</span> <span class="n">FileVersions</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">fileversionlog</span> <span class="k">TO</span> <span class="n">FileVersionLog</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">filestoragelocations</span> <span class="k">TO</span> <span class="n">FileStorageLocations</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">files</span> <span class="k">TO</span> <span class="n">Files</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">groups</span> <span class="k">TO</span> <span class="n">Groups</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">jobs</span> <span class="k">TO</span> <span class="n">Jobs</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">jobslog</span> <span class="k">TO</span> <span class="n">JobsLog</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">layouts</span> <span class="k">TO</span> <span class="n">Layouts</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">layoutpresets</span> <span class="k">TO</span> <span class="n">LayoutPresets</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">systemnotifications</span> <span class="k">TO</span> <span class="n">SystemNotifications</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">packages</span> <span class="k">TO</span> <span class="n">Packages</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">pagepaths</span> <span class="k">TO</span> <span class="n">PagePaths</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">pagesearchindex</span> <span class="k">TO</span> <span class="n">PageSearchIndex</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">pagepermissionpagetypes</span> <span class="k">TO</span> <span class="n">PagePermissionPageTypes</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">pagepermissions</span> <span class="k">TO</span> <span class="n">PagePermissions</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">pagestatistics</span> <span class="k">TO</span> <span class="n">PageStatistics</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">pagethemes</span> <span class="k">TO</span> <span class="n">PageThemes</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">pagethemestyles</span> <span class="k">TO</span> <span class="n">PageThemeStyles</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">pagetypeattributes</span> <span class="k">TO</span> <span class="n">PageTypeAttributes</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">pagetypes</span> <span class="k">TO</span> <span class="n">PageTypes</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">pages</span> <span class="k">TO</span> <span class="n">Pages</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">pilecontents</span> <span class="k">TO</span> <span class="n">PileContents</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">piles</span> <span class="k">TO</span> <span class="n">Piles</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">userattributekeys</span> <span class="k">TO</span> <span class="n">UserAttributeKeys</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">userattributevalues</span> <span class="k">TO</span> <span class="n">UserAttributeValues</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">userprivatemessages</span> <span class="k">TO</span> <span class="n">UserPrivateMessages</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">userprivatemessagesto</span> <span class="k">TO</span> <span class="n">UserPrivateMessagesTo</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">userbannedips</span> <span class="k">TO</span> <span class="n">UserBannedIPs</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">usergroups</span> <span class="k">TO</span> <span class="n">UserGroups</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">uservalidationhashes</span> <span class="k">TO</span> <span class="n">UserValidationHashes</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">logs</span> <span class="k">TO</span> <span class="n">Logs</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">mailimporters</span> <span class="k">TO</span> <span class="n">MailImporters</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">mailvalidationhashes</span> <span class="k">TO</span> <span class="n">MailValidationHashes</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">useropenids</span> <span class="k">TO</span> <span class="n">UserOpenIDs</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">users</span> <span class="k">TO</span> <span class="n">Users</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">usersfriends</span> <span class="k">TO</span> <span class="n">UsersFriends</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">signuprequests</span> <span class="k">TO</span> <span class="n">SignupRequests</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">filesets</span> <span class="k">TO</span> <span class="n">FileSets</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">filesetsavedsearches</span> <span class="k">TO</span> <span class="n">FileSetSavedSearches</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">filesetfiles</span> <span class="k">TO</span> <span class="n">FileSetFiles</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">atboolean</span> <span class="k">TO</span> <span class="n">atBoolean</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">atbooleansettings</span> <span class="k">TO</span> <span class="n">atBooleanSettings</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">atdatetimesettings</span> <span class="k">TO</span> <span class="n">atDateTimeSettings</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">atdatetime</span> <span class="k">TO</span> <span class="n">atDateTime</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">atfile</span> <span class="k">TO</span> <span class="n">atFile</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">atnumber</span> <span class="k">TO</span> <span class="n">atNumber</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">atselectsettings</span> <span class="k">TO</span> <span class="n">atSelectSettings</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">attextareasettings</span> <span class="k">TO</span> <span class="n">atTextareaSettings</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">atselectoptions</span> <span class="k">TO</span> <span class="n">atSelectOptions</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">atselectoptionsselected</span> <span class="k">TO</span> <span class="n">atSelectOptionsSelected</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">ataddress</span> <span class="k">TO</span> <span class="n">atAddress</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">ataddresscustomcountries</span> <span class="k">TO</span> <span class="n">atAddressCustomCountries</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">ataddresssettings</span> <span class="k">TO</span> <span class="n">atAddressSettings</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">btnavigation</span> <span class="k">TO</span> <span class="n">btNavigation</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">btdatenav</span> <span class="k">TO</span> <span class="n">btDateNav</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">btexternalform</span> <span class="k">TO</span> <span class="n">btExternalForm</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">btcontentfile</span> <span class="k">TO</span> <span class="n">btContentFile</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">btflashcontent</span> <span class="k">TO</span> <span class="n">btFlashContent</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">btform</span> <span class="k">TO</span> <span class="n">btForm</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">btformquestions</span> <span class="k">TO</span> <span class="n">btFormQuestions</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">btformanswerset</span> <span class="k">TO</span> <span class="n">btFormAnswerSet</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">btformanswers</span> <span class="k">TO</span> <span class="n">btFormAnswers</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">btgooglemap</span> <span class="k">TO</span> <span class="n">btGoogleMap</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">btguestbook</span> <span class="k">TO</span> <span class="n">btGuestBook</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">btguestbookentries</span> <span class="k">TO</span> <span class="n">btGuestBookEntries</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">btcontentlocal</span> <span class="k">TO</span> <span class="n">btContentLocal</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">btcontentimage</span> <span class="k">TO</span> <span class="n">btContentImage</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">btfile</span> <span class="k">TO</span> <span class="n">btFile</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">btnextprevious</span> <span class="k">TO</span> <span class="n">btNextPrevious</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">btpagelist</span> <span class="k">TO</span> <span class="n">btPageList</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">btrssdisplay</span> <span class="k">TO</span> <span class="n">btRssDisplay</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">btsearch</span> <span class="k">TO</span> <span class="n">btSearch</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">btslideshow</span> <span class="k">TO</span> <span class="n">btSlideshow</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">btslideshowimg</span> <span class="k">TO</span> <span class="n">btSlideshowImg</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">btsurvey</span> <span class="k">TO</span> <span class="n">btSurvey</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">btsurveyoptions</span> <span class="k">TO</span> <span class="n">btSurveyOptions</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">btsurveyresults</span> <span class="k">TO</span> <span class="n">btSurveyResults</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">bttags</span> <span class="k">TO</span> <span class="n">btTags</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">btvideo</span> <span class="k">TO</span> <span class="n">btVideo</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">btyoutube</span> <span class="k">TO</span> <span class="n">btYouTube</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">collectionsearchindexattributes</span> <span class="k">TO</span> <span class="n">CollectionSearchIndexAttributes</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">filesearchindexattributes</span> <span class="k">TO</span> <span class="n">FileSearchIndexAttributes</span><span class="p">;</span> 
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">usersearchindexattributes</span> <span class="k">TO</span> <span class="n">UserSearchIndexAttributes</span><span class="p">;</span>
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">btcorescrapbookdisplay</span> <span class="k">TO</span> <span class="n">btCoreScrapbookDisplay</span><span class="p">;</span>
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">btcorestackdisplay</span> <span class="k">TO</span> <span class="n">btCoreStackDisplay</span><span class="p">;</span>
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">btdashboardnewsflowlatest</span> <span class="k">TO</span> <span class="n">btDashboardNewsflowLatest</span><span class="p">;</span>
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">collectionversionrelatededits</span> <span class="k">TO</span> <span class="n">CollectionVersionRelatedEdits</span><span class="p">;</span>
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">stacks</span> <span class="k">TO</span> <span class="n">Stacks</span><span class="p">;</span>
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">systemantispamlibraries</span> <span class="k">TO</span> <span class="n">SystemAntispamLibraries</span><span class="p">;</span>
+<span class="k">RENAME</span> <span class="k">TABLE</span> <span class="n">systemcaptchalibraries</span> <span class="k">TO</span> <span class="n">SystemCaptchaLibraries</span><span class="p">;</span></code></pre></div>
+
+	</div>
+
+	
+	<p class="tags">Tagged with:
+	
+  <a href="/tag/concrete5">Concrete5</a> 
+	
+  <a href="/tag/mysql">MySQL</a> 
+	
+	</p>
+	
+
+	<!--
+	<div class="author">
+		<a href="https://twitter.com/lukaswhite" title="Twitter">Twitter</a>
+		<a href="https://plus.google.com/+LukasWhiteWebDeveloper" title="My Google+ Profile">Google+</a>
+	</div>	
+-->
+
+	<div id="disqus_thread"></div>
+	<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">Comments powered by Disqus.</a></noscript>
+	<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+</article>
+
+<aside class="five columns">
+	
+	<h4>About Me</h4>
+
+<p>I&#39;m a web developer based in Manchester, England. I also design websites.  I generally favour open-source technologies such as PHP, MySQL and JQuery, and I have extensive experience using Drupal.</p>
+
+
+	<div class="block tag-cloud">
+			 	<h4>Tags</h4>
+			 	<ul class="tags">
+				
+	    		<li><a href="/blog/tags/drupal">Drupal</a></li>
+				
+	    		<li><a href="/blog/tags/mobile">mobile</a></li>
+				
+	    		<li><a href="/blog/tags/rwd">RWD</a></li>
+				
+	    		<li><a href="/blog/tags/responsive-web-design">responsive web design</a></li>
+				
+	    		<li><a href="/blog/tags/deployment">deployment</a></li>
+				
+	    		<li><a href="/blog/tags/prowl">Prowl</a></li>
+				
+	    		<li><a href="/blog/tags/push-notifications">push notifications</a></li>
+				
+	    		<li><a href="/blog/tags/concrete5">Concrete5</a></li>
+				
+	    		<li><a href="/blog/tags/cms">CMS</a></li>
+				
+	    		<li><a href="/blog/tags/tutorials">tutorials</a></li>
+				
+	    		<li><a href="/blog/tags/php">PHP</a></li>
+				
+	    		<li><a href="/blog/tags/laravel">Laravel</a></li>
+				
+	    		<li><a href="/blog/tags/frameworks">frameworks</a></li>
+				
+	    		<li><a href="/blog/tags/facebook">Facebook</a></li>
+				
+	    		<li><a href="/blog/tags/drupal-7">Drupal 7</a></li>
+				
+	    		<li><a href="/blog/tags/ux">UX</a></li>
+				
+	    		<li><a href="/blog/tags/less">Less</a></li>
+				
+	    		<li><a href="/blog/tags/mysql">MySQL</a></li>
+				
+	    		<li><a href="/blog/tags/writing">writing</a></li>
+				
+	    		<li><a href="/blog/tags/sitepoint">Sitepoint</a></li>
+				
+	    		<li><a href="/blog/tags/articles">articles</a></li>
+				
+	    		<li><a href="/blog/tags/spotify">Spotify</a></li>
+				
+	    		<li><a href="/blog/tags/drupal-commerce">Drupal Commerce</a></li>
+				
+	    		<li><a href="/blog/tags/bash">Bash</a></li>
+				
+	    		<li><a href="/blog/tags/git">Git</a></li>
+				
+	    		<li><a href="/blog/tags/apache">Apache</a></li>
+				
+	    		<li><a href="/blog/tags/workflow">Workflow</a></li>
+				
+	    		<li><a href="/blog/tags/foundation">Foundation</a></li>
+				
+	    		<li><a href="/blog/tags/gravatar">Gravatar</a></li>
+				
+	    		<li><a href="/blog/tags/jquery">JQuery</a></li>
+				
+	    		<li><a href="/blog/tags/geo">Geo</a></li>
+				
+	    		<li><a href="/blog/tags/backbone">Backbone</a></li>
+				
+	    		<li><a href="/blog/tags/homestead">Homestead</a></li>
+				
+	    		<li><a href="/blog/tags/elasticsearch">Elasticsearch</a></li>
+				
+	    		<li><a href="/blog/tags/jekyll">Jekyll</a></li>
+				
+	    		<li><a href="/blog/tags/grunt">Grunt</a></li>
+				
+				</ul>
+			</div>
+
+</aside>
+
+
+<script type="text/javascript">    
+	var disqus_shortname = 'lukaswhite';
+    
+	(function() {
+		var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+		dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+		(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+	})();
+</script>
+ 
+  </div>
+
+  <!-- Footer begins ========================================================================== -->
+  <footer id="footer">
+    <hr>
+    <div class="eight columns">
+      <ul id="footerLinks">
+        <li>&copy; 2014 Lukas White. All rights reserved.</li>        
+        <li><a href="http://www.twitter.com/lukaswhite" target="_blank">@lukaswhite</a></li>              
+      </ul>
+    </div>
+    <div class="eight columns right">
+      <ul class="social small">
+        <li><a class="linkedin" href="http://uk.linkedin.com/in/lukaswhite" target="_blank"><span>View my LinkedIn Profile</span></a></li>
+        <li><a class="twitter" href="http://www.twitter.com/lukaswhite" target="_blank"><span>Follow me on Twitter</span></a></li>
+        <li><a class="facebook" href="http://www.facebook.com/lukas.white.freelance.web.developer" target="_blank"><span>Find me on Facebook</span></a></li>
+        <li><a class="github" href="https://github.com/lukaswhite" target="_blank"><span>Find me on Github</span></a></li>
+      </ul>
+    </div>
+    <hr>
+    <div class="sixteen columns centered">
+      <p>Powered by <a href="http://www.typeandgrids.com" target="_blank">Type &amp; Grids</a>, <a href="http://jekyllrb.com/">Jekyll</a> and <a href="https://github.com/erikhuda/thor">Thor</a></p>
+    </div>
+  </footer>
+  <!-- Footer ends ============================================================================ -->
+    
+</div><!-- container -->
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-3485550-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</body>
+</html>

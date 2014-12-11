@@ -1,0 +1,527 @@
+<!doctype html>
+<!--[if lt IE 7 ]><html class="ie ie6" lang="en"> <![endif]-->
+<!--[if IE 7 ]><html class="ie ie7" lang="en"> <![endif]-->
+<!--[if IE 8 ]><html class="ie ie8" lang="en"> <![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!--><html lang="en"> <!--<![endif]-->
+<head>
+<meta charset="utf-8">
+
+<!--
+••••••••••••••••••••••••
+
+Powered by Type & Grids™
+www.typeandgrids.com
+
+••••••••••••••••••••••••
+-->
+
+<title>Gift Certificates in Drupal Commerce</title>
+<meta name="description" content="The website of Lukas White, Manchester-based Freelance Web Designer and Developer">
+<meta name="author" content="Lukas White">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+<!-- CSS
+================================================================================================= -->
+<link rel="stylesheet" href="/dist/styles.min.css">
+
+<!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+
+<!-- Favicons
+================================================================================================= -->
+<link rel="shortcut icon" href="/favicon.ico">
+<link rel="apple-touch-icon" href="images/favicons/apple-touch-icon.png">
+<link rel="apple-touch-icon" sizes="72x72" href="images/favicons/apple-touch-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="114x114" href="images/favicons/apple-touch-icon-114x114.png">
+
+</head>
+<body>
+
+<div class="container">
+  
+  <!-- Header begins ========================================================================== -->
+  <header id="page-header" class="sixteen columns">
+    <div id="logo">
+      <a href="/">
+        <h1>Lukas White</h1>
+        <h2>Freelance Web Developer</h2>
+      </a>
+      <!--
+      <img src="images/logo.png" width="275" height="35" alt="Logo" />
+      -->
+    </div>
+    <nav>
+      <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/about">About</a></li>
+        <li><a href="/blog">Blog</a></li>
+        <li><a href="/work">Work</a></li>
+        <li><a href="/contact">Contact</a></li>        
+      </ul>
+    </nav>
+    <hr />
+  </header>
+  <!-- Header ends ============================================================================ -->
+  
+  <div id="content" class="content">
+  <article class="eleven columns post">
+	<h2>Gift Certificates in Drupal Commerce</h2>
+	<p class="meta"> &ndash; <time datetime="2013-05-04">4<sup>th</sup> May, 2013</time></p>
+
+	<div class="body">
+		<p>There isn&#39;t really an out-of-the-box solution for gift certificates in <a href="http://www.drupalcommerce.org/">Drupal Commerce</a>; there&#39;s no module (at time of writing) you can simply download, enable and forget about. Being Drupal, there are many ways to skin a cat, so to speak, so in this post I&#39;m going to outline how I got them working on a site I built.</p>
+
+<p>Of course, the way your gift certificates work may well differ from site-to-site; I had a way I wanted it to work, but your requirements might be subtly different, but hopefully whatever your requirements, some of what follows is of some use.</p>
+
+<p>To outline, here&#39;s what I wanted to achieve:</p>
+
+<ol>
+<li> Gift certificates available as products, which a customer can purchase</li>
+<li> A range of values (£5, £10, £20 etc) available</li>
+<li> A product display page that differed from &quot;conventional&quot; products - there are less fields required, so the layout was likely to be different </li>
+<li>I wanted a customer to be able to specify a recipient for the gift certificate</li>
+<li>The customer needed to supply an email address for the recipient, so we can send it to them via email</li>
+<li>I wanted the customer to be able to specify the recipient&#39;s name, to personalise the email</li>
+<li>The customer ought to be able to enter their name as they wished it to appear on the email; the billing name on the order might well be too formal</li>
+<li>There ought to be an optional text field to add a personal message</li>
+<li>The gift certificate needed to be sent out via email when the order was completed, and paid for</li>
+</ol>
+
+<p>As it turns out, step 3 – creating a custom product display page type – was a requirement, which I&#39;ll discuss later.</p>
+
+<p>Okay, so the fundamental basis of this task is the gift certificate itself; a redemption code that could be used as payment – or part-payment – by the recipient.</p>
+
+<p>This, there is a module for. <a href="http://drupal.org/project/commerce_coupon">Commerce Coupon</a> takes care of all this. However out-of-the-box, it only really allows you to generate a coupon in the admin interface, whereas we need to automate this.</p>
+
+<p>Let&#39;s start there, though – download and enable <a href="http://drupal.org/project/commerce_coupon">Commerce Coupon</a> in the normal way.</p>
+
+<p>This isn&#39;t quite enough, though – there are two sub-modules, for fixed-amount coupons and percentage-based coupons (money off). It&#39;s the <a href="http://drupal.org/project/commerce_coupon_fixed_amount">fixed amount version</a> we&#39;re interested in, so download and enable that too. You will probably want to enable the UI module bundled with Commerce coupon, too.</p>
+
+<p>Play around, and note how it works - it adds a new field in the checkout process, where a customer can enter a coupon code, and the value of the corresponding coupon gets deducted from their order balance.</p>
+
+<p>So far, so good. One thing I immediately found, though, is that the terminology didn&#39;t really fit what I was trying to achieve.</p>
+
+<p>Fortunately, there&#39;s a simple way to change small portions of text without having to mess around wit translation files, and what-not - the <a href="http://drupal.org/project/stringoverrides">String Overrides</a> module.</p>
+
+<p>Now go to <strong>Admin -&gt; Configuration -&gt; Regional and Language -&gt; String overrides</strong>, where you can enter a string you want to change. I changed &quot;Enter here your coupon code.&quot; (remember to add it exactly as it&#39;s displayed, which means including the full-stop) to &quot;If you have a gift certificate, enter its code here&quot; and &quot;Granted amount&quot; to &quot;Value&quot;.</p>
+
+<p>Now we need to create a new custom line item type. It&#39;ll be based on a product (as opposed to, say, a shipping or tax line item). You can create this by going to <strong>Admin -&gt; Store -&gt; Configuration -&gt; Line item types -&gt; Add a product line item type</strong>, and giving it a name, e.g. &quot;Gift Certificate&quot;, or there&#39;s some code to do this automatically in <a href="https://github.com/lukaswhite/Drupal-Commerce-Gift-Certificates">my example module on Github</a>.</p>
+
+<p>Next, we need to add some fields to the line item. This requires the <a href="http://drupal.org/project/commerce_custom_product">Commerce Custom Product</a> module. Again, this is done automatically in my example module, or you might prefer to do it manually through the Field UI. I&#39;ve added four fields, with the machine names in brackets – these are important, because we&#39;ll use them later on in the code:</p>
+
+<ul>
+<li>Recipient name (field_gift_recipient_name)</li>
+<li>Recipient email (field_gift_recipient_email)</li>
+<li>Sender name (field_gift_sender_name)</li>
+<li>Personal message (field_gift_personal_message)</li>
+</ul>
+
+<p>Next up, we need to create a new Product Display content type, e.g. &quot;Product Display (Gift Certificate)&quot;. I won&#39;t go into the details on how to do this, you&#39;ve probably already done one. Remember I said that this was required anyway – this is because the Add to Cart form needs to act differently for this content type, because we need to add the fields that are specific to gift certificates. Don&#39;t forget to add a product reference field – you may well be able to re-use the existing field from your &quot;conventional&quot; products.</p>
+
+<p>We need to ensure that the fields we created show up alongside the Add to Cart button for the relevant products; this is achieved through the Display settings on the Product field of the newly created Product Display type. Go to <strong>Admin -&gt; Structure -&gt; Content types -&gt; Product Display (Gift Certificate) -&gt; Manage Display</strong> (substituting Product Display (Gift Certificate) for whatever you called your new content type). Click the cog alongside the Product field to change the format settings for the Add to Cart form, and change <strong>Add to Cart line item type</strong> to <strong>Gift Certificate</strong> (or whatever you called the new line item type).</p>
+
+<p>Now, if you visit the product page for our gift certificate product, you&#39;ll see that instead of a simple Add to Cart button, we&#39;ve got a form instead, where in order to add a gift certificate to their cart, a customer is required to enter this additional information.</p>
+
+<p>So, how do we send out a gift certificate when a customer orders it – only after, of course, the customer has paid for it.</p>
+
+<p>This is where Rules comes in. Much of Commerce&#39;s functionality is based around rules, so we&#39;ll do this in much the same way.</p>
+
+<p>As you&#39;re probably aware by now, a rule consists of three components:</p>
+
+<ul>
+<li>an <strong>event</strong>; in this case when an order has been completed</li>
+<li>a <strong>condition</strong>; we want this rule to fire when an order contains one or more gift certificates</li>
+<li>an <strong>action</strong>; what we want to happen</li>
+</ul>
+
+<p>Commerce already provides an action that fits our requirements. This event is labelled &quot;Completing the checkout process&quot;. Go to <strong>Store -&gt; Configuration -&gt; Checkout settings -&gt; Checkout rules</strong>. You&#39;ll probably see there are already a number of rules for this event, depending on what modules you have installed (for example, I&#39;m using Commerce Stock, which decrements the stock level for each product, as well as Commerce Message, which sends out emails when an order has been placed). Click <strong>Add a checkout rule</strong>, and give it a name – e.g. &quot;Send out a gift certificate&quot;.</p>
+
+<p>Next up, we need to add a condition – we only want this rule to fire when a customer has ordered a gift certificate.</p>
+
+<p>Click <strong>Add condition</strong>. Under <strong>Select the condition to add</strong>, select <strong>Order contains a particular product</strong> under the section <strong>Commerce Order</strong>.</p>
+
+<p><strong>Data selector</strong> should be <strong>commerce_order</strong>. The next field is <strong>Product SKU</strong>, so enter the SKU you specified earlier, to specify which product is of interest to us.</p>
+
+<p><strong>Operator</strong> should be set to <strong>=</strong>, for obvious reasons, and you can leave <strong>Quantity</strong> at <strong>1</strong>. Ignore <strong>negate</strong>, and click <strong>Save</strong>.</p>
+
+<p>For now, let&#39;s use an action for debugging purposes. Click <strong>Add action</strong> and under <strong>Select the action to add</strong> scroll down to <strong>System</strong> and select <strong>Display a message on the site</strong>, and enter some message, e.g. &quot;DEBUGGING: The order contains a gift certificate!&quot;.</p>
+
+<p>Now, try ordering a gift certificate, and when you complete the order you should see the message you just specified. </p>
+
+<p>Here&#39;s where it gets a little more complicated. The rules module provides a number of simple actions, Commerce adds a few more, and various contributed modules add more still. But what we want to achieve can&#39;t really be achieved without writing some custom code to do what we want.</p>
+
+<p>So, we need to create a new module to add the &quot;action&quot; to this rule. To summarise, this is what we want it to do:</p>
+
+<ul>
+<li>  get the order in question</li>
+<li>  load the line items for the order</li>
+<li>  look for the line items that contain products (as opposed to, say, shipping)</li>
+<li>  find those line items which contain a gift certificate</li>
+<li>  determine the value of the gift certificate</li>
+<li>  extract the recipient information (name, email), and the other bits of personalisation (sender&#39;s name, personal message)</li>
+<li>  generate a coupon of the required value</li>
+<li>  construct an email, containing the code for the new coupon, and using the information provided by the customer</li>
+<li>  send the email to the recipient&#39;s email address</li>
+</ul>
+
+<p>Hopefully you&#39;ll see why this requires a module; it&#39;s not that complex, but enough that standard actions just won&#39;t cut it.</p>
+
+<p>You&#39;ll need the <a href="http://drupal.org/project/email">email</a> module, for the recipient&#39;s email field. Download and enable in the normal way.</p>
+
+<p>First step, as always, a module <code>.info</code> file (in a directory called <code>gift_certificates</code> in your modules directory), or <a href="https://github.com/lukaswhite/Drupal-Commerce-Gift-Certificates">grab the code from Github</a>:</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">name = Gift Certificates
+description = Supporting functionality for gift certificates
+core = 7.x
+package = Commerce
+
+dependencies[] = commerce
+dependencies[] = commerce_coupon
+dependencies[] = commerce_coupon_fixed_amount
+dependencies[] = commerce_custom_product
+dependencies[] = email
+</code></pre></div>
+<p>Note the dependencies – but if you&#39;ve been following along, you should have these already installed.</p>
+
+<p>Next up, we need to define our action. We do this by implementing <code>hook_rules_action_info()</code> thus:</p>
+
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="sd">/**</span>
+<span class="sd"> * Implements hook_rules_action_info().</span>
+<span class="sd"> */</span>
+<span class="k">function</span> <span class="nf">gift_certificates_rules_action_info</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="k">array</span><span class="p">(</span>
+    <span class="s1">&#39;gift_certificates_action_send&#39;</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span>
+      <span class="s1">&#39;label&#39;</span> <span class="o">=&gt;</span> <span class="nx">t</span><span class="p">(</span><span class="s1">&#39;Send Gift Certificate&#39;</span><span class="p">),</span>
+      <span class="s1">&#39;group&#39;</span> <span class="o">=&gt;</span> <span class="nx">t</span><span class="p">(</span><span class="s1">&#39;Gift Certificates&#39;</span><span class="p">),</span>
+    <span class="p">),</span>
+  <span class="p">);</span>
+<span class="p">}</span></code></pre></div>
+
+<p>Now let&#39;s start on the function which gets called when this action fires:</p>
+
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="sd">/**</span>
+<span class="sd"> * Rule action; sends gift certificate(s).</span>
+<span class="sd"> */</span>
+<span class="k">function</span> <span class="nf">gift_certificates_action_send</span><span class="p">()</span> <span class="p">{</span>
+  
+  <span class="c1">// Get the order</span>
+  <span class="nv">$order_id</span> <span class="o">=</span> <span class="nx">arg</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+  <span class="nv">$order</span> <span class="o">=</span> <span class="nx">commerce_order_load</span><span class="p">(</span><span class="nv">$order_id</span><span class="p">);</span></code></pre></div>
+
+<p>When the action fires, the order ID becomes available in arg(1) – try calling <code>dpm</code> (with Devel installed) if you don&#39;t believe me. There&#39;s probably a more elegant way of doing this, but let&#39;s keep it simple for now.</p>
+
+<p>Next step is to iterate through the line items:</p>
+
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="c1">// Go through the line items</span>
+  <span class="k">foreach</span> <span class="p">(</span><span class="nv">$order</span><span class="o">-&gt;</span><span class="na">commerce_line_items</span><span class="p">[</span><span class="nx">LANGUAGE_NONE</span><span class="p">]</span> <span class="k">as</span> <span class="nv">$line_item_item</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nv">$line_item_id</span> <span class="o">=</span> <span class="nv">$line_item_item</span><span class="p">[</span><span class="s1">&#39;line_item_id&#39;</span><span class="p">];</span>
+    <span class="nv">$line_item</span> <span class="o">=</span> <span class="nx">commerce_line_item_load</span><span class="p">(</span><span class="nv">$line_item_id</span><span class="p">);</span>
+
+    <span class="c1">// is this a gift certificate?</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nv">$line_item</span><span class="o">-&gt;</span><span class="na">type</span> <span class="o">==</span> <span class="s1">&#39;gift_certificate&#39;</span><span class="p">)</span> <span class="p">{</span></code></pre></div>
+
+<p>Simple enough; we iterate through the line item IDs in the order object – each item is in the form <code>array(&#39;line_item_id&#39; =&gt; 123)</code>.</p>
+
+<p>Then, we load the line item and then check its type; we&#39;re only interested in the line item type we created earlier; note that you might need to change this depending on how you set it up.</p>
+
+<p>Next thing is to grab the product from the line item:</p>
+
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="c1">// create a params array, to use in the subsequent email</span>
+      <span class="nv">$params</span> <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
+      
+      <span class="c1">// get the product ID</span>
+      <span class="nv">$product_id</span> <span class="o">=</span> <span class="nv">$line_item</span><span class="o">-&gt;</span><span class="na">commerce_product</span><span class="p">[</span><span class="nx">LANGUAGE_NONE</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;product_id&#39;</span><span class="p">];</span>
+
+      <span class="c1">// load the product</span>
+      <span class="nv">$product</span> <span class="o">=</span> <span class="nx">commerce_product_load</span><span class="p">(</span><span class="nv">$product_id</span><span class="p">);</span></code></pre></div>
+
+<p>Then we extract the information from the fields we attached to the gift certificate line item:</p>
+
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="c1">// get the recipient&#39;s details</span>
+      <span class="nv">$params</span><span class="p">[</span><span class="s1">&#39;recipient_name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$line_item</span><span class="o">-&gt;</span><span class="na">field_gift_recipient_name</span><span class="p">[</span><span class="nx">LANGUAGE_NONE</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;safe_value&#39;</span><span class="p">];</span>
+      <span class="nv">$params</span><span class="p">[</span><span class="s1">&#39;email&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$line_item</span><span class="o">-&gt;</span><span class="na">field_gift_recipient_email</span><span class="p">[</span><span class="nx">LANGUAGE_NONE</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;email&#39;</span><span class="p">];</span>
+
+      <span class="c1">// and the sender details</span>
+      <span class="nv">$params</span><span class="p">[</span><span class="s1">&#39;sender_name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$line_item</span><span class="o">-&gt;</span><span class="na">field_gift_sender_name</span><span class="p">[</span><span class="nx">LANGUAGE_NONE</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;safe_value&#39;</span><span class="p">];</span>
+
+      <span class="c1">// and optionally, the personal message</span>
+      <span class="nv">$params</span><span class="p">[</span><span class="s1">&#39;personal_message&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$line_item</span><span class="o">-&gt;</span><span class="na">field_gift_personal_message</span><span class="p">[</span><span class="nx">LANGUAGE_NONE</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;safe_value&#39;</span><span class="p">];</span></code></pre></div>
+
+<p>Next, we programmatically create the coupon:</p>
+
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="c1">// Create the coupon</span>
+      <span class="nv">$coupon</span> <span class="o">=</span> <span class="nx">commerce_coupon_create</span><span class="p">(</span><span class="s1">&#39;commerce_coupon_fixed&#39;</span><span class="p">);</span>
+      
+      <span class="c1">// set to single use</span>
+      <span class="nv">$coupon</span><span class="o">-&gt;</span><span class="na">commerce_coupon_number_of_uses</span><span class="p">[</span><span class="nx">LANGUAGE_NONE</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;value&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+
+      <span class="c1">// set the amount</span>
+      <span class="nv">$coupon</span><span class="o">-&gt;</span><span class="na">commerce_coupon_fixed_amount</span><span class="p">[</span><span class="nx">LANGUAGE_NONE</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span>
+        <span class="s1">&#39;amount&#39;</span>  <span class="o">=&gt;</span> <span class="nv">$product</span><span class="o">-&gt;</span><span class="na">commerce_price</span><span class="p">[</span><span class="nx">LANGUAGE_NONE</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;amount&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;currency_code&#39;</span> <span class="o">=&gt;</span> <span class="nv">$product</span><span class="o">-&gt;</span><span class="na">commerce_price</span><span class="p">[</span><span class="nx">LANGUAGE_NONE</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;currency_code&#39;</span><span class="p">],</span>
+      <span class="p">);</span>
+
+      <span class="c1">// save the coupon</span>
+      <span class="nx">commerce_coupon_save</span><span class="p">(</span><span class="nv">$coupon</span><span class="p">);</span>
+    
+      <span class="c1">// get the coupon code</span>
+      <span class="nv">$params</span><span class="p">[</span><span class="s1">&#39;coupon_code&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$coupon</span><span class="o">-&gt;</span><span class="na">commerce_coupon_code</span><span class="p">[</span><span class="nx">LANGUAGE_NONE</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;value&#39;</span><span class="p">];</span>
+
+      <span class="c1">// add the formatted amount to the parameters</span>
+      <span class="nv">$params</span><span class="p">[</span><span class="s1">&#39;coupon_amount&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nx">commerce_currency_format</span><span class="p">(</span>
+        <span class="nv">$coupon</span><span class="o">-&gt;</span><span class="na">commerce_coupon_fixed_amount</span><span class="p">[</span><span class="nx">LANGUAGE_NONE</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;amount&#39;</span><span class="p">],</span>
+        <span class="nv">$coupon</span><span class="o">-&gt;</span><span class="na">commerce_coupon_fixed_amount</span><span class="p">[</span><span class="nx">LANGUAGE_NONE</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;currency_code&#39;</span><span class="p">]</span>
+      <span class="p">);</span></code></pre></div>
+
+<p>There are a few things to note here:</p>
+
+<ul>
+<li>  We need to create a fixed amount coupon; as opposed to, say, a money-off one</li>
+<li>  We don&#39;t need to worry about setting the coupon code; it&#39;s done for us</li>
+<li>  We only want the coupon to be used once, so we need to set the number of uses to one</li>
+<li>  The price and currency comes from the <code>commerce_price</code> component of the product, which we extracted from the line item</li>
+<li>  We extract the coupon code from the coupon once we&#39;ve saved it, and insert it into the <code>$params</code> array for use later</li>
+<li>  We also format the price, and include it in the <code>$params</code> array too</li>
+</ul>
+
+<p>Finally, we send the email to the recipient, passing in the various values we&#39;ve collected along the way:</p>
+
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="c1">// Now send the coupon via email to the recipient</span>
+      <span class="nx">gift_certificates_mail_send</span><span class="p">(</span><span class="nv">$params</span><span class="p">);</span></code></pre></div>
+
+<p>Here&#39;s the definition of <code>gift_certificates_mail_send</code>:</p>
+
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="sd">/**</span>
+<span class="sd"> * Sends an e-mail.</span>
+<span class="sd"> *</span>
+<span class="sd"> * @param $variables</span>
+<span class="sd"> *   An array of variables used to send the mail, including the various parameters</span>
+<span class="sd"> */</span>
+<span class="k">function</span> <span class="nf">gift_certificates_mail_send</span><span class="p">(</span><span class="nv">$variables</span><span class="p">)</span> <span class="p">{</span>
+  
+  <span class="nv">$module</span> <span class="o">=</span> <span class="s1">&#39;gift_certificates&#39;</span><span class="p">;</span>
+  <span class="nv">$key</span> <span class="o">=</span> <span class="s1">&#39;gift_certificate&#39;</span><span class="p">;</span>
+
+  <span class="c1">// Specify &#39;to&#39; and &#39;from&#39; addresses.</span>
+  <span class="nv">$to</span> <span class="o">=</span> <span class="nv">$variables</span><span class="p">[</span><span class="s1">&#39;email&#39;</span><span class="p">];</span>
+  <span class="nv">$from</span> <span class="o">=</span> <span class="nx">variable_get</span><span class="p">(</span><span class="s1">&#39;site_mail&#39;</span><span class="p">,</span> <span class="s1">&#39;admin@example.com&#39;</span><span class="p">);</span>
+  
+  <span class="nv">$params</span> <span class="o">=</span> <span class="nv">$variables</span><span class="p">;</span>
+
+  <span class="nv">$language</span> <span class="o">=</span> <span class="nx">language_default</span><span class="p">();</span>
+
+  <span class="nv">$send</span> <span class="o">=</span> <span class="k">TRUE</span><span class="p">;</span>
+
+  <span class="nv">$result</span> <span class="o">=</span> <span class="nx">drupal_mail</span><span class="p">(</span><span class="nv">$module</span><span class="p">,</span> <span class="nv">$key</span><span class="p">,</span> <span class="nv">$to</span><span class="p">,</span> <span class="nv">$language</span><span class="p">,</span> <span class="nv">$params</span><span class="p">,</span> <span class="nv">$from</span><span class="p">,</span> <span class="nv">$send</span><span class="p">);</span>  
+
+<span class="p">}</span></code></pre></div>
+
+<p>Standard stuff; note that we get the recipient (<code>$to</code>) from the parameters we passed through.</p>
+
+<p>This then relies on an implementation of <code>hook_mail()</code>:</p>
+
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="sd">/**</span>
+<span class="sd"> * Implements hook_mail().</span>
+<span class="sd"> */</span>
+<span class="k">function</span> <span class="nf">gift_certificates_mail</span><span class="p">(</span><span class="nv">$key</span><span class="p">,</span> <span class="o">&amp;</span><span class="nv">$message</span><span class="p">,</span> <span class="nv">$params</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">global</span> <span class="nv">$user</span><span class="p">;</span>
+  <span class="k">global</span> <span class="nv">$base_url</span><span class="p">;</span>
+  
+  <span class="nv">$options</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span>
+    <span class="s1">&#39;langcode&#39;</span> <span class="o">=&gt;</span> <span class="nv">$message</span><span class="p">[</span><span class="s1">&#39;language&#39;</span><span class="p">]</span><span class="o">-&gt;</span><span class="na">language</span><span class="p">,</span>
+  <span class="p">);</span>
+
+  <span class="k">switch</span> <span class="p">(</span><span class="nv">$key</span><span class="p">)</span> <span class="p">{</span>    
+    <span class="k">case</span> <span class="s1">&#39;gift_certificate&#39;</span><span class="o">:</span>
+
+      <span class="nv">$message</span><span class="p">[</span><span class="s1">&#39;subject&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nx">t</span><span class="p">(</span><span class="s1">&#39;@sender_name has sent you a @site-name gift certificate&#39;</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span><span class="s1">&#39;@sender_name&#39;</span> <span class="o">=&gt;</span> <span class="nv">$params</span><span class="p">[</span><span class="s1">&#39;sender_name&#39;</span><span class="p">],</span> <span class="s1">&#39;@site-name&#39;</span> <span class="o">=&gt;</span> <span class="nx">variable_get</span><span class="p">(</span><span class="s1">&#39;site_name&#39;</span><span class="p">,</span> <span class="s1">&#39;Drupal&#39;</span><span class="p">)),</span> <span class="nv">$options</span><span class="p">);</span>   
+
+      <span class="nv">$message</span><span class="p">[</span><span class="s1">&#39;body&#39;</span><span class="p">][]</span> <span class="o">=</span> <span class="nx">t</span><span class="p">(</span><span class="s1">&#39;@recipient_name,&#39;</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span><span class="s1">&#39;@recipient_name&#39;</span> <span class="o">=&gt;</span> <span class="nv">$params</span><span class="p">[</span><span class="s1">&#39;recipient_name&#39;</span><span class="p">]),</span> <span class="nv">$options</span><span class="p">);</span>
+
+      <span class="nv">$message</span><span class="p">[</span><span class="s1">&#39;body&#39;</span><span class="p">][]</span> <span class="o">=</span> <span class="nx">t</span><span class="p">(</span><span class="s1">&#39;@sender_name has sent you a gift certificate for @coupon_amount to spend at @site-name.&#39;</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span><span class="s1">&#39;@sender_name&#39;</span> <span class="o">=&gt;</span> <span class="nv">$params</span><span class="p">[</span><span class="s1">&#39;sender_name&#39;</span><span class="p">],</span> <span class="s1">&#39;@coupon_amount&#39;</span> <span class="o">=&gt;</span> <span class="nv">$params</span><span class="p">[</span><span class="s1">&#39;coupon_amount&#39;</span><span class="p">],</span> <span class="s1">&#39;@site-name&#39;</span> <span class="o">=&gt;</span> <span class="nx">variable_get</span><span class="p">(</span><span class="s1">&#39;site_name&#39;</span><span class="p">,</span> <span class="s1">&#39;Drupal&#39;</span><span class="p">)),</span> <span class="nv">$options</span><span class="p">);</span>
+
+      <span class="nv">$message</span><span class="p">[</span><span class="s1">&#39;body&#39;</span><span class="p">][]</span> <span class="o">=</span> <span class="nx">t</span><span class="p">(</span><span class="s1">&#39;To use your gift certificate, go to @site-url and enter the code: @coupon_code at checkout.&#39;</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span><span class="s1">&#39;@coupon_code&#39;</span> <span class="o">=&gt;</span> <span class="nv">$params</span><span class="p">[</span><span class="s1">&#39;coupon_code&#39;</span><span class="p">],</span> <span class="s1">&#39;@site-url&#39;</span> <span class="o">=&gt;</span> <span class="nv">$base_url</span><span class="p">),</span> <span class="nv">$options</span><span class="p">);</span>
+
+      <span class="k">if</span> <span class="p">(</span><span class="nb">strlen</span><span class="p">(</span><span class="nv">$params</span><span class="p">[</span><span class="s1">&#39;personal_message&#39;</span><span class="p">]))</span> <span class="p">{</span>
+        <span class="nv">$message</span><span class="p">[</span><span class="s1">&#39;body&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nx">t</span><span class="p">(</span><span class="s1">&#39;@sender_name says:&#39;</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span><span class="s1">&#39;@sender_name&#39;</span> <span class="o">=&gt;</span> <span class="nv">$params</span><span class="p">[</span><span class="s1">&#39;sender_name&#39;</span><span class="p">]),</span> <span class="nv">$options</span><span class="p">);</span>           
+        <span class="nv">$message</span><span class="p">[</span><span class="s1">&#39;body&#39;</span><span class="p">][]</span> <span class="o">=</span> <span class="nv">$params</span><span class="p">[</span><span class="s1">&#39;personal_message&#39;</span><span class="p">];</span>
+      <span class="p">}</span>
+
+      <span class="k">break</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span></code></pre></div>
+
+<p>This simply takes the values we&#39;ve collected – recipient name, sender name, personal message, coupon amount (which we&#39;ve already formatted) and coupon code, as well as the site name and its URL – and builds the email to send to the coupon&#39;s recipient.</p>
+
+<p>And that&#39;s it, basic gift certificate functionality. It&#39;s not quite there, as there are a few other considerations:</p>
+
+<ul>
+<li>  If an order contains <em>only</em> gift certificates, we probably shouldn&#39;t apply any shipping charges</li>
+<li>  You may need to enable Commerce No Payment in order to allow people to pay the full balance on an order using a gift certificate</li>
+</ul>
+
+<p>...but, hopefully, this will get you started.</p>
+
+	</div>
+
+	
+	<p class="tags">Tagged with:
+	
+  <a href="/tag/drupal">Drupal</a> 
+	
+  <a href="/tag/drupal-commerce">Drupal Commerce</a> 
+	
+	</p>
+	
+
+	<!--
+	<div class="author">
+		<a href="https://twitter.com/lukaswhite" title="Twitter">Twitter</a>
+		<a href="https://plus.google.com/+LukasWhiteWebDeveloper" title="My Google+ Profile">Google+</a>
+	</div>	
+-->
+
+	<div id="disqus_thread"></div>
+	<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">Comments powered by Disqus.</a></noscript>
+	<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+</article>
+
+<aside class="five columns">
+	
+	<h4>About Me</h4>
+
+<p>I&#39;m a web developer based in Manchester, England. I also design websites.  I generally favour open-source technologies such as PHP, MySQL and JQuery, and I have extensive experience using Drupal.</p>
+
+
+	<div class="block tag-cloud">
+			 	<h4>Tags</h4>
+			 	<ul class="tags">
+				
+	    		<li><a href="/blog/tags/drupal">Drupal</a></li>
+				
+	    		<li><a href="/blog/tags/mobile">mobile</a></li>
+				
+	    		<li><a href="/blog/tags/rwd">RWD</a></li>
+				
+	    		<li><a href="/blog/tags/responsive-web-design">responsive web design</a></li>
+				
+	    		<li><a href="/blog/tags/deployment">deployment</a></li>
+				
+	    		<li><a href="/blog/tags/prowl">Prowl</a></li>
+				
+	    		<li><a href="/blog/tags/push-notifications">push notifications</a></li>
+				
+	    		<li><a href="/blog/tags/concrete5">Concrete5</a></li>
+				
+	    		<li><a href="/blog/tags/cms">CMS</a></li>
+				
+	    		<li><a href="/blog/tags/tutorials">tutorials</a></li>
+				
+	    		<li><a href="/blog/tags/php">PHP</a></li>
+				
+	    		<li><a href="/blog/tags/laravel">Laravel</a></li>
+				
+	    		<li><a href="/blog/tags/frameworks">frameworks</a></li>
+				
+	    		<li><a href="/blog/tags/facebook">Facebook</a></li>
+				
+	    		<li><a href="/blog/tags/drupal-7">Drupal 7</a></li>
+				
+	    		<li><a href="/blog/tags/ux">UX</a></li>
+				
+	    		<li><a href="/blog/tags/less">Less</a></li>
+				
+	    		<li><a href="/blog/tags/mysql">MySQL</a></li>
+				
+	    		<li><a href="/blog/tags/writing">writing</a></li>
+				
+	    		<li><a href="/blog/tags/sitepoint">Sitepoint</a></li>
+				
+	    		<li><a href="/blog/tags/articles">articles</a></li>
+				
+	    		<li><a href="/blog/tags/spotify">Spotify</a></li>
+				
+	    		<li><a href="/blog/tags/drupal-commerce">Drupal Commerce</a></li>
+				
+	    		<li><a href="/blog/tags/bash">Bash</a></li>
+				
+	    		<li><a href="/blog/tags/git">Git</a></li>
+				
+	    		<li><a href="/blog/tags/apache">Apache</a></li>
+				
+	    		<li><a href="/blog/tags/workflow">Workflow</a></li>
+				
+	    		<li><a href="/blog/tags/foundation">Foundation</a></li>
+				
+	    		<li><a href="/blog/tags/gravatar">Gravatar</a></li>
+				
+	    		<li><a href="/blog/tags/jquery">JQuery</a></li>
+				
+	    		<li><a href="/blog/tags/geo">Geo</a></li>
+				
+	    		<li><a href="/blog/tags/backbone">Backbone</a></li>
+				
+	    		<li><a href="/blog/tags/homestead">Homestead</a></li>
+				
+	    		<li><a href="/blog/tags/elasticsearch">Elasticsearch</a></li>
+				
+	    		<li><a href="/blog/tags/jekyll">Jekyll</a></li>
+				
+	    		<li><a href="/blog/tags/grunt">Grunt</a></li>
+				
+				</ul>
+			</div>
+
+</aside>
+
+
+<script type="text/javascript">    
+	var disqus_shortname = 'lukaswhite';
+    
+	(function() {
+		var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+		dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+		(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+	})();
+</script>
+ 
+  </div>
+
+  <!-- Footer begins ========================================================================== -->
+  <footer id="footer">
+    <hr>
+    <div class="eight columns">
+      <ul id="footerLinks">
+        <li>&copy; 2014 Lukas White. All rights reserved.</li>        
+        <li><a href="http://www.twitter.com/lukaswhite" target="_blank">@lukaswhite</a></li>              
+      </ul>
+    </div>
+    <div class="eight columns right">
+      <ul class="social small">
+        <li><a class="linkedin" href="http://uk.linkedin.com/in/lukaswhite" target="_blank"><span>View my LinkedIn Profile</span></a></li>
+        <li><a class="twitter" href="http://www.twitter.com/lukaswhite" target="_blank"><span>Follow me on Twitter</span></a></li>
+        <li><a class="facebook" href="http://www.facebook.com/lukas.white.freelance.web.developer" target="_blank"><span>Find me on Facebook</span></a></li>
+        <li><a class="github" href="https://github.com/lukaswhite" target="_blank"><span>Find me on Github</span></a></li>
+      </ul>
+    </div>
+    <hr>
+    <div class="sixteen columns centered">
+      <p>Powered by <a href="http://www.typeandgrids.com" target="_blank">Type &amp; Grids</a>, <a href="http://jekyllrb.com/">Jekyll</a> and <a href="https://github.com/erikhuda/thor">Thor</a></p>
+    </div>
+  </footer>
+  <!-- Footer ends ============================================================================ -->
+    
+</div><!-- container -->
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-3485550-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</body>
+</html>

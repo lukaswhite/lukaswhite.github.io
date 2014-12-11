@@ -1,0 +1,276 @@
+<!doctype html>
+<!--[if lt IE 7 ]><html class="ie ie6" lang="en"> <![endif]-->
+<!--[if IE 7 ]><html class="ie ie7" lang="en"> <![endif]-->
+<!--[if IE 8 ]><html class="ie ie8" lang="en"> <![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!--><html lang="en"> <!--<![endif]-->
+<head>
+<meta charset="utf-8">
+
+<!--
+••••••••••••••••••••••••
+
+Powered by Type & Grids™
+www.typeandgrids.com
+
+••••••••••••••••••••••••
+-->
+
+<title>Using an Additional Database in Drupal 7</title>
+<meta name="description" content="The website of Lukas White, Manchester-based Freelance Web Designer and Developer">
+<meta name="author" content="Lukas White">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+<!-- CSS
+================================================================================================= -->
+<link rel="stylesheet" href="/dist/styles.min.css">
+
+<!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+
+<!-- Favicons
+================================================================================================= -->
+<link rel="shortcut icon" href="/favicon.ico">
+<link rel="apple-touch-icon" href="images/favicons/apple-touch-icon.png">
+<link rel="apple-touch-icon" sizes="72x72" href="images/favicons/apple-touch-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="114x114" href="images/favicons/apple-touch-icon-114x114.png">
+
+</head>
+<body>
+
+<div class="container">
+  
+  <!-- Header begins ========================================================================== -->
+  <header id="page-header" class="sixteen columns">
+    <div id="logo">
+      <a href="/">
+        <h1>Lukas White</h1>
+        <h2>Freelance Web Developer</h2>
+      </a>
+      <!--
+      <img src="images/logo.png" width="275" height="35" alt="Logo" />
+      -->
+    </div>
+    <nav>
+      <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/about">About</a></li>
+        <li><a href="/blog">Blog</a></li>
+        <li><a href="/work">Work</a></li>
+        <li><a href="/contact">Contact</a></li>        
+      </ul>
+    </nav>
+    <hr />
+  </header>
+  <!-- Header ends ============================================================================ -->
+  
+  <div id="content" class="content">
+  <article class="eleven columns post">
+	<h2>Using an Additional Database in Drupal 7</h2>
+	<p class="meta"> &ndash; <time datetime="2011-08-16">16<sup>th</sup> August, 2011</time></p>
+
+	<div class="body">
+		<p>One of the nice, lesser-known features of Drupal 7 is the ability to use additional databases and switch at ease. This might be useful for external databases, or if you have another database in an alternative format – perhaps you have an SQLite database that for performance reasons, you don’t wish to migrate. (Yes, Drupal 7 now supports SQLite!) The configuration can be a little confusing at first, so let’s look at a <code>settings.php</code> file set up to use two databases: <code>drupal</code> on <code>Localhost</code>, and <code>db2</code> situated at <code>db.example.com</code>.</p>
+
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="nv">$databases</span> <span class="o">=</span> <span class="k">array</span> <span class="p">(</span>
+  <span class="s1">&#39;default&#39;</span> <span class="o">=&gt;</span> 
+  <span class="k">array</span> <span class="p">(</span>
+    <span class="s1">&#39;default&#39;</span> <span class="o">=&gt;</span> 
+    <span class="k">array</span> <span class="p">(</span>
+      <span class="s1">&#39;database&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;drupal&#39;</span><span class="p">,</span>
+      <span class="s1">&#39;username&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;username&#39;</span><span class="p">,</span>
+      <span class="s1">&#39;password&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;password&#39;</span><span class="p">,</span>
+      <span class="s1">&#39;host&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;localhost&#39;</span><span class="p">,</span>
+      <span class="s1">&#39;port&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+      <span class="s1">&#39;driver&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;mysql&#39;</span><span class="p">,</span>
+      <span class="s1">&#39;prefix&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+    <span class="p">),</span>
+  <span class="p">),</span>
+  <span class="s1">&#39;external&#39;</span> <span class="o">=&gt;</span> 
+  <span class="k">array</span> <span class="p">(</span>
+    <span class="s1">&#39;default&#39;</span> <span class="o">=&gt;</span> 
+    <span class="k">array</span> <span class="p">(</span>
+      <span class="s1">&#39;database&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;db1&#39;</span><span class="p">,</span>
+      <span class="s1">&#39;username&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;username2&#39;</span><span class="p">,</span>
+      <span class="s1">&#39;password&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;password2&#39;</span><span class="p">,</span>
+      <span class="s1">&#39;host&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;db.example.com&#39;</span><span class="p">,</span>
+      <span class="s1">&#39;port&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+      <span class="s1">&#39;driver&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;mysql&#39;</span><span class="p">,</span>
+      <span class="s1">&#39;prefix&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+    <span class="p">),</span>
+  <span class="p">),</span>
+<span class="p">);</span></code></pre></div>
+
+<p>The file is fairly self-explanatory – the default database is called <code>drupal</code> and the second database is keyed <code>external</code> (i.e., the <strong>connection key</strong>). The confusion might lie in the nested <code>default</code>. In addition to allowing additional, separate databases, Drupal now allows master/slave configurations. In the example above the second level <code>default</code> is the <strong>target</strong>, and refers to the <em>master</em> server – as does the second. If you examine the code it can become quite easy to confuse whether <code>default</code> refers to the default database, the master database or the additional, master database. (perhaps <code>master</code> would have been a better term?) just remember, connection key followed by target. Switching databases in your code is simple: </p>
+
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="nx">db_set_active</span><span class="p">(</span><span class="s1">&#39;external&#39;</span><span class="p">);</span></code></pre></div>
+
+<p>Any subsequent database operations (for example, <code>db_select</code>) will now take place on your second database. There’s a caveat – you <em>must</em> switch back to the default database when you’ve done. Otherwise you’ll get tell-tale error; a “Base table or view not found”, usually something like one of Drupal’s cache tables, or commonly the <code>block</code> table – either way, the error message will tell you it’s your database as the table names will be prefixed with the schema in the error message. Switching back to the default database is easy; no key is required as the default is assumed, thus: </p>
+
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="nx">db_set_active</span><span class="p">();</span></code></pre></div>
+
+<p>Hope this helps.</p>
+
+	</div>
+
+	
+	<p class="tags">Tagged with:
+	
+  <a href="/tag/drupal">Drupal</a> 
+	
+  <a href="/tag/drupal-7">Drupal 7</a> 
+	
+	</p>
+	
+
+	<!--
+	<div class="author">
+		<a href="https://twitter.com/lukaswhite" title="Twitter">Twitter</a>
+		<a href="https://plus.google.com/+LukasWhiteWebDeveloper" title="My Google+ Profile">Google+</a>
+	</div>	
+-->
+
+	<div id="disqus_thread"></div>
+	<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">Comments powered by Disqus.</a></noscript>
+	<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+</article>
+
+<aside class="five columns">
+	
+	<h4>About Me</h4>
+
+<p>I&#39;m a web developer based in Manchester, England. I also design websites.  I generally favour open-source technologies such as PHP, MySQL and JQuery, and I have extensive experience using Drupal.</p>
+
+
+	<div class="block tag-cloud">
+			 	<h4>Tags</h4>
+			 	<ul class="tags">
+				
+	    		<li><a href="/blog/tags/drupal">Drupal</a></li>
+				
+	    		<li><a href="/blog/tags/mobile">mobile</a></li>
+				
+	    		<li><a href="/blog/tags/rwd">RWD</a></li>
+				
+	    		<li><a href="/blog/tags/responsive-web-design">responsive web design</a></li>
+				
+	    		<li><a href="/blog/tags/deployment">deployment</a></li>
+				
+	    		<li><a href="/blog/tags/prowl">Prowl</a></li>
+				
+	    		<li><a href="/blog/tags/push-notifications">push notifications</a></li>
+				
+	    		<li><a href="/blog/tags/concrete5">Concrete5</a></li>
+				
+	    		<li><a href="/blog/tags/cms">CMS</a></li>
+				
+	    		<li><a href="/blog/tags/tutorials">tutorials</a></li>
+				
+	    		<li><a href="/blog/tags/php">PHP</a></li>
+				
+	    		<li><a href="/blog/tags/laravel">Laravel</a></li>
+				
+	    		<li><a href="/blog/tags/frameworks">frameworks</a></li>
+				
+	    		<li><a href="/blog/tags/facebook">Facebook</a></li>
+				
+	    		<li><a href="/blog/tags/drupal-7">Drupal 7</a></li>
+				
+	    		<li><a href="/blog/tags/ux">UX</a></li>
+				
+	    		<li><a href="/blog/tags/less">Less</a></li>
+				
+	    		<li><a href="/blog/tags/mysql">MySQL</a></li>
+				
+	    		<li><a href="/blog/tags/writing">writing</a></li>
+				
+	    		<li><a href="/blog/tags/sitepoint">Sitepoint</a></li>
+				
+	    		<li><a href="/blog/tags/articles">articles</a></li>
+				
+	    		<li><a href="/blog/tags/spotify">Spotify</a></li>
+				
+	    		<li><a href="/blog/tags/drupal-commerce">Drupal Commerce</a></li>
+				
+	    		<li><a href="/blog/tags/bash">Bash</a></li>
+				
+	    		<li><a href="/blog/tags/git">Git</a></li>
+				
+	    		<li><a href="/blog/tags/apache">Apache</a></li>
+				
+	    		<li><a href="/blog/tags/workflow">Workflow</a></li>
+				
+	    		<li><a href="/blog/tags/foundation">Foundation</a></li>
+				
+	    		<li><a href="/blog/tags/gravatar">Gravatar</a></li>
+				
+	    		<li><a href="/blog/tags/jquery">JQuery</a></li>
+				
+	    		<li><a href="/blog/tags/geo">Geo</a></li>
+				
+	    		<li><a href="/blog/tags/backbone">Backbone</a></li>
+				
+	    		<li><a href="/blog/tags/homestead">Homestead</a></li>
+				
+	    		<li><a href="/blog/tags/elasticsearch">Elasticsearch</a></li>
+				
+	    		<li><a href="/blog/tags/jekyll">Jekyll</a></li>
+				
+	    		<li><a href="/blog/tags/grunt">Grunt</a></li>
+				
+				</ul>
+			</div>
+
+</aside>
+
+
+<script type="text/javascript">    
+	var disqus_shortname = 'lukaswhite';
+    
+	(function() {
+		var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+		dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+		(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+	})();
+</script>
+ 
+  </div>
+
+  <!-- Footer begins ========================================================================== -->
+  <footer id="footer">
+    <hr>
+    <div class="eight columns">
+      <ul id="footerLinks">
+        <li>&copy; 2014 Lukas White. All rights reserved.</li>        
+        <li><a href="http://www.twitter.com/lukaswhite" target="_blank">@lukaswhite</a></li>              
+      </ul>
+    </div>
+    <div class="eight columns right">
+      <ul class="social small">
+        <li><a class="linkedin" href="http://uk.linkedin.com/in/lukaswhite" target="_blank"><span>View my LinkedIn Profile</span></a></li>
+        <li><a class="twitter" href="http://www.twitter.com/lukaswhite" target="_blank"><span>Follow me on Twitter</span></a></li>
+        <li><a class="facebook" href="http://www.facebook.com/lukas.white.freelance.web.developer" target="_blank"><span>Find me on Facebook</span></a></li>
+        <li><a class="github" href="https://github.com/lukaswhite" target="_blank"><span>Find me on Github</span></a></li>
+      </ul>
+    </div>
+    <hr>
+    <div class="sixteen columns centered">
+      <p>Powered by <a href="http://www.typeandgrids.com" target="_blank">Type &amp; Grids</a>, <a href="http://jekyllrb.com/">Jekyll</a> and <a href="https://github.com/erikhuda/thor">Thor</a></p>
+    </div>
+  </footer>
+  <!-- Footer ends ============================================================================ -->
+    
+</div><!-- container -->
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-3485550-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</body>
+</html>

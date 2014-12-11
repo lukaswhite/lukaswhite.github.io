@@ -1,0 +1,5 @@
+RewriteEngine On
+RewriteRule ^/blog/post/2011/lavarel-php-framework-walkthrough$ /blog/post/2011/laravel-php-framework-walkthrough [R=301,L]
+RewriteRule ^/drupal-development$ /drupal-developer-manchester [R=301,L]
+
+ErrorDocument 404 /page-not-found/index.html

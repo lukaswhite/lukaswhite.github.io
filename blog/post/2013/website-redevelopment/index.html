@@ -1,0 +1,394 @@
+<!doctype html>
+<!--[if lt IE 7 ]><html class="ie ie6" lang="en"> <![endif]-->
+<!--[if IE 7 ]><html class="ie ie7" lang="en"> <![endif]-->
+<!--[if IE 8 ]><html class="ie ie8" lang="en"> <![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!--><html lang="en"> <!--<![endif]-->
+<head>
+<meta charset="utf-8">
+
+<!--
+••••••••••••••••••••••••
+
+Powered by Type & Grids™
+www.typeandgrids.com
+
+••••••••••••••••••••••••
+-->
+
+<title>Website Re-Development</title>
+<meta name="description" content="The website of Lukas White, Manchester-based Freelance Web Designer and Developer">
+<meta name="author" content="Lukas White">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+<!-- CSS
+================================================================================================= -->
+<link rel="stylesheet" href="/dist/styles.min.css">
+
+<!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+
+<!-- Favicons
+================================================================================================= -->
+<link rel="shortcut icon" href="/favicon.ico">
+<link rel="apple-touch-icon" href="images/favicons/apple-touch-icon.png">
+<link rel="apple-touch-icon" sizes="72x72" href="images/favicons/apple-touch-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="114x114" href="images/favicons/apple-touch-icon-114x114.png">
+
+</head>
+<body>
+
+<div class="container">
+  
+  <!-- Header begins ========================================================================== -->
+  <header id="page-header" class="sixteen columns">
+    <div id="logo">
+      <a href="/">
+        <h1>Lukas White</h1>
+        <h2>Freelance Web Developer</h2>
+      </a>
+      <!--
+      <img src="images/logo.png" width="275" height="35" alt="Logo" />
+      -->
+    </div>
+    <nav>
+      <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/about">About</a></li>
+        <li><a href="/blog">Blog</a></li>
+        <li><a href="/work">Work</a></li>
+        <li><a href="/contact">Contact</a></li>        
+      </ul>
+    </nav>
+    <hr />
+  </header>
+  <!-- Header ends ============================================================================ -->
+  
+  <div id="content" class="content">
+  <article class="eleven columns post">
+	<h2>Website Re-Development</h2>
+	<p class="meta"> &ndash; <time datetime="2013-08-11">11<sup>th</sup> August, 2013</time></p>
+
+	<div class="body">
+		<p>Until very recently, this website was powered by Drupal.  Now although Drupal&#39;s great in a whole raft of situations, there are times when either it&#39;s overkill for something small, or just doesn&#39;t fit into one&#39;s workflow.  I came to realise that both of these applied to this site, so when it came to re-developing, I decided to abandon Drupal for the site altogether.</p>
+
+<p>In the end, I decided to rebuild the site using Jekyll, along with a few other tools along the way.  </p>
+
+<p>This post explains the motivations behind the decision, what I did next and some of the challenges I faced along the way.</p>
+
+<h3>The Need for Re-development</h3>
+
+<p>There were several aspects that made re-developing my site something of a priority.</p>
+
+<p>First, it wasn&#39;t mobile-friendly.  I may have been able to get away with that some years ago when I first drafted the site, but now that&#39;s just not acceptable.  After weighing the pros and cons of a responsive vs a separate mobile site, I decided on the former - and the only way to do that would be to start the front end build again from scratch.</p>
+
+<p>Secondly, the site was running Drupal 6.  When I first built the site, Seven was in the offing, but not yet secure or stable enough for production.  Staying with Drupal would have meant an upgrade, and moving between versions 6 and 7 isn&#39;t trivial.</p>
+
+<p>Lastly, the structure of the site was no longer ideal.  My <a href="/work/portfolio">work</a> of late has included <a href="/work/open-source">open-source development</a> and <a href="/work/writing">lots of writing</a>, so a <a href="/work/portfolio">portfolio</a> only told half the story.</p>
+
+<h3>Other Factors</h3>
+
+<h4>Workflow</h4>
+
+<p>Though the entire site was content-managed, the vast majority of my time was spent on the blog - the rest rarely changed.  Although I had a WYSIWYG editor installed I was far more likely to use raw HTML, and often use the tools I use every day - such as Sublime Text - and then copying between applications, rather than editing in the browser.  As such, it made sense from a workflow point-of-view to switch to something that closer resembles my development process.</p>
+
+<p>I&#39;ve also become quite a fan of Markdown of late.</p>
+
+<h4>Bloat</h4>
+
+<p>For such a simple site, there sure was a lot of it.  </p>
+
+<h4>Performance</h4>
+
+<p>There were time when the site ran pretty slow.  Largely this was down to the fact that I have all sorts of projects running on the same box, and also because there have been times when the site has taken something of a hammering - particularly whe I release a new article.  I wanted my site to perform the best it possibly could, without throwing server resources at the problem.</p>
+
+<h3>Curiosity</h3>
+
+<p>Then there was the final motivation - I wanted to try something a little different.  There&#39;s no doubt that moving sites from a CMS to static is quite &quot;cool&quot; right now; maybe there was an element of that, but it&#39;s also true that the vast majority of the projects I&#39;m involved in use frameworks or CMS&#39;s, and I wanted to try stripping back the complexity of those, and try something new.  Enter Jekyll, which although I&#39;d looked at I hadn&#39;t really used.</p>
+
+<h3>What had to Go</h3>
+
+<p>In moving from a fully-featured CMS to a static site, there were a number of things that would have to go - or, at least, be re-thought.</p>
+
+<h4>Comments</h4>
+
+<p>Most of my posts attracted some excellent comments.  Clearly comments are something that aren&#39;t supported with a static site, at least without using something like Disqus.</p>
+
+<p>However, with comments you always have to weigh up the pros of inviting discussion and gaining useful insight, with the effort involved in fighting spam.  I used a number of the tools at my disposal to help the fight on my Drupal site - primarily, moderation and Mollom.  I deliberately opted against CAPTCHA - as well as being far from fool-proof, I personally find them a significant hinderance.  </p>
+
+<p>Despite my best efforts, the sheer amount of spam - including a week of sustained attacks that had led me to disable comments anyway - made the decision to put aisde the lack of a commenting system in my decision to move to a static site.</p>
+
+<h4>Dynamic Image Re-sizing</h4>
+
+<p>Drupal&#39;s image styles (formerly imagecache) enabled me to upload a single image for something, and have the CMS take care of any necessary resizing.  There are <a href="https://github.com/zroger/jekyll-minimagick">solutions for Jekyll</a>, but even then it became clear that this wasn&#39;t a priority.  I also found that images weren&#39;t always resized the way I wanted them, and setting the compression is something that varies according to the image - and can only, I feel, be done by eye.  As such, losing this particular piece of functionality wasn&#39;t a big deal.</p>
+
+<h4>Other Features</h4>
+
+<p>Of course Drupal provides many, many other features - either in core, via third-party modules, or by writing your own.  But I didn&#39;t <em>need</em> anything else.  I didn&#39;t <em>need</em> to be able to switch themes, to translate content, dynamic views or a hundred and one content types.  In fact, the sheer amount of unused functionality just added to the bloat.</p>
+
+<h3>Other Advantages</h3>
+
+<p>One of the problems with a CMS is that as well as having to keep a backup - preferably in source control! - of all your code, there&#39;s also the database to worry about.  Indeed, with Drupal in addition to all the content being stored in the database, so too is much of the configuration (fortunately, Drupal 8 is changing this).  So that&#39;s two things to worry about, and with a database that means scheduled backups.  It&#39;s also much more complex to use version control with SQl sumps.  With a static site, there are no such problems - the whole thing; templates, code, and content is in one place and can be safely stored away in Git.</p>
+
+<p>I&#39;ve reworked the design slightly, replaced all the CSS and underlying HTML, and tidied up some of the visuals.  </p>
+
+<h3>Source-code Highlighting</h3>
+
+<p>I use a lot of code samples in my posts, so source-code highlighting was a must.  Fortunately, Jekyll supports it by default using <a href="http://pygments.org/">Pygments</a>.</p>
+
+<p>That said, there are a few steps required to make it work - the actual steps will depend on your system, and what you already have installed.</p>
+
+<p>First, I had to install Pygments.  I installed on a Mac, so I already had Python installed, so I simply had to do this:</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">sudo easy_install pygments
+</code></pre></div>
+<p>I also needed to ensure it was installed in my <code>_config.yml</code> file:</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">pygments: true
+</code></pre></div>
+<p>The next thing I needed to do was create the css file:</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">pygmentize -S default -f html &gt; css/pygments.css
+</code></pre></div>
+<p>And the step I forgot for a while, leading to much unecessary head-scratching - including the CSS in my layout!</p>
+
+<p>At first, I struggled to get PHP code to highlight.  Turns out that by default, Pygments expects <code>&lt;?php</code> tags, unless you use the <code>startinline</code> option:</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">{{% highlight php startinline %}}
+</code></pre></div>
+<p>Using Pygments - which formats source-code using CSS - solved one of the problems I had with my existing site, which was that the Javascript-based solution I was using was a little tempremental.  It also caused problems on mobile - though to be fair, I do find code quite difficult to read on mobiles regardless.  Using CSS to format the code seems much more natural than using a plugin.</p>
+
+<h3>Portfolio</h3>
+
+<p>To use CMS parlance, Jekyll only supports one &quot;content type&quot;, and that&#39;s blog posts.  In my old site, my portfolio was comprised of a &quot;project&quot; content type, and I felt it would be easier to manage if I had something similar in this version of the site.</p>
+
+<p>https://github.com/flatterline/jekyll-plugins</p>
+
+<h3>Blocks</h3>
+
+<p>http://stackoverflow.com/questions/8772404/jekyll-not-interpreting-markdown</p>
+
+<p>In <code>_plugins/unident.rb</code>:</p>
+
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="k">module</span> <span class="nn">Jekyll</span>
+  <span class="k">module</span> <span class="nn">UnindentFilter</span>
+    <span class="k">def</span> <span class="nf">unindent</span> <span class="n">input</span>
+      <span class="n">input</span><span class="o">.</span><span class="n">lstrip</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="no">Liquid</span><span class="o">::</span><span class="no">Template</span><span class="o">.</span><span class="n">register_filter</span> <span class="no">Jekyll</span><span class="o">::</span><span class="no">UnindentFilter</span></code></pre></div>
+
+<p>https://github.com/agelber/jekyll-rss</p>
+
+<h3>Twitter Feed</h3>
+
+<p>Another challenge I faced was the Twitter feed, that appears on the front page of the site.</p>
+
+<p>Because it was a static site and this involved dynamic content, it made sense to explore a client-side solutio; i.e., Javascript.  </p>
+
+<p>Only a few months previous, this would have been a doddle - however, my website redevelopment came shortly after Twitter finally retired the old REST API - requiring developers to use OAuth, even if all you want to do is fetch a public timeline.</p>
+
+<p>The problem with OAuth, of course, is that your credentials need to be kept well out of view - which makes things difficult if you&#39;re building a client-side application.</p>
+
+<p>My solution - as suggested by <a href="http://mikerogers.io/2013/02/25/how-use-twitter-oauth-1-1-javascriptjquery.html">this excellent article</a> - was to build a simple proxy.</p>
+
+<p>As such, instead of fetching the data from Twitter, my JQuery code simply needed to pass the required URL to my proxy, and then that would be responsible for making the call to Twitter, authenticating using OAuth.</p>
+
+<p>The next challenge was to format the tweets.  For this I found <a href="https://github.com/remy/twitterlib">Remy Sharp&#39;s twitterlib</a>.  However, the format method was unsuitable, because it added avatars - unecessary for one person&#39;s timeline, I feel - and the format didn&#39;t fit the site.  Instead, I used the method <code>twitterlib.ify.clean</code>.  Here&#39;s the code in full:</p>
+
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">$</span><span class="p">(</span><span class="nb">document</span><span class="p">).</span><span class="nx">ready</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="nx">$</span><span class="p">.</span><span class="nx">getJSON</span><span class="p">(</span><span class="s1">&#39;/twitter-proxy.php?url=&#39;</span><span class="o">+</span><span class="nb">encodeURIComponent</span><span class="p">(</span><span class="s1">&#39;statuses/user_timeline.json?screen_name=lukaswhite&amp;count=2&amp;include_rts=false&amp;exclude_replies=true&#39;</span><span class="p">),</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">){</span>
+        <span class="kd">var</span> <span class="nx">html</span> <span class="o">=</span> <span class="s1">&#39;&lt;ul&gt;&#39;</span><span class="p">;</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="nx">len</span><span class="o">=</span><span class="nx">d</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">&lt;</span><span class="nx">len</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span>
+        <span class="p">{</span> 
+            <span class="c1">//html += twitterlib.expandLinks(d[i]);</span>
+            <span class="nx">html</span> <span class="o">+=</span> <span class="s1">&#39;&lt;li&gt;&#39;</span> <span class="o">+</span> <span class="nx">twitterlib</span><span class="p">.</span><span class="nx">ify</span><span class="p">.</span><span class="nx">clean</span><span class="p">(</span><span class="nx">d</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">text</span><span class="p">);</span>
+            <span class="nx">html</span> <span class="o">+=</span> <span class="s1">&#39; &lt;span class=&quot;created&quot;&gt;&amp;mdash; &#39;</span> <span class="o">+</span> <span class="nx">twitterlib</span><span class="p">.</span><span class="nx">time</span><span class="p">.</span><span class="nx">datetime</span><span class="p">(</span><span class="nx">d</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">created_at</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;&lt;/span&gt;&#39;</span><span class="p">;</span> <span class="c1">// + &#39;&quot;&gt;&#39; + twitterlib.time.relative(d[i].created_at) + &#39;&lt;/span&gt;&lt;/a&gt;&#39;;</span>
+            <span class="nx">html</span> <span class="o">+=</span> <span class="s1">&#39;&lt;/li&gt;&#39;</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="nx">html</span> <span class="o">+=</span> <span class="s1">&#39;&lt;/ul&gt;&#39;</span><span class="p">;</span>
+        <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#tweets&#39;</span><span class="p">).</span><span class="nx">html</span><span class="p">(</span><span class="nx">html</span><span class="p">);</span>
+    <span class="p">});</span>
+<span class="p">});</span></code></pre></div>
+
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="nb">require</span> <span class="s1">&#39;date&#39;</span>
+
+<span class="k">module</span> <span class="nn">Jekyll</span>
+  <span class="k">module</span> <span class="nn">NiceDate</span>
+    <span class="k">def</span> <span class="nf">nice_date</span><span class="p">(</span><span class="n">input</span><span class="p">)</span>
+      <span class="n">d</span> <span class="o">=</span> <span class="n">input</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%e&quot;</span><span class="p">)</span>
+      <span class="nb">self</span><span class="o">.</span><span class="n">ordinalize</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">to_i</span><span class="p">)</span> <span class="o">+</span> <span class="n">input</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot; %B, %Y&quot;</span><span class="p">)</span>
+    <span class="k">end</span>
+    <span class="k">def</span> <span class="nf">ordinalize</span><span class="p">(</span><span class="n">number</span><span class="p">)</span>
+      <span class="k">if</span> <span class="p">(</span><span class="mi">11</span><span class="o">.</span><span class="n">.</span><span class="mi">13</span><span class="p">)</span><span class="o">.</span><span class="n">include?</span><span class="p">(</span><span class="n">number</span> <span class="o">%</span> <span class="mi">100</span><span class="p">)</span>
+        <span class="s2">&quot;</span><span class="si">#{</span><span class="n">number</span><span class="si">}</span><span class="s2">&lt;sup&gt;th&lt;/sup&gt;&quot;</span>
+      <span class="k">else</span>
+        <span class="k">case</span> <span class="n">number</span> <span class="o">%</span> <span class="mi">10</span>
+          <span class="k">when</span> <span class="mi">1</span><span class="p">;</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="n">number</span><span class="si">}</span><span class="s2">&lt;sup&gt;st&lt;/sup&gt;&quot;</span>
+          <span class="k">when</span> <span class="mi">2</span><span class="p">;</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="n">number</span><span class="si">}</span><span class="s2">&lt;sup&gt;nd&lt;/sup&gt;&quot;</span>
+          <span class="k">when</span> <span class="mi">3</span><span class="p">;</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="n">number</span><span class="si">}</span><span class="s2">&lt;sup&gt;rd&lt;/sup&gt;&quot;</span>
+          <span class="k">else</span>    <span class="s2">&quot;</span><span class="si">#{</span><span class="n">number</span><span class="si">}</span><span class="s2">&lt;sup&gt;th&lt;/sup&gt;&quot;</span>
+        <span class="k">end</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="no">Liquid</span><span class="o">::</span><span class="no">Template</span><span class="o">.</span><span class="n">register_filter</span><span class="p">(</span><span class="no">Jekyll</span><span class="o">::</span><span class="no">NiceDate</span><span class="p">)</span></code></pre></div>
+
+<p>http://truongtx.me/2013/01/09/display-liquid-code-in-jekyll/</p>
+
+	</div>
+
+	
+
+	<!--
+	<div class="author">
+		<a href="https://twitter.com/lukaswhite" title="Twitter">Twitter</a>
+		<a href="https://plus.google.com/+LukasWhiteWebDeveloper" title="My Google+ Profile">Google+</a>
+	</div>	
+-->
+
+	<div id="disqus_thread"></div>
+	<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">Comments powered by Disqus.</a></noscript>
+	<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+</article>
+
+<aside class="five columns">
+	
+	<h4>About Me</h4>
+
+<p>I&#39;m a web developer based in Manchester, England. I also design websites.  I generally favour open-source technologies such as PHP, MySQL and JQuery, and I have extensive experience using Drupal.</p>
+
+
+	<div class="block tag-cloud">
+			 	<h4>Tags</h4>
+			 	<ul class="tags">
+				
+	    		<li><a href="/blog/tags/drupal">Drupal</a></li>
+				
+	    		<li><a href="/blog/tags/mobile">mobile</a></li>
+				
+	    		<li><a href="/blog/tags/rwd">RWD</a></li>
+				
+	    		<li><a href="/blog/tags/responsive-web-design">responsive web design</a></li>
+				
+	    		<li><a href="/blog/tags/deployment">deployment</a></li>
+				
+	    		<li><a href="/blog/tags/prowl">Prowl</a></li>
+				
+	    		<li><a href="/blog/tags/push-notifications">push notifications</a></li>
+				
+	    		<li><a href="/blog/tags/concrete5">Concrete5</a></li>
+				
+	    		<li><a href="/blog/tags/cms">CMS</a></li>
+				
+	    		<li><a href="/blog/tags/tutorials">tutorials</a></li>
+				
+	    		<li><a href="/blog/tags/php">PHP</a></li>
+				
+	    		<li><a href="/blog/tags/laravel">Laravel</a></li>
+				
+	    		<li><a href="/blog/tags/frameworks">frameworks</a></li>
+				
+	    		<li><a href="/blog/tags/facebook">Facebook</a></li>
+				
+	    		<li><a href="/blog/tags/drupal-7">Drupal 7</a></li>
+				
+	    		<li><a href="/blog/tags/ux">UX</a></li>
+				
+	    		<li><a href="/blog/tags/less">Less</a></li>
+				
+	    		<li><a href="/blog/tags/mysql">MySQL</a></li>
+				
+	    		<li><a href="/blog/tags/writing">writing</a></li>
+				
+	    		<li><a href="/blog/tags/sitepoint">Sitepoint</a></li>
+				
+	    		<li><a href="/blog/tags/articles">articles</a></li>
+				
+	    		<li><a href="/blog/tags/spotify">Spotify</a></li>
+				
+	    		<li><a href="/blog/tags/drupal-commerce">Drupal Commerce</a></li>
+				
+	    		<li><a href="/blog/tags/bash">Bash</a></li>
+				
+	    		<li><a href="/blog/tags/git">Git</a></li>
+				
+	    		<li><a href="/blog/tags/apache">Apache</a></li>
+				
+	    		<li><a href="/blog/tags/workflow">Workflow</a></li>
+				
+	    		<li><a href="/blog/tags/foundation">Foundation</a></li>
+				
+	    		<li><a href="/blog/tags/gravatar">Gravatar</a></li>
+				
+	    		<li><a href="/blog/tags/jquery">JQuery</a></li>
+				
+	    		<li><a href="/blog/tags/geo">Geo</a></li>
+				
+	    		<li><a href="/blog/tags/backbone">Backbone</a></li>
+				
+	    		<li><a href="/blog/tags/homestead">Homestead</a></li>
+				
+	    		<li><a href="/blog/tags/elasticsearch">Elasticsearch</a></li>
+				
+	    		<li><a href="/blog/tags/jekyll">Jekyll</a></li>
+				
+	    		<li><a href="/blog/tags/grunt">Grunt</a></li>
+				
+				</ul>
+			</div>
+
+</aside>
+
+
+<script type="text/javascript">    
+	var disqus_shortname = 'lukaswhite';
+    
+	(function() {
+		var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+		dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+		(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+	})();
+</script>
+ 
+  </div>
+
+  <!-- Footer begins ========================================================================== -->
+  <footer id="footer">
+    <hr>
+    <div class="eight columns">
+      <ul id="footerLinks">
+        <li>&copy; 2014 Lukas White. All rights reserved.</li>        
+        <li><a href="http://www.twitter.com/lukaswhite" target="_blank">@lukaswhite</a></li>              
+      </ul>
+    </div>
+    <div class="eight columns right">
+      <ul class="social small">
+        <li><a class="linkedin" href="http://uk.linkedin.com/in/lukaswhite" target="_blank"><span>View my LinkedIn Profile</span></a></li>
+        <li><a class="twitter" href="http://www.twitter.com/lukaswhite" target="_blank"><span>Follow me on Twitter</span></a></li>
+        <li><a class="facebook" href="http://www.facebook.com/lukas.white.freelance.web.developer" target="_blank"><span>Find me on Facebook</span></a></li>
+        <li><a class="github" href="https://github.com/lukaswhite" target="_blank"><span>Find me on Github</span></a></li>
+      </ul>
+    </div>
+    <hr>
+    <div class="sixteen columns centered">
+      <p>Powered by <a href="http://www.typeandgrids.com" target="_blank">Type &amp; Grids</a>, <a href="http://jekyllrb.com/">Jekyll</a> and <a href="https://github.com/erikhuda/thor">Thor</a></p>
+    </div>
+  </footer>
+  <!-- Footer ends ============================================================================ -->
+    
+</div><!-- container -->
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-3485550-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</body>
+</html>

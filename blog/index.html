@@ -1,0 +1,961 @@
+<!doctype html>
+<!--[if lt IE 7 ]><html class="ie ie6" lang="en"> <![endif]-->
+<!--[if IE 7 ]><html class="ie ie7" lang="en"> <![endif]-->
+<!--[if IE 8 ]><html class="ie ie8" lang="en"> <![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!--><html lang="en"> <!--<![endif]-->
+<head>
+<meta charset="utf-8">
+
+<!--
+••••••••••••••••••••••••
+
+Powered by Type & Grids™
+www.typeandgrids.com
+
+••••••••••••••••••••••••
+-->
+
+<title>Lukas White // Web Developer // Blog</title>
+<meta name="description" content="The website of Lukas White, Manchester-based Freelance Web Designer and Developer">
+<meta name="author" content="Lukas White">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+<!-- CSS
+================================================================================================= -->
+<link rel="stylesheet" href="/dist/styles.min.css">
+
+<!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+
+<!-- Favicons
+================================================================================================= -->
+<link rel="shortcut icon" href="/favicon.ico">
+<link rel="apple-touch-icon" href="images/favicons/apple-touch-icon.png">
+<link rel="apple-touch-icon" sizes="72x72" href="images/favicons/apple-touch-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="114x114" href="images/favicons/apple-touch-icon-114x114.png">
+
+</head>
+<body>
+
+<div class="container">
+  
+  <!-- Header begins ========================================================================== -->
+  <header id="page-header" class="sixteen columns">
+    <div id="logo">
+      <a href="/">
+        <h1>Lukas White</h1>
+        <h2>Freelance Web Developer</h2>
+      </a>
+      <!--
+      <img src="images/logo.png" width="275" height="35" alt="Logo" />
+      -->
+    </div>
+    <nav>
+      <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/about">About</a></li>
+        <li><a href="/blog">Blog</a></li>
+        <li><a href="/work">Work</a></li>
+        <li><a href="/contact">Contact</a></li>        
+      </ul>
+    </nav>
+    <hr />
+  </header>
+  <!-- Header ends ============================================================================ -->
+  
+  <div id="content" class="content">
+  <div id="blog">  
+
+	<div class="eleven columns post">
+
+		<h2>Blog</h2>
+
+		
+		<article class="post clearfix">
+			<header>
+				<h3><a href="/blog/post/2014/easy-jekyll-deployment-grunt-git">Easy Jekyll Deployment with Grunt and Git</a></h3>		    		
+				<p class="meta"> &ndash; 12<sup>th</sup> September, 2014</p>
+			</header>
+			<div class="body excerpt">      
+				<p>I&#39;ve recently re-built this site using <a href="http://jekyllrb.com/">Jekyll</a>, for reasons I&#39;ll go into in another blog post. I wanted to make deploying changes really, really easy. In this post, I&#39;m going to detail my approach.</p>
+
+<h3>Hosting</h3>
+
+<p>Jekyll plays nicely with Github Pages. However, I haven&#39;t taken advantage of it, for two reasons. The first is that I have a number of unsupported plugins, so I can&#39;t take advantage of their automatic Jekyll building process. That&#39;s not necessarily an impediment to using Github Pages, since there are workarounds. A bigger issue is that you currently cannot use HTTPS with a custom domain, which is suddenly really important as far as search rankings go, following <a href="http://googlewebmastercentral.blogspot.co.uk/2014/08/https-as-ranking-signal.html">Google&#39;s recent announcement</a>.</p>
+
+<p>One of the great things about using Jekyll is that because it&#39;s all static files, hosting requirements are nominal. So, I decided to keep my <a href="https://www.digitalocean.com/?refcode=4bb9d458bcc0">Digital Ocean</a> droplet (disclaimer: that&#39;s an affiliate link). It&#39;s pretty low-spec, but if it comes to it, resizing a Droplet is a piece of cake.</p>
+
+<p>So that&#39;s the hosting, now I&#39;ll go through the steps involved in my deployment process.</p>
+
+<h3>Overview of the Deployment Steps</h3>
+
+<h4>Grunt</h4>
+
+<p>I&#39;m using <a href="http://gruntjs.com/">Grunt</a> to perform a number of tasks:</p>
+
+<ul>
+<li>Compiling some SASS files</li>
+<li>Concatenating the CSS</li>
+<li>Minifying all my CSS</li>
+</ul>
+
+<p>I&#39;ve configured a default task for these, so I simply need to run <code>grunt</code>. There are no Javascript-related tasks, such as linting or minifying, simply because there isn&#39;t any Javascript.</p>
+
+<p>I&#39;ve also added a task to optimize all my images, but haven&#39;t included it in my default Grunt configuration, simply because it takes a while - I just run it as and when I need to.</p>
+
+<h4>Jekyll</h4>
+
+<p>The next step is of course to run <code>jekyll build</code>. This regenerates the website in the <code>_site</code> directory. I&#39;ve set up Git so that this directory is included in the repository. This is contrary to a lot of setups, which deliberately ignore the built version of the site - but since I&#39;m building it locally, it&#39;s necessary to include it.</p>
+
+<h4>Git</h4>
+
+<p>The next step in my deployment process is to commit any changes to Git. Then, I&#39;m pushing those changes to the master branch on Bitbucket, as well as the &quot;live&quot; site by using a Git remote. I&#39;ll go through that part of the process shortly.</p>
+
+<h3>The Deployment Process</h3>
+
+<p>The first thing I did was add my SSH key to the Droplet, so I wouldn&#39;t need to enter a password everytime I deploy. This is really easy:</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nb">cd</span> ~
+cat .ssh/id_rsa.pub <span class="p">|</span> ssh me@example.com <span class="s1">&#39;cat &gt;&gt; .ssh/authorized_keys&#39;</span></code></pre></div>
+
+<p>The next step was to create a new directory on the remote server:</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nb">cd</span> /var/www
+mkdir example.com</code></pre></div>
+
+<p>Then I created a new, empty Git repository:</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nb">cd </span>example.com
+git init</code></pre></div>
+
+<p>I set the <code>receive.denyCurrent</code> Git setting to <code>ignore</code> for the repository - here&#39;s the complete file (<code>.git/config</code>) for demonstration:</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="o">[</span>core<span class="o">]</span>
+    <span class="nv">repositoryformatversion</span> <span class="o">=</span> 0
+    <span class="nv">filemode</span> <span class="o">=</span> <span class="nb">true</span>
+<span class="nb">   </span><span class="nv">bare</span> <span class="o">=</span> <span class="nb">false</span>
+<span class="nb">   </span><span class="nv">logallrefupdates</span> <span class="o">=</span> <span class="nb">true</span>
+<span class="o">[</span>receive<span class="o">]</span>
+    <span class="nv">denyCurrentBranch</span> <span class="o">=</span> ignore</code></pre></div>
+
+<p>Next, I configured Apache to point to <code>/var/www/example.com/_site</code>. </p>
+
+<p>Then I added a remote to my <strong>local</strong> Git repository:</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">git remote add production ssh://me@example.com/var/www/example.com</code></pre></div>
+
+<p>Next, I created a post-receive hook on the web server:</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">nano /var/www/example.com/.git/hooks/post-receive</code></pre></div>
+
+<p>Here are the contents of that file:</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="c">#!/bin/sh</span>
+<span class="nb">cd</span> ..
+<span class="nv">GIT_DIR</span><span class="o">=</span><span class="s1">&#39;.git&#39;</span>
+<span class="nv">GIT_WORK_TREE</span><span class="o">=</span>/var/www/example.com git checkout -f
+<span class="nb">umask </span><span class="m">002</span> <span class="o">&amp;&amp;</span> git reset --hard</code></pre></div>
+
+<p>Essentially, this synchronises the remote server (i.e. my web host)&#39;s copy of the Git repository which holds the site, whenever I do a <code>git push</code>.</p>
+
+<p>Note that this file needs to be made executable:</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">chmod +x /var/www/example.com/.git/hooks/post-receive</code></pre></div>
+
+<p>Next, my local deployment script. I created a file named simply <code>deploy</code> with the following contents:</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="c">#!/bin/bash</span>
+grunt
+jekyll build
+git add . -A
+git commit -am <span class="s2">&quot;Updated website&quot;</span>
+git push production master</code></pre></div>
+
+<p>This does the following:</p>
+
+<ol>
+<li>Runs my Grunt tasks (compiling SASS, concatenating and then minifying the CSS)</li>
+<li>Builds the site</li>
+<li>Adds any newly created files to Git. The -A flag (all) also ensures any deleted files are removed from Git (see <a href="http://www.geekgumbo.com/2010/05/16/removing-deleted-files-from-your-git-working-directory/">this post</a> for further explanation)</li>
+<li>Commits the changes to Git</li>
+<li>Pushes up to the remote server, where the Git hook takes care of updating the &quot;live site&quot;</li>
+</ol>
+
+<p>With all this in place, all I need to do to deploy my site is this:</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">./deploy</code></pre></div>
+
+<h3>Extending for Multiple Environments</h3>
+
+<p>If you have multiple environments - for example production and staging - you can expand this script to ask which one to push to. Here&#39;s the modified script:</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="c">#!/bin/bash</span>
+<span class="nv">prompt</span><span class="o">=</span><span class="s2">&quot;Pick an option: &quot;</span>
+<span class="nv">options</span><span class="o">=(</span><span class="s2">&quot;Production&quot;</span> <span class="s2">&quot;Staging&quot;</span><span class="o">)</span>
+
+<span class="nv">PS3</span><span class="o">=</span><span class="s2">&quot;$prompt &quot;</span>
+<span class="k">select</span> opt in <span class="s2">&quot;${options[@]}&quot;</span> <span class="s2">&quot;Quit&quot;</span><span class="p">;</span> <span class="k">do</span> 
+
+    <span class="k">case</span> <span class="s2">&quot;$REPLY&quot;</span> in
+
+    <span class="m">1</span> <span class="o">)</span> <span class="nv">env</span><span class="o">=</span><span class="s2">&quot;production&quot;</span><span class="p">;;</span>
+    <span class="m">2</span> <span class="o">)</span> <span class="nv">env</span><span class="o">=</span><span class="s2">&quot;staging&quot;</span><span class="p">;;</span>
+
+    <span class="k">$((</span> <span class="k">${#</span><span class="nv">options</span><span class="p">[@]</span><span class="k">}</span><span class="o">+</span><span class="m">1</span> <span class="k">))</span> <span class="o">)</span> <span class="nb">echo</span> <span class="s2">&quot;Exiting.&quot;</span><span class="p">;</span> <span class="nb">exit</span><span class="p">;;</span>
+    *<span class="o">)</span> <span class="nb">echo</span> <span class="s2">&quot;Invalid option. Try another one.&quot;</span><span class="p">;</span><span class="k">continue</span><span class="p">;;</span>
+
+    <span class="k">esac</span>
+    <span class="nb">break</span>
+
+<span class="k">done</span>
+
+<span class="nb">echo</span> <span class="s2">&quot;Pushing to $env&quot;</span>
+
+grunt
+jekyll build
+git add . -A
+git commit -am <span class="s2">&quot;Updated website&quot;</span>
+git push <span class="nv">$env</span> master</code></pre></div>
+
+<p>Now when you run it, you get the following:</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">&gt; ./deploy
+&gt; 1<span class="o">)</span> Production
+&gt; 2<span class="o">)</span> Staging
+&gt; 3<span class="o">)</span> Quit
+&gt; Pick an option:  1
+&gt; Pushing to production</code></pre></div>
+
+<p>That&#39;s it - deploying is now a piece of cake.</p>
+
+			</div>
+			<footer>
+				<p class="readmore"><a href="/blog/post/2014/easy-jekyll-deployment-grunt-git">Read more &raquo;</a></p>
+			</footer>
+		</article>
+		
+		<article class="post clearfix">
+			<header>
+				<h3><a href="/blog/post/2014/installing-elasticsearch-laravel-homestead">Installing Elasticsearch on Laravel Homestead</a></h3>		    		
+				<p class="meta"> &ndash; 3<sup>rd</sup> August, 2014</p>
+			</header>
+			<div class="body excerpt">      
+				<p>Here&#39;s a gist I created, showing how to install Elasticsearch on a Laravel Homestead box with just a few lines. Hope you find it useful.</p>
+
+<script src="https://gist.github.com/lukaswhite/c50a6cf82ce0b7aa6b2a.js"></script>
+
+			</div>
+			<footer>
+				<p class="readmore"><a href="/blog/post/2014/installing-elasticsearch-laravel-homestead">Read more &raquo;</a></p>
+			</footer>
+		</article>
+		
+		<article class="post clearfix">
+			<header>
+				<h3><a href="/blog/post/2014/building-applications-backbone-and-laravel-jst">Building Applications with Backbone and Laravel: JST</a></h3>		    		
+				<p class="meta"> &ndash; 13<sup>th</sup> April, 2014</p>
+			</header>
+			<div class="body excerpt">      
+				<p>You might well be used to developing Backbone views like this:</p>
+
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">MyApp</span><span class="p">.</span><span class="nx">Views</span><span class="p">.</span><span class="nx">SomeView</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">View</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>    
+  <span class="nx">template</span><span class="o">:</span> <span class="nx">_</span><span class="p">.</span><span class="nx">template</span><span class="p">(</span><span class="s1">&#39;&lt;ul&gt;&lt;% _.each(items, function(item){ %&gt;&lt;li&gt;&lt;%= item %&gt;&lt;/li&gt;&lt;% }); %&gt;&lt;/ul&gt;&#39;</span><span class="p">),</span>    
+  <span class="nx">el</span><span class="o">:</span> <span class="s1">&#39;#some-element&#39;</span><span class="p">,</span></code></pre></div>
+
+<p>This is all fine and well for simple structures, but can quickly get unwieldly if you&#39;re building markup of any significant size or complexity. It can also lead to all sorts of issues around readability.</p>
+
+<p>One alternative is to put more complex templates into separate HTML files:</p>
+
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="c1">// file: folder/template.html</span>
+
+<span class="o">&lt;</span><span class="nx">ul</span><span class="o">&gt;</span>
+ <span class="o">&lt;%</span> <span class="nx">_</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">items</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">item</span><span class="p">){</span> <span class="o">%&gt;</span>
+ <span class="o">&lt;</span><span class="nx">li</span><span class="o">&gt;</span> <span class="o">&lt;%=</span> <span class="nx">item</span> <span class="o">%&gt;</span> <span class="o">&lt;</span><span class="err">/li&gt;</span>
+ <span class="o">&lt;%</span> <span class="p">});</span> <span class="o">%&gt;</span>
+<span class="o">&lt;</span><span class="err">/ul&gt;</span></code></pre></div>
+
+<p>Each time you want to render a template, you can load in the template via AJAX or use RequireJS&#39;s <a href="http://requirejs.org/docs/api.html#text">text plugin</a>. Great for development, but pretty atrocious for performance, as it&#39;ll fire off untold numbers of HTTP requests.</p>
+
+<p>Using <a href="http://ricostacruz.com/backbone-patterns/#jst_templates">JST</a> allows you to develop templates in this way - spreading templates across separate files, organised into a logical hierarchy - but &quot;collapse&quot; them into variables which are available via a single JS file. This file can then be minified, or incorporated into a larger Javascript file using, for example, the RequireJS optimiser or Google Closure Compiler.</p>
+
+<p>Such a file looks a little like this:</p>
+
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="c1">// file: jst.js</span>
+
+<span class="kd">var</span> <span class="nx">JST</span> <span class="o">=</span> <span class="nx">JST</span> <span class="o">||</span> <span class="p">{};</span>
+<span class="nx">JST</span><span class="p">[</span><span class="s1">&#39;app/templates/folder/template.html&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nx">_</span><span class="p">.</span><span class="nx">template</span><span class="p">(</span><span class="s1">&#39;&lt;ul&gt;&lt;% _.each(items, function(item){ %&gt;&lt;li&gt;&lt;%= item %&gt;&lt;/li&gt;&lt;% }); %&gt;&lt;/ul&gt;&#39;</span><span class="p">);</span>
+<span class="nx">JST</span><span class="p">[</span><span class="s1">&#39;app/templates/folder/template2.html&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nx">_</span><span class="p">.</span><span class="nx">template</span><span class="p">(</span><span class="s1">&#39;...&#39;</span><span class="p">);</span>
+<span class="nx">JST</span><span class="p">[</span><span class="s1">&#39;app/templates/folder2/template.html&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nx">_</span><span class="p">.</span><span class="nx">template</span><span class="p">(</span><span class="s1">&#39;...&#39;</span><span class="p">);</span>
+<span class="c1">// etc...</span></code></pre></div>
+
+<h2>JST and Laravel</h2>
+
+<p>If your Backbone application&#39;s back-end uses Laravel, I&#39;ve <a href="https://github.com/lukaswhite/laravel-jst">written a package</a> to generate such a file.</p>
+
+<h3>Usage</h3>
+
+<p>Generate your JST file by entering the following command in your terminal:</p>
+
+<p><code>php artisan jst:generate</code></p>
+
+<p>Or alternatively, you can have it &quot;watch&quot; your templates directory (and any sub-directories) for changes, and recompile the file for you:</p>
+
+<p><code>php artisan jst:watch</code></p>
+
+<p>Back to your Backbone application:</p>
+
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="c1">// file: namespace.js</span>
+ 
+<span class="nx">define</span><span class="p">([</span>
+    <span class="c1">// Libs</span>
+    <span class="s2">&quot;jquery&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;use!underscore&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;use!backbone&quot;</span>
+<span class="p">],</span>
+
+<span class="kd">function</span><span class="p">(</span><span class="nx">$</span><span class="p">,</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">Backbone</span><span class="p">)</span> <span class="p">{</span>
+ <span class="c1">// Put application wide code here</span>
+
+ <span class="k">return</span> <span class="p">{</span>
+  <span class="c1">// This is useful when developing if you don&#39;t want to use a</span>
+  <span class="c1">// build process every time you change a template.</span>
+  <span class="c1">//</span>
+  <span class="c1">// Delete if you are using a different template loading method.</span>
+  <span class="nx">fetchTemplate</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">path</span><span class="p">,</span> <span class="nx">done</span><span class="p">)</span> <span class="p">{</span>
+   <span class="kd">var</span> <span class="nx">JST</span> <span class="o">=</span> <span class="nb">window</span><span class="p">.</span><span class="nx">JST</span> <span class="o">=</span> <span class="nb">window</span><span class="p">.</span><span class="nx">JST</span> <span class="o">||</span> <span class="p">{};</span>
+   <span class="kd">var</span> <span class="nx">def</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">$</span><span class="p">.</span><span class="nx">Deferred</span><span class="p">();</span>
+
+   <span class="c1">// Should be an instant synchronous way of getting the template, if it</span>
+   <span class="c1">// exists in the JST object.</span>
+   <span class="k">if</span> <span class="p">(</span><span class="nx">JST</span><span class="p">[</span><span class="nx">path</span><span class="p">])</span> <span class="p">{</span>        
+    <span class="k">if</span> <span class="p">(</span><span class="nx">_</span><span class="p">.</span><span class="nx">isFunction</span><span class="p">(</span><span class="nx">done</span><span class="p">))</span> <span class="p">{</span>
+     <span class="nx">done</span><span class="p">(</span><span class="nx">JST</span><span class="p">[</span><span class="nx">path</span><span class="p">]);</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="nx">def</span><span class="p">.</span><span class="nx">resolve</span><span class="p">(</span><span class="nx">JST</span><span class="p">[</span><span class="nx">path</span><span class="p">]);</span>
+   <span class="p">}</span>
+
+   <span class="c1">// Fetch it asynchronously if not available from JST, ensure that</span>
+   <span class="c1">// template requests are never cached and prevent global ajax event</span>
+   <span class="c1">// handlers from firing.</span>
+   <span class="nx">$</span><span class="p">.</span><span class="nx">ajax</span><span class="p">({</span>
+    <span class="nx">url</span><span class="o">:</span> <span class="nx">path</span><span class="p">,</span>
+    <span class="nx">type</span><span class="o">:</span> <span class="s2">&quot;get&quot;</span><span class="p">,</span>
+    <span class="nx">dataType</span><span class="o">:</span> <span class="s2">&quot;text&quot;</span><span class="p">,</span>
+    <span class="nx">cache</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+    <span class="nx">global</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+
+    <span class="nx">success</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">contents</span><span class="p">)</span> <span class="p">{</span>
+     <span class="nx">JST</span><span class="p">[</span><span class="nx">path</span><span class="p">]</span> <span class="o">=</span> <span class="nx">_</span><span class="p">.</span><span class="nx">template</span><span class="p">(</span><span class="nx">contents</span><span class="p">);</span>
+
+     <span class="c1">// Set the global JST cache and return the template</span>
+     <span class="k">if</span> <span class="p">(</span><span class="nx">_</span><span class="p">.</span><span class="nx">isFunction</span><span class="p">(</span><span class="nx">done</span><span class="p">))</span> <span class="p">{</span>
+      <span class="nx">done</span><span class="p">(</span><span class="nx">JST</span><span class="p">[</span><span class="nx">path</span><span class="p">]);</span>
+     <span class="p">}</span>
+
+     <span class="c1">// Resolve the template deferred</span>
+     <span class="nx">def</span><span class="p">.</span><span class="nx">resolve</span><span class="p">(</span><span class="nx">JST</span><span class="p">[</span><span class="nx">path</span><span class="p">]);</span>
+    <span class="p">}</span>
+   <span class="p">});</span>
+
+   <span class="c1">// Ensure a normalized return value (Promise)</span>
+   <span class="k">return</span> <span class="nx">def</span><span class="p">.</span><span class="nx">promise</span><span class="p">();</span>
+  <span class="p">},</span>
+
+ <span class="p">};</span>
+<span class="p">});</span></code></pre></div>
+
+<p>As you can see, this provides a method which tries to load a template from a global variable called JST, but if that&#39;s not available - i.e., during development - then it loads it in as an HTML file using AJAX.</p>
+
+<p>Now you can create a view like this, to take advantage of it:</p>
+
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">MyApp</span><span class="p">.</span><span class="nx">Views</span><span class="p">.</span><span class="nx">SomeView</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">View</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+ <span class="nx">template</span><span class="o">:</span> <span class="s2">&quot;app/templates/folder/someview.html&quot;</span><span class="p">,</span>        
+    <span class="nx">render</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">done</span><span class="p">)</span> <span class="p">{</span>      
+  <span class="nx">namespace</span><span class="p">.</span><span class="nx">fetchTemplate</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">template</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">tmpl</span><span class="p">)</span> <span class="p">{</span>        
+   <span class="nx">view</span><span class="p">.</span><span class="nx">el</span><span class="p">.</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="nx">tmpl</span><span class="p">({</span><span class="nx">model</span><span class="o">:</span> <span class="nx">view</span><span class="p">.</span><span class="nx">model</span><span class="p">.</span><span class="nx">toJSON</span><span class="p">()</span> <span class="p">});</span>
+   <span class="k">if</span> <span class="p">(</span><span class="nx">_</span><span class="p">.</span><span class="nx">isFunction</span><span class="p">(</span><span class="nx">done</span><span class="p">))</span> <span class="p">{</span>
+    <span class="nx">done</span><span class="p">(</span><span class="nx">view</span><span class="p">.</span><span class="nx">el</span><span class="p">);</span>
+   <span class="p">}</span>  
+  <span class="p">});</span>
+ <span class="p">}</span>
+<span class="c1">// …</span></code></pre></div>
+
+<h2>Using it Outside of Laravel</h2>
+
+<p>There&#39;s no reason why this code can&#39;t be re-purposed to work outside of Laravel - perhaps I&#39;ll get a chance at some point, but feel free to have a stab at it. All the dependencies are managed via Composer.</p>
+
+			</div>
+			<footer>
+				<p class="readmore"><a href="/blog/post/2014/building-applications-backbone-and-laravel-jst">Read more &raquo;</a></p>
+			</footer>
+		</article>
+		
+		<article class="post clearfix">
+			<header>
+				<h3><a href="/blog/post/2014/more-articles-and-tutorials">More Articles and Tutorials</a></h3>		    		
+				<p class="meta"> &ndash; 12<sup>th</sup> April, 2014</p>
+			</header>
+			<div class="body excerpt">      
+				<p>I&#39;ve had a few more articles and tutorials published in the past few days, with a number to come later this month. Here&#39;s a quick run-down of the articles I&#39;ve had published in the past couple of weeks.</p>
+
+<h4><a href="http://www.sitepoint.com/abstract-file-systems-flysystem">Abstract File Systems with Flysystem, Sitepoint</a></h4>
+
+<p>An introduction to Flysystem, a PHP library which provides developers with a layer of abstraction over file storage systems including standard local files, online services such as Dropbox and Cloud Files and remote storage mechanisms such as FTP.</p>
+
+<h4><a href="http://www.sitepoint.com/introduction-jadephp/">Introduction to JadePHP, Sitepoint</a></h4>
+
+<p>Jade is a templating language often found in the JavaScript world. Heavily influenced by Haml, it provides an extremely concise way of defining your XML-based markup. JadePHP brings it to PHP, and in this article I take it for a test-drive.</p>
+
+<h4><a href="http://www.sitepoint.com/getting-started-assetic/">Getting Started with Assetic, Sitepoint</a></h4>
+
+<p>Assetic is an asset management package for PHP. It helps organise static assets - such as stylesheets, javascript and images - and perform actions on them such as compilation, compression and concatenation. In this article, I give a rundown of how to use it.</p>
+
+<h3>Coming Up</h3>
+
+<p>Here&#39;s a sneak preview of what&#39;s coming up.</p>
+
+<p>I&#39;ve written a huge four-part tutorial on using <em>Apache SOLR</em> along with <em>Solarium</em>, a PHP library which allows you to use SOLR as if it were a native search implementation. It&#39;s due sometime around the end of April.</p>
+
+<p><a href="http://getkirby.com/">Kirby</a> is a very simple, file-based CMS written in PHP. I&#39;ve written a comprehensive review of it, which will be published in the next couple of weeks.</p>
+
+<p>I&#39;ve also written extensively on <a href="http://piwik.org/">Piwik</a> which is a self-hosted, open-sourced alternative to Google Analytics. If you&#39;ve been concerned recently with Google and privacy, or simply want to take control of your analytics data, then it&#39;s well worth a look.</p>
+
+<p>I&#39;ve also been doing some writing about <a href="http://nodejs.org">Node</a>, which I&#39;ve been working with a lot lately. One upcoming article is about using JSON web tokens to secure an application, using examples written in Node with Express and Backbone for the server-side and client-side components respectively.  I&#39;ve also written an article on using streams in Node. Both articles should be published in the next few weeks.</p>
+
+<p>Finally, I&#39;ve also written a thorough review of <a href="http://brackets.io/">Brackets</a>, which is an open-sourced editor originally by Adobe.</p>
+
+<p>Keep an eye out for these if they&#39;re of any interest - I&#39;ll be continually updating <a href="/work/writing">this page</a> with the details.</p>
+
+			</div>
+			<footer>
+				<p class="readmore"><a href="/blog/post/2014/more-articles-and-tutorials">Read more &raquo;</a></p>
+			</footer>
+		</article>
+		
+		<article class="post clearfix">
+			<header>
+				<h3><a href="/blog/post/2014/legal-pages-laravel">Legal Pages in Laravel</a></h3>		    		
+				<p class="meta"> &ndash; 13<sup>th</sup> March, 2014</p>
+			</header>
+			<div class="body excerpt">      
+				<p>Most sites have pages for Terms and Conditions, a Privacy policy and / or a page about cookies.  Presumably they are usually tucked away in a CMS somewhere, or as static HTML - no doubt copied &amp; pasted verbatim from the Internet.  Whether the CMS is the natural place for them remains to be seen, and certainly if a site doesn&#39;t have content as such then supporting those sorts of pages introduces new problems - is the content simply dropped into a view somewhere?</p>
+
+<p>To help solve this problem - in Laravel 4, specifically - I&#39;ve created a simple package called <a href="https://github.com/lukaswhite/legalpages">Legalpages</a>. The idea behind it is simple - you install it, enter a few pieces of information about your business or organisation in a configuration file - and done, your site now has Terms and Conditions, Privacy and cookie pages. I&#39;ve used some boilerplate documents, which get tailored according to the information you provide, but you can customise them if you wish - they wind up in your <code>app/storage</code> directory in Markdown format for easy editing.</p>
+
+<p>The sample documents are UK-focussed (in fact, more England &amp; Wales since some of the laws in question differ slightly up in Scotland) - but if there&#39;s enough demand, I&#39;ll look at expanding the package to support other countries. Of course you can still use the package, just modify the Markdown files.</p>
+
+<p>The code is <a href="https://github.com/lukaswhite/legalpages">on Github</a>, or you can install it using Composer:</p>
+
+<p><code>&quot;lukaswhite/legalpages&quot; : &quot;dev-master&quot;</code></p>
+
+<p>Check out <a href="https://github.com/lukaswhite/legalpages/blob/master/README.md">the README</a> for more detailed instructions.</p>
+
+			</div>
+			<footer>
+				<p class="readmore"><a href="/blog/post/2014/legal-pages-laravel">Read more &raquo;</a></p>
+			</footer>
+		</article>
+		
+		<article class="post clearfix">
+			<header>
+				<h3><a href="/blog/post/2014/working-uk-postcodes-php">Working with UK Postcodes in PHP</a></h3>		    		
+				<p class="meta"> &ndash; 6<sup>th</sup> March, 2014</p>
+			</header>
+			<div class="body excerpt">      
+				<p>I&#39;ve created a <a href="https://github.com/lukaswhite/uk-postcodes">simple package</a> for working with UK Postcodes.  It contains two principle components:</p>
+
+<ol>
+<li>A simple class to encapsulate UK Postcodes</li>
+<li>A wrapper to <a href="http://www.uk-postcodes.com/api">this web service</a></li>
+</ol>
+
+<p>The postcode class can be used for:</p>
+
+<ul>
+<li>validating postcodes</li>
+<li>formatting them, e.g. &quot;sw1a2aa&quot; -&gt; &quot;SW1A 2AA&quot;</li>
+<li>getting the outcode (the first part of a postcode; e.g. M1, SW1A, GL9)</li>
+</ul>
+
+<p>The meat and bones of the package, though, is the web service.  Most notably, it allows you to take a postcode, and find out its latitude and longitude.  Here&#39;s an example of how it&#39;s used:</p>
+
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="x">// Create the client</span>
+<span class="x">$client = new Lukaswhite\UkPostcodes\UkPostcodesClient();       </span>
+
+<span class="x">// Call the web service</span>
+<span class="x">$postcode = $client-&gt;postcode(&#39;sw1a2aa&#39;);</span>
+
+<span class="x">print get_class($postcode);</span>
+<span class="x">// Lukaswhite\UkPostcodes\UkPostcode</span>
+
+<span class="x">print $postcode-&gt;formatted();</span>
+<span class="x">// SW1A 2AA</span>
+
+<span class="x">print get_class($postcode-&gt;getCoordinate());</span>
+<span class="x">// League\Geotools\Coordinate\Coordinate</span>
+
+<span class="x">print $postcode-&gt;getCoordinate()-&gt;getLatitude();</span>
+<span class="x">// 51.503539898876</span>
+
+<span class="x">print $postcode-&gt;getCoordinate()-&gt;getLongitude();</span>
+<span class="x">// -0.12768084037293</span>
+
+<span class="x">print get_class($postcode-&gt;getCoordinate()-&gt;getEllipsoid());</span>
+<span class="x">// League\Geotools\Coordinate\Ellipsoid </span>
+
+<span class="x">print $postcode-&gt;council-&gt;title;</span>
+<span class="x">// City of Westminster</span>
+
+<span class="x">print $postcode-&gt;council-&gt;code;</span>
+<span class="x">// E09000033</span>
+
+<span class="x">print $postcode-&gt;council-&gt;uri;</span>
+<span class="x">// http://statistics.data.gov.uk/id/statistical-geography/E09000033</span>
+
+<span class="x">print $postcode-&gt;ward-&gt;title;</span>
+<span class="x">// St. James&#39;s</span>
+
+<span class="x">print $postcode-&gt;constituency-&gt;title;</span>
+<span class="x">// Cities of London and Westminster</span></code></pre></div>
+
+<p>Because the UkPostcode class utilises <a href="http://geotools-php.org/">Geotools</a>, you can do all sorts of geo-related stuff with the postcodes (using <code>getCoordinate()</code>) such as finding the distance between a point and a postcode, or between two postcodes. </p>
+
+<p>The source is <a href="https://github.com/lukaswhite/uk-postcodes">on Github</a>.</p>
+
+			</div>
+			<footer>
+				<p class="readmore"><a href="/blog/post/2014/working-uk-postcodes-php">Read more &raquo;</a></p>
+			</footer>
+		</article>
+		
+		<article class="post clearfix">
+			<header>
+				<h3><a href="/blog/post/2014/incorporating-gravatar-signin-or-registration-process">Incorporating Gravatar into the Signin (or Registration) Process</a></h3>		    		
+				<p class="meta"> &ndash; 26<sup>th</sup> February, 2014</p>
+			</header>
+			<div class="body excerpt">      
+				<p>I signed up for an online service the other day (<a href="https://commando.io/%22">Commando.io</a>), and they had a really nice little interaction during the signup and signin processes. As soon as you enter your email address, it automatically displays your <a href="http://en.gravatar.com">Gravatar</a>. Nice little touch.</p>
+
+<p>So, I thought I&#39;d write a quick tutorial on how to replicate the effect.</p>
+
+<p>There is a <a href="http://demos.lukaswhite.com/gravatar-signin">demo here</a>.</p>
+
+<h3>Getting Started</h3>
+
+<p>For simplicity, I based the form on one of the <a href="http://getbootstrap.com/examples/signin">example templates</a> for the <a href="http://getbootstrap.com">Bootstrap framework</a>.</p>
+
+<p>It&#39;s pretty straightforward to download the Bootstrap framework using <a href="http://bower.io">Bower</a>:</p>
+
+<p><code>bower install bootstrap</code></p>
+
+<p>Because Bootstrap&#39;s JS - not that it&#39;s used for this tutorial - has JQuery has a dependency, Bower will download it automatically - so no need to download it separately.</p>
+
+<p>Next up, a little additional markup for the form:</p>
+
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;html&gt;</span>
+<span class="nt">&lt;form</span> <span class="na">id=</span><span class="s">&quot;login&quot;</span> <span class="na">class=</span><span class="s">&quot;form-signin&quot;</span> <span class="na">role=</span><span class="s">&quot;form&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;h2</span> <span class="na">class=</span><span class="s">&quot;form-signin-heading&quot;</span><span class="nt">&gt;</span>Please sign in<span class="nt">&lt;/h2&gt;</span>
+        <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;avatar-holder&quot;</span><span class="nt">&gt;</span>
+          <span class="nt">&lt;img</span> <span class="na">src=</span><span class="s">&quot;./img/avatar.png&quot;</span> <span class="na">width=</span><span class="s">&quot;64&quot;</span> <span class="na">height=</span><span class="s">&quot;64&quot;</span> <span class="na">id=</span><span class="s">&quot;avatar&quot;</span> <span class="nt">/&gt;</span>
+        <span class="nt">&lt;/div&gt;</span>
+<span class="c">&lt;!-- ...rest of the form goes here... --&gt;</span>
+<span class="nt">&lt;/html&gt;</span></code></pre></div>
+
+<p>A few CSS styles - I&#39;ve just put them in the HEAD for simplicity:</p>
+
+<div class="highlight"><pre><code class="language-css" data-lang="css"><span class="nc">.avatar-holder</span> <span class="p">{</span>
+    <span class="k">text-align</span><span class="o">:</span> <span class="k">center</span><span class="p">;</span>
+    <span class="k">padding</span><span class="o">:</span> <span class="m">1em</span> <span class="m">0</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="nf">#avatar</span> <span class="p">{</span>
+    <span class="k">width</span><span class="o">:</span> <span class="m">64px</span><span class="p">;</span>
+    <span class="k">height</span><span class="o">:</span> <span class="m">64px</span><span class="p">;</span>
+    <span class="k">border</span><span class="o">-</span><span class="n">radius</span><span class="o">:</span> <span class="m">32px</span><span class="p">;</span>
+    <span class="k">border</span><span class="o">:</span> <span class="k">solid</span> <span class="m">2px</span> <span class="m">#ddd</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="nc">.note</span> <span class="p">{</span>
+    <span class="k">margin-top</span><span class="o">:</span> <span class="m">2em</span><span class="p">;</span>
+    <span class="k">text-align</span><span class="o">:</span> <span class="k">center</span><span class="p">;</span>        
+<span class="p">}</span>
+<span class="nc">.note</span> <span class="nt">p</span> <span class="p">{</span>
+    <span class="k">font-size</span><span class="o">:</span> <span class="m">0.8em</span><span class="p">;</span>
+    <span class="k">color</span><span class="o">:</span> <span class="m">#666</span><span class="p">;</span>
+<span class="p">}</span></code></pre></div>
+
+<p>That&#39;s the basic structure ready to go.</p>
+
+<h3>How to Use Gravatar</h3>
+
+<p>Generating a Gravatar is really easy. You simply create an image tag and point it to a specific URL, which you construct as follows:</p>
+
+<p><code style="font-size:1.5em">http://www.gravatar.com/avatar/HASH?s=64</code></p>
+
+<p>HASH is an MD5 hash of the user&#39;s email address, which should first be converted to lowercase. There are a few additional parameters you can use, which are <a href="http://en.gravatar.com/site/implement/images">detailed in the documentation</a>, but I&#39;m just setting the size here - indicated by the attribute <em>s</em>. In this case, I want the Gravatar to be 64px x 64px, to match the image.</p>
+
+<h3>Implementation</h3>
+
+<p>The first thing to note is that Javascript doesn&#39;t support MD5 hashing out-the-box. Fortunately there are libraries for that, such as <a href="https://github.com/blueimp/JavaScript-MD5">this one</a>.</p>
+
+<p>Again, this can be installed using Bower:</p>
+
+<p><code>bower install blueimp-md5</code></p>
+
+<p>Now the JQuery:</p>
+
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">$</span><span class="p">(</span><span class="nb">document</span><span class="p">).</span><span class="nx">ready</span><span class="p">(</span><span class="kd">function</span><span class="p">(){</span>
+
+    <span class="c1">// React to the email field (on the login form) having been filled out</span>
+    <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;form#login input[name=&quot;email&quot;]&#39;</span><span class="p">).</span><span class="nx">blur</span><span class="p">(</span><span class="kd">function</span><span class="p">(){</span>
+        <span class="kd">var</span> <span class="nx">email</span> <span class="o">=</span> <span class="nx">$</span><span class="p">(</span><span class="k">this</span><span class="p">).</span><span class="nx">val</span><span class="p">();</span>
+
+        <span class="c1">// Assuming an email has been provided...</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">email</span> <span class="o">!==</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="p">{</span>     
+
+            <span class="c1">// Construct the Gravatar URL</span>
+            <span class="kd">var</span> <span class="nx">gravatar_url</span> <span class="o">=</span> <span class="s1">&#39;http://www.gravatar.com/avatar/&#39;</span> <span class="o">+</span> <span class="nx">md5</span><span class="p">(</span><span class="nx">email</span><span class="p">.</span><span class="nx">trim</span><span class="p">().</span><span class="nx">toLowerCase</span><span class="p">())</span> <span class="o">+</span> <span class="s1">&#39;?s=64&#39;</span><span class="p">;</span>
+
+            <span class="c1">// Set the source of the avatar image.</span>
+            <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;img#avatar&#39;</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s1">&#39;src&#39;</span><span class="p">,</span> <span class="nx">gravatar_url</span><span class="p">);</span>
+        <span class="p">}</span>
+        
+    <span class="p">});</span>
+
+<span class="p">});</span></code></pre></div>
+
+<p>Most of this should be relatively straightforward. Because we want to grab the avatar after the user has entered their email address, it&#39;s set to fire on the <code>blur</code> event on the email input. After a quick check to ensure a value has been entered (we might also want to validate it here), we build the URL to the Gravatar. First we take the email address - the value of the input - trim any erroneous whitespace, convert it to lowercase, then obtain its MD5 hash. This is then used to generate the URL, which is set as the <code>src</code> attribute of the avatar image. Pretty simple effect, but it adds a little something to your forms.</p></p>
+
+<p><a href="http://demos.lukaswhite.com/gravatar-signin/">Demo</a> / <a href="https://github.com/lukaswhite/Gravatar-Signin">source code</a></p>
+
+			</div>
+			<footer>
+				<p class="readmore"><a href="/blog/post/2014/incorporating-gravatar-signin-or-registration-process">Read more &raquo;</a></p>
+			</footer>
+		</article>
+		
+		<article class="post clearfix">
+			<header>
+				<h3><a href="/blog/post/2014/running-laravel-artisan-commands-your-admin-dashboard-gui">Running Laravel Artisan Commands from your Admin Dashboard / GUI</a></h3>		    		
+				<p class="meta"> &ndash; 22<sup>nd</sup> January, 2014</p>
+			</header>
+			<div class="body excerpt">      
+				<p>Sometimes you may wish to run Artisan commands from your admin dashboard
+/ application, without using the command line. Perhaps you don&#39;t have
+access to the command line (in which case perhaps it&#39;s time to switch
+hosting!), or more likely perhaps you want to manually run tasks right
+from your application. Here&#39;s a quick guide to how you might set that
+up.</p>
+
+<h3>Running a command</h3>
+
+<p>To run a command programmatically, you simply do this:</p>
+
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="nx">Artisan</span><span class="o">::</span><span class="na">call</span><span class="p">(</span><span class="s1">&#39;my-command&#39;</span><span class="p">,</span> <span class="k">array</span><span class="p">());</span></code></pre></div>
+
+<p>The first argument is the name of the command, the second your options,
+which I&#39;m going to ignore for brevity.</p>
+
+<p>It&#39;s probably more useful if you can get a hold of the command&#39;s output;
+you can do this by passing a third argument, which should be a class
+that implements <code>Symfony\Component\Console\Output\OutputInterface</code>.
+Perhaps the most useful of these classes is <code>StreamOutput</code>. So, for
+example, you can write the output to a file:</p>
+
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="nv">$stream</span> <span class="o">=</span> <span class="nb">fopen</span><span class="p">(</span><span class="s1">&#39;log.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">);</span>
+<span class="nx">Artisan</span><span class="o">::</span><span class="na">call</span><span class="p">(</span><span class="s1">&#39;my-command&#39;</span><span class="p">,</span> <span class="k">array</span><span class="p">(),</span> <span class="k">new</span> <span class="nx">StreamOutput</span><span class="p">(</span><span class="nv">$stream</span><span class="p">));</span></code></pre></div>
+
+<p>Or <code>php://output</code>:</p>
+
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="nv">$stream</span> <span class="o">=</span> <span class="nb">fopen</span><span class="p">(</span><span class="s1">&#39;php://output&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">);</span>
+<span class="nx">Artisan</span><span class="o">::</span><span class="na">call</span><span class="p">(</span><span class="s1">&#39;my-command&#39;</span><span class="p">,</span> <span class="k">array</span><span class="p">(),</span> <span class="k">new</span> <span class="nx">StreamOutput</span><span class="p">(</span><span class="nv">$stream</span><span class="p">));</span></code></pre></div>
+
+<p>Armed with this, we can proceed with the admin interface.</p>
+
+<h3>The Admin Interface</h3>
+
+<p>Now to set up a route for the main admin page.</p>
+
+<p>The first thing we probably want to do is set up a white-list of
+commands you&#39;re permitted to run from the back-end:</p>
+
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="c1">// @file app/config/commands.php</span>
+<span class="k">return</span> <span class="k">array</span><span class="p">(</span>
+    <span class="sd">/**</span>
+<span class="sd">    * An array of commands which are available to run from the admin area.</span>
+<span class="sd">    */</span>
+    <span class="s1">&#39;whitelist&#39;</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span>
+        <span class="s1">&#39;my-command&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;another-command&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;do-something-else&#39;</span><span class="p">,</span>
+    <span class="p">),</span>
+<span class="p">);</span></code></pre></div>
+
+<p>You&#39;ll notice the white-list just contains the commands&#39; names; we can
+get the descriptions as defined in the Command classes themselves.</p>
+
+<p>Here&#39;s an example route:</p>
+
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="k">use</span> <span class="nx">Symfony\Component\Console\Output\StreamOutput</span><span class="p">,</span>
+<span class="k">use</span> <span class="nx">Symfony\Component\Console\Descriptor\ApplicationDescription</span><span class="p">;</span>
+
+<span class="nx">Route</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;/commands&#39;</span><span class="p">,</span> <span class="k">function</span><span class="p">()</span>
+<span class="p">{</span>   
+        <span class="nv">$app</span> <span class="o">=</span> <span class="nx">App</span><span class="o">::</span><span class="na">make</span><span class="p">(</span><span class="s1">&#39;app&#39;</span><span class="p">);</span>
+
+        <span class="nv">$app</span><span class="o">-&gt;</span><span class="na">loadDeferredProviders</span><span class="p">();</span>
+
+        <span class="nv">$console_app</span> <span class="o">=</span> <span class="nx">\Illuminate\Console\Application</span><span class="o">::</span><span class="na">start</span><span class="p">(</span><span class="nv">$app</span><span class="p">);</span>
+
+        <span class="nv">$description</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">ApplicationDescription</span><span class="p">(</span><span class="nv">$console_app</span><span class="p">,</span> <span class="k">null</span><span class="p">);</span>
+
+        <span class="k">foreach</span> <span class="p">(</span><span class="nv">$description</span><span class="o">-&gt;</span><span class="na">getCommands</span><span class="p">()</span> <span class="k">as</span> <span class="nv">$command</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nb">in_array</span><span class="p">(</span><span class="nv">$command</span><span class="o">-&gt;</span><span class="na">getName</span><span class="p">(),</span> <span class="nx">Config</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;commands.whitelist&#39;</span><span class="p">)))</span> <span class="p">{</span>
+                <span class="nv">$commands</span><span class="p">[</span><span class="nv">$command</span><span class="o">-&gt;</span><span class="na">getName</span><span class="p">()]</span> <span class="o">=</span> <span class="nv">$command</span><span class="o">-&gt;</span><span class="na">getDescription</span><span class="p">();</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="nx">View</span><span class="o">::</span><span class="na">make</span><span class="p">(</span><span class="s1">&#39;commands.index&#39;</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span><span class="s1">&#39;commands&#39;</span> <span class="o">=&gt;</span> <span class="nv">$commands</span><span class="p">));</span>
+<span class="p">});</span></code></pre></div>
+
+<p>This code explained:</p>
+
+<ol>
+<li>We get a reference to the Laravel application from the IoC container</li>
+<li>We load deferred providers - without this, we won&#39;t have access to
+our own commands</li>
+<li>We grab a Console application</li>
+<li>We get an instance of
+<code>Symfony\Component\Console\Descriptor\ApplicationDescription</code>, which
+will provide us with information about the commands</li>
+<li>We take a subset of the commands - cross-referencing them against
+the white-list - and pass their names and descriptions to the view.</li>
+</ol>
+
+<p>Now the view:</p>
+
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;html&gt;</span>
+<span class="nt">&lt;ul</span> <span class="na">id=</span><span class="s">&quot;commands&quot;</span><span class="nt">&gt;</span>
+    @foreach ($commands as $name =&gt; $description)
+    <span class="nt">&lt;li&gt;&lt;a</span> <span class="na">href=</span><span class="s">&quot;/commands/run/&quot;</span><span class="nt">&gt;&lt;/a&gt;&lt;/li&gt;</span>
+    @endforeach
+<span class="nt">&lt;/ul&gt;</span>
+
+<span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;output&quot;</span><span class="nt">&gt;</span>
+
+<span class="nt">&lt;/div&gt;</span>
+<span class="nt">&lt;/html&gt;</span></code></pre></div>
+
+<p>This is simply a list of links and an empty DIV to hold the output,
+which we&#39;ll populate (by running the appropriate command) via AJAX.</p>
+
+<p>The Javascript:</p>
+
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#commands li a&#39;</span><span class="p">).</span><span class="nx">click</span><span class="p">(</span><span class="kd">function</span><span class="p">(){</span>
+    <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#output&#39;</span><span class="p">).</span><span class="nx">html</span><span class="p">(</span><span class="s1">&#39;&lt;p&gt;Running...&lt;/p&gt;&#39;</span><span class="p">);</span>
+    <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#output&#39;</span><span class="p">).</span><span class="nx">load</span><span class="p">(</span><span class="nx">$</span><span class="p">(</span><span class="k">this</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s1">&#39;href&#39;</span><span class="p">));</span>
+    <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+<span class="p">});</span></code></pre></div>
+
+<p>Finally, the route to actually run the command:</p>
+
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="nx">Route</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;/commands/run/{command}&#39;</span><span class="p">,</span> <span class="k">function</span><span class="p">(</span><span class="nv">$command</span><span class="p">)</span>
+<span class="p">{</span>
+        <span class="k">print</span> <span class="s1">&#39;&lt;pre&gt;&#39;</span><span class="p">;</span>
+        <span class="nv">$stream</span> <span class="o">=</span> <span class="nb">fopen</span><span class="p">(</span><span class="s1">&#39;php://output&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">);</span>
+        <span class="nx">Artisan</span><span class="o">::</span><span class="na">call</span><span class="p">(</span><span class="nv">$command</span><span class="p">,</span> <span class="k">array</span><span class="p">(),</span> <span class="k">new</span> <span class="nx">StreamOutput</span><span class="p">(</span><span class="nv">$stream</span><span class="p">));</span>
+        <span class="k">print</span> <span class="s1">&#39;&lt;/pre&gt;&#39;</span><span class="p">;</span>
+        <span class="k">print</span> <span class="s1">&#39;&lt;p&gt;DONE&lt;/p&gt;&#39;</span><span class="p">;</span>
+<span class="p">});</span></code></pre></div>
+
+<p>It&#39;s a simplistic example, with some crucial omissions - arguments /
+options and security - but it&#39;s a starting point.</p>
+
+			</div>
+			<footer>
+				<p class="readmore"><a href="/blog/post/2014/running-laravel-artisan-commands-your-admin-dashboard-gui">Read more &raquo;</a></p>
+			</footer>
+		</article>
+		
+		<article class="post clearfix">
+			<header>
+				<h3><a href="/blog/post/2013/laravel-pagination-with-foundation">Laravel Pagination with Foundation</a></h3>		    		
+				<p class="meta"> &ndash; 19<sup>th</sup> December, 2013</p>
+			</header>
+			<div class="body excerpt">      
+				<p>Laravel 4&#39;s pagination functionality supports Twitter Bootstrap out-of-the-box.  However, if you prefer to use Zurb&#39;s <a href="http://foundation.zurb.com/">Foundation</a>, here is the code you&#39;ll need.  Just drop the presenter class somewhere where your autoloader will pick it up, pick one (or both) of the template files, and configure your <code>app/config/view.php</code> file to point to the appropriate template file.</p>
+
+<p>First, the presenter class: </p>
+
+<p><script src='https://gist.github.com/7942142.js?file=FoundationPresenter.php'></script><noscript><pre><code></code></pre></noscript></p>
+
+<p>The simple template file:</p>
+
+<p><script src='https://gist.github.com/7942142.js?file=simple.php'></script><noscript><pre><code></code></pre></noscript></p>
+
+<p>The slider template file:</p>
+
+<p><script src='https://gist.github.com/7942142.js?file=slider.php'></script><noscript><pre><code></code></pre></noscript></p>
+
+			</div>
+			<footer>
+				<p class="readmore"><a href="/blog/post/2013/laravel-pagination-with-foundation">Read more &raquo;</a></p>
+			</footer>
+		</article>
+		
+		<article class="post clearfix">
+			<header>
+				<h3><a href="/blog/post/2013/recent-sitepoint-articles">Recent Sitepoint Articles</a></h3>		    		
+				<p class="meta"> &ndash; 6<sup>th</sup> October, 2013</p>
+			</header>
+			<div class="body excerpt">      
+				<p>I haven&#39;t written anything here for quite a while, but I have been writing. I&#39;ve had quite a number of articles published on Sitepoint (and before the re-brand, the PHPMaster site).</p>
+
+			</div>
+			<footer>
+				<p class="readmore"><a href="/blog/post/2013/recent-sitepoint-articles">Read more &raquo;</a></p>
+			</footer>
+		</article>
+		
+
+		<!-- Pagination links -->
+		<div class="pagination">
+			
+			<span class="previous">&laquo; Previous</span>
+			
+			<span class="page_number ">Page 1 of 4</span>
+			
+			<a href="/blog/page2" class="next">Next</a>
+			
+		</div>
+
+	</div>
+		 <aside class="five columns">		 	
+			
+			<h4>About Me</h4>
+
+<p>I&#39;m a web developer based in Manchester, England. I also design websites.  I generally favour open-source technologies such as PHP, MySQL and JQuery, and I have extensive experience using Drupal.</p>
+		 	
+		 </aside>
+
+		 <aside class="five columns">
+			<div class="block tag-cloud">
+			 	<h4>Tags</h4>
+			 	<ul class="tags">
+				
+	    		<li><a href="/blog/tags/drupal">Drupal</a></li>
+				
+	    		<li><a href="/blog/tags/mobile">mobile</a></li>
+				
+	    		<li><a href="/blog/tags/rwd">RWD</a></li>
+				
+	    		<li><a href="/blog/tags/responsive-web-design">responsive web design</a></li>
+				
+	    		<li><a href="/blog/tags/deployment">deployment</a></li>
+				
+	    		<li><a href="/blog/tags/prowl">Prowl</a></li>
+				
+	    		<li><a href="/blog/tags/push-notifications">push notifications</a></li>
+				
+	    		<li><a href="/blog/tags/concrete5">Concrete5</a></li>
+				
+	    		<li><a href="/blog/tags/cms">CMS</a></li>
+				
+	    		<li><a href="/blog/tags/tutorials">tutorials</a></li>
+				
+	    		<li><a href="/blog/tags/php">PHP</a></li>
+				
+	    		<li><a href="/blog/tags/laravel">Laravel</a></li>
+				
+	    		<li><a href="/blog/tags/frameworks">frameworks</a></li>
+				
+	    		<li><a href="/blog/tags/facebook">Facebook</a></li>
+				
+	    		<li><a href="/blog/tags/drupal-7">Drupal 7</a></li>
+				
+	    		<li><a href="/blog/tags/ux">UX</a></li>
+				
+	    		<li><a href="/blog/tags/less">Less</a></li>
+				
+	    		<li><a href="/blog/tags/mysql">MySQL</a></li>
+				
+	    		<li><a href="/blog/tags/writing">writing</a></li>
+				
+	    		<li><a href="/blog/tags/sitepoint">Sitepoint</a></li>
+				
+	    		<li><a href="/blog/tags/articles">articles</a></li>
+				
+	    		<li><a href="/blog/tags/spotify">Spotify</a></li>
+				
+	    		<li><a href="/blog/tags/drupal-commerce">Drupal Commerce</a></li>
+				
+	    		<li><a href="/blog/tags/bash">Bash</a></li>
+				
+	    		<li><a href="/blog/tags/git">Git</a></li>
+				
+	    		<li><a href="/blog/tags/apache">Apache</a></li>
+				
+	    		<li><a href="/blog/tags/workflow">Workflow</a></li>
+				
+	    		<li><a href="/blog/tags/foundation">Foundation</a></li>
+				
+	    		<li><a href="/blog/tags/gravatar">Gravatar</a></li>
+				
+	    		<li><a href="/blog/tags/jquery">JQuery</a></li>
+				
+	    		<li><a href="/blog/tags/geo">Geo</a></li>
+				
+	    		<li><a href="/blog/tags/backbone">Backbone</a></li>
+				
+	    		<li><a href="/blog/tags/homestead">Homestead</a></li>
+				
+	    		<li><a href="/blog/tags/elasticsearch">Elasticsearch</a></li>
+				
+	    		<li><a href="/blog/tags/jekyll">Jekyll</a></li>
+				
+	    		<li><a href="/blog/tags/grunt">Grunt</a></li>
+				
+				</ul>
+			</div>
+		 </aside>
+</div>  
+ 
+  </div>
+
+  <!-- Footer begins ========================================================================== -->
+  <footer id="footer">
+    <hr>
+    <div class="eight columns">
+      <ul id="footerLinks">
+        <li>&copy; 2014 Lukas White. All rights reserved.</li>        
+        <li><a href="http://www.twitter.com/lukaswhite" target="_blank">@lukaswhite</a></li>              
+      </ul>
+    </div>
+    <div class="eight columns right">
+      <ul class="social small">
+        <li><a class="linkedin" href="http://uk.linkedin.com/in/lukaswhite" target="_blank"><span>View my LinkedIn Profile</span></a></li>
+        <li><a class="twitter" href="http://www.twitter.com/lukaswhite" target="_blank"><span>Follow me on Twitter</span></a></li>
+        <li><a class="facebook" href="http://www.facebook.com/lukas.white.freelance.web.developer" target="_blank"><span>Find me on Facebook</span></a></li>
+        <li><a class="github" href="https://github.com/lukaswhite" target="_blank"><span>Find me on Github</span></a></li>
+      </ul>
+    </div>
+    <hr>
+    <div class="sixteen columns centered">
+      <p>Powered by <a href="http://www.typeandgrids.com" target="_blank">Type &amp; Grids</a>, <a href="http://jekyllrb.com/">Jekyll</a> and <a href="https://github.com/erikhuda/thor">Thor</a></p>
+    </div>
+  </footer>
+  <!-- Footer ends ============================================================================ -->
+    
+</div><!-- container -->
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-3485550-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</body>
+</html>

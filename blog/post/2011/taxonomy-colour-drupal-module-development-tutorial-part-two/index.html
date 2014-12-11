@@ -1,0 +1,601 @@
+<!doctype html>
+<!--[if lt IE 7 ]><html class="ie ie6" lang="en"> <![endif]-->
+<!--[if IE 7 ]><html class="ie ie7" lang="en"> <![endif]-->
+<!--[if IE 8 ]><html class="ie ie8" lang="en"> <![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!--><html lang="en"> <!--<![endif]-->
+<head>
+<meta charset="utf-8">
+
+<!--
+••••••••••••••••••••••••
+
+Powered by Type & Grids™
+www.typeandgrids.com
+
+••••••••••••••••••••••••
+-->
+
+<title>Taxonomy Colour: Drupal Module Development Tutorial (Part Two)</title>
+<meta name="description" content="The website of Lukas White, Manchester-based Freelance Web Designer and Developer">
+<meta name="author" content="Lukas White">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+<!-- CSS
+================================================================================================= -->
+<link rel="stylesheet" href="/dist/styles.min.css">
+
+<!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+
+<!-- Favicons
+================================================================================================= -->
+<link rel="shortcut icon" href="/favicon.ico">
+<link rel="apple-touch-icon" href="images/favicons/apple-touch-icon.png">
+<link rel="apple-touch-icon" sizes="72x72" href="images/favicons/apple-touch-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="114x114" href="images/favicons/apple-touch-icon-114x114.png">
+
+</head>
+<body>
+
+<div class="container">
+  
+  <!-- Header begins ========================================================================== -->
+  <header id="page-header" class="sixteen columns">
+    <div id="logo">
+      <a href="/">
+        <h1>Lukas White</h1>
+        <h2>Freelance Web Developer</h2>
+      </a>
+      <!--
+      <img src="images/logo.png" width="275" height="35" alt="Logo" />
+      -->
+    </div>
+    <nav>
+      <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/about">About</a></li>
+        <li><a href="/blog">Blog</a></li>
+        <li><a href="/work">Work</a></li>
+        <li><a href="/contact">Contact</a></li>        
+      </ul>
+    </nav>
+    <hr />
+  </header>
+  <!-- Header ends ============================================================================ -->
+  
+  <div id="content" class="content">
+  <article class="eleven columns post">
+	<h2>Taxonomy Colour: Drupal Module Development Tutorial (Part Two)</h2>
+	<p class="meta"> &ndash; <time datetime="2011-07-04">4<sup>th</sup> July, 2011</time></p>
+
+	<div class="body">
+		<p>In the <a href="/blog/post/2010/taxonomy-colour-drupal-module-development-tutorial-part-one">first part</a>, I looked at creating the database schema for a simple Drupal module designed to allow you to associate colours with taxonomy terms. In this second part, I’ll look at the administration aspects of the module. In essence, what we need to do is as follows: </p>
+
+<ul>
+<li>  Since colour-coding may only be appropriate to certain vocabularies (e.g. categories) and not others (tags, perhaps). We need to provide the user with the option to specify which vocabularies are applicable.</li>
+<li>  The user needs to be able to specify a colour when adding or editing a term, where appropriate.</li>
+<li>  We need to provide a mechanism which allows the colour associated with a term to be stored, retrieved, and to be displayed. </li>
+</ul>
+
+<p>Later, I’m going to want to incorporate the colour in views, as well as consider some performance aspects. The next thing, then, is to start coding the module and this will take place in the PHP file we created in part one, <code>taxonomy_color.module</code>. </p>
+
+<h3>Introducing hook_form_alter</h3>
+
+<p>To allow the option to categorise terms on a per-vocabulary basis, we&#39;ll add a checkbox to the edit vocabulary form (which is also used to add a new vocabulary). We achieve this by harnessing the power of <code>hook_form_alter</code>. In order to intercept the form and add this checkbox, we need to create a method whose name matches the signature <code>hook_form_FORM_ID_alter</code>. The first part of this tutorial introduced hooks, and I introduced the idea that the the <code>hook</code> part should be replaced by the ID of the module, thus: <code>taxonomy_color_form_FORM_ID_alter</code>. To find our form ID, the easiest way is to get the form on screen by navigating to the relevant page (in this case, go and edit an existing term), <strong>view source</strong> and check the ID of the <code>form</code> tag: </p>
+
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;form</span> <span class="na">action=</span><span class="s">&quot;/admin/content/taxonomy/edit/vocabulary/1&quot;</span>  <span class="na">accept-charset=</span><span class="s">&quot;UTF-8&quot;</span> <span class="na">method=</span><span class="s">&quot;post&quot;</span> <span class="na">id=</span><span class="s">&quot;taxonomy-form-vocabulary&quot;</span><span class="nt">&gt;</span></code></pre></div>
+
+<p>You’ll see that this is <code>taxonomy-form-vocabulary</code> – we must then, however, get rid of those dashes and replace them with underscores, i.e. <code>taxonomy_form_vocabulary</code> – so the method name becomes: <code>taxonomy_color_form_taxonomy_form_vocabulary_alter</code> Quite a mouthful, huh? This mechanism for determining your function name might seem unwieldy and complicated, but you soon get the hang of it. Consulting the <a href="http://api.drupal.org/api/drupal/developer--hooks--core.php/function/hook_form_FORM_ID_alter/6">documentation</a> / source for <code>hook_form_FORM_ID_alter</code> shows that the method should look like this:</p>
+
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="sd">/**</span>
+<span class="sd"> * Implementation of hook_form_FORM_ID_alter().</span>
+<span class="sd"> */</span>
+<span class="k">function</span> <span class="nf">taxonomy_color_form_taxonomy_form_vocabulary_alter</span><span class="p">(</span><span class="o">&amp;</span><span class="nv">$form</span><span class="p">,</span> <span class="o">&amp;</span><span class="nv">$form_state</span><span class="p">)</span> <span class="p">{</span>
+ <span class="c1">// implementation goes here</span>
+<span class="p">}</span></code></pre></div>
+
+<p>So, let&#39;s start implementing the function by adding the form element.</p>
+
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="nv">$form</span><span class="p">[</span><span class="s1">&#39;color&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span>
+          <span class="s1">&#39;#type&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;checkbox&#39;</span><span class="p">,</span>
+          <span class="s1">&#39;#title&#39;</span> <span class="o">=&gt;</span> <span class="nx">t</span><span class="p">(</span><span class="s1">&#39;Use colour-coding&#39;</span><span class="p">),</span>
+          <span class="s1">&#39;#default_value&#39;</span> <span class="o">=&gt;</span> <span class="nv">$checked</span><span class="p">,</span>      
+        <span class="p">);</span></code></pre></div>
+
+<p>Once you’ve added this new element, the form should look something like the figure below: </p>
+
+<figure class="captioned-image" style="width:600px;"> <img src="/images/blogs/2011/taxonomy/taxonomy-color-vocab-form-1.png" width="580" height="400" alt="" /><figcaption>The Add / Edit Vocabulary form, after we've added a new checkbox (“Use colour-coding”)</figcaption></figure> 
+
+<p>You’ll probably notice a minor issue immediately – the new element sits below the <em>Save</em> (i.e. the submit) and <em>Delete</em> buttons. Whilst the form is still fully functional, it’ not ideal from a usability point-of-view. In order to fix this we juggle the weights, which control the order in which elements appear within a form. Let’s first set the weight – configured as an element of the array that represents the element – to a high number, thus:</p>
+
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="nv">$form</span><span class="p">[</span><span class="s1">&#39;color&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span>
+    <span class="s1">&#39;#type&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;checkbox&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;#title&#39;</span> <span class="o">=&gt;</span> <span class="nx">t</span><span class="p">(</span><span class="s1">&#39;Use colour-coding&#39;</span><span class="p">),</span>
+    <span class="s1">&#39;#default_value&#39;</span> <span class="o">=&gt;</span> <span class="nv">$checked</span><span class="p">,</span>      
+    <span class="s1">&#39;#weight&#39;</span> <span class="o">=&gt;</span> <span class="mi">999</span><span class="p">,</span> 
+  <span class="p">);</span></code></pre></div>
+
+<p>And then change the weights of the <em>Save</em> (the submit) and <em>Delete</em> buttons to greater values (the greater the value, the further down the form the element will appear), thus:</p>
+
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="nv">$form</span><span class="p">[</span><span class="s1">&#39;submit&#39;</span><span class="p">][</span><span class="s1">&#39;#weight&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">;</span>
+    <span class="nv">$form</span><span class="p">[</span><span class="s1">&#39;delete&#39;</span><span class="p">][</span><span class="s1">&#39;#weight&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1001</span><span class="p">;</span></code></pre></div>
+
+<p>The form should now be re-ordered, as illustrated by the figure below: </p>
+
+<figure class="captioned-image" style="width:600px;"> <img src="/images/blogs/2011/taxonomy/taxonomy-color-vocab-form-2.png" width="580" height="170" alt="" /><figcaption>The amended form, now we’ve juggled the weights around</figcaption></figure> 
+
+<p>I won’t go into the mechanics of the Drupal Form API – you may wish to refer to the <a href="http://drupal.org/node/751826">Form API Quickstart Guide</a> – but we&#39;re basically adding a new element called <em>color</em>, which is a checkbox with the given caption (the <code>t()</code> function – which stands for translate – allows us to localise our titles and messages). Now, the other element which so far I’ve just skimmed over - the <code>default_value</code> element. In truth this is probably easier to think of as an <em>initial</em> value; when adding a new vocabulary it’s a default value but when editing it’s the <em>current</em> value. But before we can set this value, we need to decide where it’ going to get stored. </p>
+
+<h3>Using Variables in Drupal</h3>
+
+<p>Creating a table to hold these values is probably overkill, however Drupal provides simple key-value storage via the <code>variable</code> system, so that’s what we&#39;ll do. What I’m going to do, then, is simply have a variable for each vocabulary indicating whether to apply a colour scheme or not. Sticking with the convention of prefixing everything with the module name to ensure it’s unique, I’ve stumped for taxonomy_color_color_vocab_<em>vid</em>, where <em>vid</em> is the vocabulary ID. So the value of <code>$default</code> is determined as follows:</p>
+
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="k">if</span> <span class="p">(</span><span class="nb">isset</span><span class="p">(</span><span class="nv">$form</span><span class="p">[</span><span class="s1">&#39;vid&#39;</span><span class="p">][</span><span class="s1">&#39;#value&#39;</span><span class="p">]))</span> <span class="p">{</span>
+        <span class="nv">$checked</span> <span class="o">=</span> <span class="nx">variable_get</span><span class="p">(</span><span class="s1">&#39;taxonomy_color_color_vocab_&#39;</span><span class="o">.</span><span class="nv">$form</span><span class="p">[</span><span class="s1">&#39;vid&#39;</span><span class="p">][</span><span class="s1">&#39;#value&#39;</span><span class="p">],</span> <span class="mi">0</span><span class="p">);</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="nv">$checked</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="p">}</span></code></pre></div>
+
+<p>If we’re editing a vocabulary (rather than adding), the vid is stored in <code>$form[&#39;vid&#39;][&#39;#value&#39;]</code> – do a <code>var_dump()</code> to see this – so in the first case, we find out the current value for the given vocabulary, first appending the vid to the key. The second argument to the function <code>variable_get</code> specifies the value to return if the key in question doesn&#39;t have a value – 0 (false) seems a sensible default. If the vid isn’t set then it– a new vocabulary, so let’ set it to false. </p>
+
+<h3>Using hook_taxonomy</h3>
+
+<p>Next up, this value needs to be stored at the appropriate time – in this case when the form gets submitted; however there’s a trick we can use to “hook in” to this part of the process; when a vocabulary is inserted or updated. We’re going to use another hook – <code>hook_taxonomy()</code>:</p>
+
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="sd">/**</span>
+<span class="sd"> * Implementation of hook_taxonomy().</span>
+<span class="sd"> */</span>
+<span class="k">function</span> <span class="nf">taxonomy_color_taxonomy</span><span class="p">(</span><span class="nv">$op</span><span class="p">,</span> <span class="nv">$type</span><span class="p">,</span> <span class="nv">$form_values</span> <span class="o">=</span> <span class="k">NULL</span><span class="p">)</span> <span class="p">{</span></code></pre></div>
+
+<p>This function gets called when inserting, updating or deleting a vocabulary or a term. <code>$op</code> indicates the operation (<em>insert</em>, <em>update</em> or <em>delete</em>), and the second argument – <code>$type</code> – indicates whether the entity in question is either a <em>term</em> or <em>vocabulary</em>. Here’s the implementation:</p>
+
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="k">switch</span> <span class="p">(</span><span class="nv">$type</span><span class="p">)</span> <span class="p">{</span>
+        
+        <span class="k">case</span> <span class="s1">&#39;vocabulary&#39;</span><span class="o">:</span>
+            <span class="k">switch</span> <span class="p">(</span><span class="nv">$op</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">case</span> <span class="s1">&#39;insert&#39;</span><span class="o">:</span>
+                <span class="k">case</span> <span class="s1">&#39;update&#39;</span><span class="o">:</span>
+                    <span class="nx">variable_set</span><span class="p">(</span><span class="s1">&#39;taxonomy_color_color_vocab_&#39;</span><span class="o">.</span><span class="nv">$form_values</span><span class="p">[</span><span class="s1">&#39;vid&#39;</span><span class="p">],</span> <span class="nb">intval</span><span class="p">(</span><span class="nv">$form_values</span><span class="p">[</span><span class="s1">&#39;color&#39;</span><span class="p">]));</span>
+                    <span class="k">break</span><span class="p">;</span>
+                <span class="k">case</span> <span class="s1">&#39;delete&#39;</span><span class="o">:</span>
+                    <span class="nx">variable_del</span><span class="p">(</span><span class="s1">&#39;taxonomy_color_color_vocab_&#39;</span><span class="o">.</span><span class="nv">$form_values</span><span class="p">[</span><span class="s1">&#39;vid&#39;</span><span class="p">]);</span>
+                    <span class="k">break</span><span class="p">;</span>
+            <span class="p">}</span>
+            
+            <span class="k">break</span><span class="p">;</span></code></pre></div>
+
+<p>We’re interested in vocabularies right now - but we&#39;ll use a <code>switch</code> here because in a moment, we’ll be looking at terms. Another <code>switch</code> decides what to do based on the operation; setting the variable we defined previously on an insert or an update, and if we’re deleting a vocabulary then let’s keep things tidy by deleting the corresponding variable. </p>
+
+<h3>Assigning Colour to Taxonomy Terms</h3>
+
+<p>Next up, we need to add the option to specify a colour for a given taxonomy term by adding a new field to the term edit form. Again, we achieve this using <code>hook_form_alter</code>, adding a new fieldset containing a textfield. Ideally we’d probably want to use JQuery to transform this element into a colour picker, but that’s outside the scope of this tutorial. So, once again we have a look at the form to get the form ID:</p>
+
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;form</span> <span class="na">action=</span><span class="s">&quot;/admin/content/taxonomy/edit/term/123&quot;</span>  <span class="na">accept-charset=</span><span class="s">&quot;UTF-8&quot;</span> <span class="na">method=</span><span class="s">&quot;post&quot;</span> <span class="na">id=</span><span class="s">&quot;taxonomy-form-term&quot;</span> <span class="na">enctype=</span><span class="s">&quot;multipart/form-data&quot;</span><span class="nt">&gt;</span></code></pre></div>
+
+<p>So by applying the same logic as before, our function name becomes: <code>taxonomy_color_form_taxonomy_form_term_alter</code> By inspecting the form we can see that the term ID (tid) is stored in <code>$form[&#39;tid&#39;][&#39;#value&#39;]</code>, so we can check for a colour associated with that term ID, otherwise defaulting to black (hex 000000). This is shown in the snippet below.</p>
+
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="nv">$tid</span> <span class="o">=</span> <span class="nv">$form</span><span class="p">[</span><span class="s1">&#39;tid&#39;</span><span class="p">][</span><span class="s1">&#39;#value&#39;</span><span class="p">];</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nb">is_numeric</span><span class="p">(</span><span class="nv">$tid</span><span class="p">))</span> <span class="p">{</span>
+    <span class="nv">$color</span> <span class="o">=</span> <span class="nx">taxonomy_color_get_term_color</span><span class="p">(</span><span class="nv">$tid</span><span class="p">);</span>
+  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+    <span class="nv">$color</span> <span class="o">=</span> <span class="s1">&#39;000000&#39;</span><span class="p">;</span>
+  <span class="p">}</span></code></pre></div>
+
+<p>You’ll probably notice immediately that I’ve called a function which I haven’t yet defined; its purpose should be self explanatory. Let’s dive in:</p>
+
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="k">function</span> <span class="nf">taxonomy_color_get_term_color</span><span class="p">(</span><span class="nv">$tid</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nv">$result</span> <span class="o">=</span> <span class="nx">db_fetch_object</span><span class="p">(</span><span class="nx">db_query</span><span class="p">(</span><span class="s2">&quot;SELECT color FROM {term_color} WHERE tid = &#39;%d&#39;&quot;</span><span class="p">,</span> <span class="nv">$tid</span><span class="p">));</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nb">is_object</span><span class="p">(</span><span class="nv">$result</span><span class="p">))</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nv">$result</span><span class="o">-&gt;</span><span class="na">color</span><span class="p">;</span>
+  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="k">NULL</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span></code></pre></div>
+
+<p>The SQL should be fairly clear; we run that query, substituting the provided term ID (tid) and fetch the result as an object. The <code>db_query</code> function provides an API to our database. Note that the table name is wrapped in curly braces; if a table prefix was allocated upon installation, this will be inserted for us – it’s not safe to just assume the table is called <code>term_color</code>. And here is the rest of <code>taxonomy_color_form_taxonomy_form_term_alter</code></p>
+
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="sd">/**</span>
+<span class="sd"> * Implementation of hook_form_FORM_ID_alter().</span>
+<span class="sd"> */</span>
+<span class="k">function</span> <span class="nf">taxonomy_color_form_taxonomy_form_term_alter</span><span class="p">(</span><span class="o">&amp;</span><span class="nv">$form</span><span class="p">,</span> <span class="o">&amp;</span><span class="nv">$form_state</span><span class="p">)</span> <span class="p">{</span>
+<span class="nv">$vid</span> <span class="o">=</span> <span class="nb">intval</span><span class="p">(</span><span class="nv">$form</span><span class="p">[</span><span class="s1">&#39;#vocabulary&#39;</span><span class="p">][</span><span class="s1">&#39;vid&#39;</span><span class="p">]);</span>
+    
+    <span class="k">if</span> <span class="p">(</span><span class="nx">variable_get</span><span class="p">(</span><span class="s1">&#39;taxonomy_color_color_vocab_&#39;</span><span class="o">.</span><span class="nv">$vid</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span> <span class="p">{</span>  
+  <span class="nv">$form</span><span class="p">[</span><span class="s1">&#39;submit&#39;</span><span class="p">][</span><span class="s1">&#39;#weight&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">99</span><span class="p">;</span>
+  <span class="nv">$form</span><span class="p">[</span><span class="s1">&#39;delete&#39;</span><span class="p">][</span><span class="s1">&#39;#weight&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">100</span><span class="p">;</span>
+  
+  <span class="nv">$tid</span> <span class="o">=</span> <span class="nv">$form</span><span class="p">[</span><span class="s1">&#39;tid&#39;</span><span class="p">][</span><span class="s1">&#39;#value&#39;</span><span class="p">];</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nb">is_numeric</span><span class="p">(</span><span class="nv">$tid</span><span class="p">))</span> <span class="p">{</span>
+    <span class="nv">$color</span> <span class="o">=</span> <span class="nx">taxonomy_color_get_term_color</span><span class="p">(</span><span class="nv">$tid</span><span class="p">);</span>
+  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+    <span class="nv">$color</span> <span class="o">=</span> <span class="s1">&#39;000000&#39;</span><span class="p">;</span>
+  <span class="p">}</span>
+  
+  <span class="nv">$form</span><span class="p">[</span><span class="s1">&#39;extras&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span>
+    <span class="s1">&#39;#type&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;fieldset&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;#title&#39;</span> <span class="o">=&gt;</span> <span class="nx">t</span><span class="p">(</span><span class="s1">&#39;Extras&#39;</span><span class="p">),</span>
+    <span class="s1">&#39;#collapsible&#39;</span> <span class="o">=&gt;</span> <span class="k">TRUE</span><span class="p">,</span>
+  <span class="p">);</span>
+    
+  <span class="nv">$form</span><span class="p">[</span><span class="s1">&#39;extras&#39;</span><span class="p">][</span><span class="s1">&#39;color&#39;</span><span class="p">]</span> <span class="o">=</span><span class="k">array</span><span class="p">(</span>
+    <span class="s1">&#39;#type&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;textfield&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;#title&#39;</span> <span class="o">=&gt;</span> <span class="nx">t</span><span class="p">(</span><span class="s1">&#39;Color&#39;</span><span class="p">),</span>
+    <span class="s1">&#39;#size&#39;</span> <span class="o">=&gt;</span>  <span class="mi">6</span><span class="p">,</span>
+    <span class="s1">&#39;#default_value&#39;</span> <span class="o">=&gt;</span> <span class="nv">$color</span><span class="p">,</span>
+    <span class="s1">&#39;#description&#39;</span> <span class="o">=&gt;</span> <span class="nx">t</span><span class="p">(</span><span class="s1">&#39;The Color that represents this term.&#39;</span><span class="p">),</span>
+  <span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span></code></pre></div>
+
+<p>Note that before we modify the form, we check whether the vocabulary of this term uses colour-coding; whether editing or adding a brand new term the vocabulary is, by design, already specified and is stored in <code>$form[&#39;#vocabulary&#39;][&#39;vid&#39;]</code> so we use this to check the value of the relevant variable. </p>
+
+<h3>Using the Database in Drupal</h3>
+
+<p>So, that’s the form modified, but we still need to store the colour in the table we created. Here we’ll go back to our implementation of <code>hook_taxonomy()</code>, and add a clause to the <code>switch</code> statement to pick up on term changes.</p>
+
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="k">function</span> <span class="nf">taxonomy_color_taxonomy</span><span class="p">(</span><span class="nv">$op</span><span class="p">,</span> <span class="nv">$type</span><span class="p">,</span> <span class="nv">$form_values</span> <span class="o">=</span> <span class="k">NULL</span><span class="p">)</span> <span class="p">{</span>
+  <span class="o">...</span>
+  <span class="k">case</span> <span class="s1">&#39;term&#39;</span><span class="o">:</span>
+<span class="sb">` If the form contains a term ID (tid), we check the operation being performed, which is stored in `</span><span class="nv">$op</span><span class="sb">`. The function continues as follows: `</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nb">isset</span><span class="p">(</span><span class="nv">$form_values</span><span class="p">[</span><span class="s1">&#39;tid&#39;</span><span class="p">]))</span> <span class="p">{</span>
+    <span class="c1">// grab the tid  </span>
+    <span class="nv">$tid</span> <span class="o">=</span> <span class="nv">$form_values</span><span class="p">[</span><span class="s1">&#39;tid&#39;</span><span class="p">];</span>
+    <span class="k">switch</span> <span class="p">(</span><span class="nv">$op</span><span class="p">)</span> <span class="p">{</span>
+<span class="sb">` If the term is being inserted or updated, `</span><span class="nv">$op</span><span class="sb">` will be **insert** or **update** respectively, but we’ll handle them with the same function: `</span>
+    <span class="k">switch</span> <span class="p">(</span><span class="nv">$op</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">case</span> <span class="s1">&#39;insert&#39;</span><span class="o">:</span>
+      <span class="k">case</span> <span class="s1">&#39;update&#39;</span><span class="o">:</span>
+        <span class="c1">// if we&#39;re inserting or updating, set the color</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">empty</span><span class="p">(</span><span class="nv">$form_values</span><span class="p">[</span><span class="s1">&#39;color&#39;</span><span class="p">]))</span> <span class="p">{</span>
+          <span class="nx">taxonomy_color_add</span><span class="p">(</span><span class="nv">$tid</span><span class="p">,</span> <span class="nv">$form_values</span><span class="p">[</span><span class="s1">&#39;color&#39;</span><span class="p">]);</span>
+        <span class="p">}</span>        
+        <span class="k">break</span><span class="p">;</span>
+<span class="sb">` There’s a new function here – `</span><span class="nx">taxonomy_color_add</span><span class="sb">` – but let’s just finish this function before addressing that: `</span>
+      <span class="k">case</span> <span class="s1">&#39;delete&#39;</span><span class="o">:</span>
+        <span class="c1">// delete the appropriate row in term_color</span>
+        <span class="nx">taxonomy_color_delete</span><span class="p">(</span><span class="nv">$tid</span><span class="p">);</span>
+        <span class="k">break</span><span class="p">;</span>
+    <span class="p">}</span></code></pre></div>
+
+<p>So as you can see, the next step is to define functions to add / update / delete a colour for a given term. Deleting is easy:</p>
+
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="sd">/**</span>
+<span class="sd"> * Delete the color associated with a given term</span>
+<span class="sd"> */</span>
+<span class="k">function</span> <span class="nf">taxonomy_color_delete</span><span class="p">(</span><span class="nv">$tid</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nx">db_query</span><span class="p">(</span><span class="s2">&quot;DELETE FROM {term_color} WHERE tid=&#39;%d&#39;&quot;</span><span class="p">,</span> <span class="nv">$tid</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="sb">` It might appear that I&#39;m making adding a colour for a given term more complicated than it needs to be, by deleting a record and inserting a new one instead of updating; however by doing it this way I’m keeping on top of enforcing the integrity of the cache, a new aspect to the module which you’ll see being introduced in this function: `</span>
+<span class="k">function</span> <span class="nf">taxonomy_color_add</span><span class="p">(</span><span class="nv">$tid</span><span class="p">,</span> <span class="nv">$color</span><span class="p">)</span> <span class="p">{</span>
+
+  <span class="nv">$count</span> <span class="o">=</span> <span class="nx">db_result</span><span class="p">(</span><span class="nx">db_query</span><span class="p">(</span><span class="s1">&#39;SELECT COUNT(tid) FROM {term_color} WHERE tid=%d&#39;</span><span class="p">,</span> <span class="nv">$tid</span><span class="p">));</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nv">$count</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// Delete old color before saving the new one.</span>
+    <span class="nx">taxonomy_color_delete</span><span class="p">(</span><span class="nv">$tid</span><span class="p">);</span>
+  <span class="p">}</span>
+
+  <span class="k">if</span> <span class="p">(</span><span class="nx">db_query</span><span class="p">(</span><span class="s2">&quot;INSERT INTO {term_color} (tid, color) VALUES (&#39;%d&#39;, &#39;%s&#39;)&quot;</span><span class="p">,</span> <span class="nv">$tid</span><span class="p">,</span> <span class="nv">$color</span><span class="p">))</span> <span class="p">{</span>
+    <span class="nx">cache_clear_all</span><span class="p">(</span><span class="s2">&quot;taxonomy_color:</span><span class="si">$tid</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s1">&#39;cache_tax_color&#39;</span><span class="p">);</span>
+    <span class="k">return</span> <span class="k">TRUE</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="k">else</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="k">FALSE</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span></code></pre></div>
+
+<p>As you can see, when we delete a colour held against a term and add a new one, we clear any record for this term from the cache, where the key is <code>taxonomy_color:tid</code>. The second parameter of the call to <code>cache_clear_all</code> is the name of the table used to store the cached data. Note that I could / should use <code>drupal_write_record</code> here, but I’m going to keep it simple for now. </p>
+
+<h3>The Module (so far) in Full</h3>
+
+<p>Below, you’ll find the module in full, at least up until this point. </p>
+
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="sd">/**</span>
+<span class="sd"> * @file</span>
+<span class="sd"> * Enables colors to be assigned to taxonomy</span>
+<span class="sd"> *</span>
+<span class="sd"> * @author Lukas White &lt;hello@lukaswhite.com&gt;</span>
+<span class="sd"> */</span>
+
+<span class="sd">/**</span>
+<span class="sd"> * Implementation of hook_perm().</span>
+<span class="sd"> */</span>
+<span class="k">function</span> <span class="nf">taxonomy_color_perm</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="k">array</span><span class="p">(</span><span class="s1">&#39;administer taxonomy&#39;</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="sd">/**</span>
+<span class="sd"> * Implementation of hook_form_FORM_ID_alter().</span>
+<span class="sd"> */</span>
+<span class="k">function</span> <span class="nf">taxonomy_color_form_taxonomy_form_term_alter</span><span class="p">(</span><span class="o">&amp;</span><span class="nv">$form</span><span class="p">,</span> <span class="o">&amp;</span><span class="nv">$form_state</span><span class="p">)</span> <span class="p">{</span>
+  
+  <span class="nv">$form</span><span class="p">[</span><span class="s1">&#39;submit&#39;</span><span class="p">][</span><span class="s1">&#39;#weight&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">99</span><span class="p">;</span>
+  <span class="nv">$form</span><span class="p">[</span><span class="s1">&#39;delete&#39;</span><span class="p">][</span><span class="s1">&#39;#weight&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">100</span><span class="p">;</span>
+  
+  <span class="nv">$tid</span> <span class="o">=</span> <span class="nv">$form</span><span class="p">[</span><span class="s1">&#39;tid&#39;</span><span class="p">][</span><span class="s1">&#39;#value&#39;</span><span class="p">];</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nb">is_numeric</span><span class="p">(</span><span class="nv">$tid</span><span class="p">))</span> <span class="p">{</span>
+    <span class="nv">$color</span> <span class="o">=</span> <span class="nx">taxonomy_color_get_term_color</span><span class="p">(</span><span class="nv">$tid</span><span class="p">);</span>
+  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+    <span class="nv">$color</span> <span class="o">=</span> <span class="s1">&#39;000000&#39;</span><span class="p">;</span>
+  <span class="p">}</span>
+  
+  <span class="nv">$form</span><span class="p">[</span><span class="s1">&#39;extras&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span>
+    <span class="s1">&#39;#type&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;fieldset&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;#title&#39;</span> <span class="o">=&gt;</span> <span class="nx">t</span><span class="p">(</span><span class="s1">&#39;Extras&#39;</span><span class="p">),</span>
+    <span class="s1">&#39;#collapsible&#39;</span> <span class="o">=&gt;</span> <span class="k">TRUE</span><span class="p">,</span>
+  <span class="p">);</span>
+    
+  <span class="nv">$form</span><span class="p">[</span><span class="s1">&#39;extras&#39;</span><span class="p">][</span><span class="s1">&#39;color&#39;</span><span class="p">]</span> <span class="o">=</span><span class="k">array</span><span class="p">(</span>
+    <span class="s1">&#39;#type&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;textfield&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;#title&#39;</span> <span class="o">=&gt;</span> <span class="nx">t</span><span class="p">(</span><span class="s1">&#39;Color&#39;</span><span class="p">),</span>
+    <span class="s1">&#39;#size&#39;</span> <span class="o">=&gt;</span>  <span class="mi">6</span><span class="p">,</span>
+    <span class="s1">&#39;#default_value&#39;</span> <span class="o">=&gt;</span> <span class="nv">$color</span><span class="p">,</span>
+    <span class="s1">&#39;#description&#39;</span> <span class="o">=&gt;</span> <span class="nx">t</span><span class="p">(</span><span class="s1">&#39;The Color that represents this term.&#39;</span><span class="p">),</span>
+  <span class="p">);</span>
+  
+<span class="p">}</span>
+
+<span class="sd">/**</span>
+<span class="sd"> * Implementation of hook_taxonomy().</span>
+<span class="sd"> */</span>
+<span class="k">function</span> <span class="nf">taxonomy_color_taxonomy</span><span class="p">(</span><span class="nv">$op</span><span class="p">,</span> <span class="nv">$type</span><span class="p">,</span> <span class="nv">$form_values</span> <span class="o">=</span> <span class="k">NULL</span><span class="p">)</span> <span class="p">{</span>
+  <span class="c1">// We&#39;re only interested in term changes.</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nv">$type</span> <span class="o">!=</span> <span class="s1">&#39;term&#39;</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="k">if</span> <span class="p">(</span><span class="nb">isset</span><span class="p">(</span><span class="nv">$form_values</span><span class="p">[</span><span class="s1">&#39;tid&#39;</span><span class="p">]))</span> <span class="p">{</span>
+    <span class="c1">// grab the tid  </span>
+    <span class="nv">$tid</span> <span class="o">=</span> <span class="nv">$form_values</span><span class="p">[</span><span class="s1">&#39;tid&#39;</span><span class="p">];</span>
+    <span class="k">switch</span> <span class="p">(</span><span class="nv">$op</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">case</span> <span class="s1">&#39;insert&#39;</span><span class="o">:</span>
+      <span class="k">case</span> <span class="s1">&#39;update&#39;</span><span class="o">:</span>
+        <span class="c1">// if we&#39;re inserting or updating, set the color</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">empty</span><span class="p">(</span><span class="nv">$form_values</span><span class="p">[</span><span class="s1">&#39;color&#39;</span><span class="p">]))</span> <span class="p">{</span>
+          <span class="nx">taxonomy_color_add</span><span class="p">(</span><span class="nv">$tid</span><span class="p">,</span> <span class="nv">$form_values</span><span class="p">[</span><span class="s1">&#39;color&#39;</span><span class="p">]);</span>
+        <span class="p">}</span>        
+        <span class="k">break</span><span class="p">;</span>
+      <span class="k">case</span> <span class="s1">&#39;delete&#39;</span><span class="o">:</span>
+        <span class="c1">// delete the appropriate row in term_color</span>
+        <span class="nx">taxonomy_color_delete</span><span class="p">(</span><span class="nv">$tid</span><span class="p">);</span>
+        <span class="k">break</span><span class="p">;</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="sd">/**</span>
+<span class="sd"> * Helper function for adding a colour to a term</span>
+<span class="sd"> */</span>
+<span class="k">function</span> <span class="nf">taxonomy_color_add</span><span class="p">(</span><span class="nv">$tid</span><span class="p">,</span> <span class="nv">$color</span><span class="p">)</span> <span class="p">{</span>
+
+  <span class="nv">$count</span> <span class="o">=</span> <span class="nx">db_result</span><span class="p">(</span><span class="nx">db_query</span><span class="p">(</span><span class="s1">&#39;SELECT COUNT(tid) FROM {term_color} WHERE tid=%d&#39;</span><span class="p">,</span> <span class="nv">$tid</span><span class="p">));</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nv">$count</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// Delete old color before saving the new one.</span>
+    <span class="nx">taxonomy_color_delete</span><span class="p">(</span><span class="nv">$tid</span><span class="p">);</span>
+  <span class="p">}</span>
+
+  <span class="k">if</span> <span class="p">(</span><span class="nx">db_query</span><span class="p">(</span><span class="s2">&quot;INSERT INTO {term_color} (tid, color) VALUES (&#39;%d&#39;, &#39;%s&#39;)&quot;</span><span class="p">,</span> <span class="nv">$tid</span><span class="p">,</span> <span class="nv">$color</span><span class="p">))</span> <span class="p">{</span>
+    <span class="nx">cache_clear_all</span><span class="p">(</span><span class="s2">&quot;taxonomy_color:</span><span class="si">$tid</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s1">&#39;cache_tax_color&#39;</span><span class="p">);</span>
+    <span class="k">return</span> <span class="k">TRUE</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="k">else</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="k">FALSE</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">function</span> <span class="nf">taxonomy_color_get_term_color</span><span class="p">(</span><span class="nv">$tid</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nv">$result</span> <span class="o">=</span> <span class="nx">db_fetch_object</span><span class="p">(</span><span class="nx">db_query</span><span class="p">(</span><span class="s2">&quot;SELECT color FROM {term_color} WHERE tid = &#39;%d&#39;&quot;</span><span class="p">,</span> <span class="nv">$tid</span><span class="p">));</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nb">is_object</span><span class="p">(</span><span class="nv">$result</span><span class="p">))</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nv">$result</span><span class="o">-&gt;</span><span class="na">color</span><span class="p">;</span>
+  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="sd">/**</span>
+<span class="sd"> * Delete the color associated with a given term</span>
+<span class="sd"> */</span>
+<span class="k">function</span> <span class="nf">taxonomy_color_delete</span><span class="p">(</span><span class="nv">$tid</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nx">db_query</span><span class="p">(</span><span class="s2">&quot;DELETE FROM {term_color} WHERE tid=&#39;%d&#39;&quot;</span><span class="p">,</span> <span class="nv">$tid</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="sd">/**</span>
+<span class="sd"> *  Implementation of hook_flush_caches().</span>
+<span class="sd"> */</span>
+<span class="k">function</span> <span class="nf">taxonomy_color_flush_caches</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="k">array</span><span class="p">(</span><span class="s1">&#39;cache_tax_color&#39;</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="sd">/**</span>
+<span class="sd"> *  Implementation of hook_views_api().</span>
+<span class="sd"> */</span>
+<span class="k">function</span> <span class="nf">taxonomy_color_views_api</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="k">array</span><span class="p">(</span>
+    <span class="s1">&#39;api&#39;</span> <span class="o">=&gt;</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="s1">&#39;path&#39;</span> <span class="o">=&gt;</span> <span class="nx">drupal_get_path</span><span class="p">(</span><span class="s1">&#39;module&#39;</span><span class="p">,</span> <span class="s1">&#39;taxonomy_color&#39;</span><span class="p">),</span>
+    <span class="p">);</span>
+<span class="p">}</span>
+
+<span class="sd">/**</span>
+<span class="sd"> *  Implementation of hook_views_handlers().</span>
+<span class="sd"> */</span>
+<span class="k">function</span> <span class="nf">taxonomy_color_views_handlers</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="k">array</span><span class="p">(</span>
+    <span class="s1">&#39;info&#39;</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span>
+      <span class="s1">&#39;path&#39;</span> <span class="o">=&gt;</span> <span class="nx">drupal_get_path</span><span class="p">(</span><span class="s1">&#39;module&#39;</span><span class="p">,</span> <span class="s1">&#39;taxonomy_color&#39;</span><span class="p">),</span>
+      <span class="p">),</span>
+    <span class="s1">&#39;handlers&#39;</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span>
+      <span class="s1">&#39;views_handler_field_taxonomy_color&#39;</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span>
+        <span class="s1">&#39;parent&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;views_handler_field&#39;</span><span class="p">,</span>
+        <span class="p">),</span>
+      <span class="p">),</span>
+    <span class="p">);</span>
+<span class="p">}</span></code></pre></div>
+
+<p>In the next part, I’ll complete the module by implementing caching fully, and then adding Views integration.</p>
+
+	</div>
+
+	
+	<p class="tags">Tagged with:
+	
+  <a href="/tag/drupal">Drupal</a> 
+	
+  <a href="/tag/tutorials">tutorials</a> 
+	
+  <a href="/tag/php">PHP</a> 
+	
+	</p>
+	
+
+	<!--
+	<div class="author">
+		<a href="https://twitter.com/lukaswhite" title="Twitter">Twitter</a>
+		<a href="https://plus.google.com/+LukasWhiteWebDeveloper" title="My Google+ Profile">Google+</a>
+	</div>	
+-->
+
+	<div id="disqus_thread"></div>
+	<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">Comments powered by Disqus.</a></noscript>
+	<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+</article>
+
+<aside class="five columns">
+	
+	<h4>About Me</h4>
+
+<p>I&#39;m a web developer based in Manchester, England. I also design websites.  I generally favour open-source technologies such as PHP, MySQL and JQuery, and I have extensive experience using Drupal.</p>
+
+
+	<div class="block tag-cloud">
+			 	<h4>Tags</h4>
+			 	<ul class="tags">
+				
+	    		<li><a href="/blog/tags/drupal">Drupal</a></li>
+				
+	    		<li><a href="/blog/tags/mobile">mobile</a></li>
+				
+	    		<li><a href="/blog/tags/rwd">RWD</a></li>
+				
+	    		<li><a href="/blog/tags/responsive-web-design">responsive web design</a></li>
+				
+	    		<li><a href="/blog/tags/deployment">deployment</a></li>
+				
+	    		<li><a href="/blog/tags/prowl">Prowl</a></li>
+				
+	    		<li><a href="/blog/tags/push-notifications">push notifications</a></li>
+				
+	    		<li><a href="/blog/tags/concrete5">Concrete5</a></li>
+				
+	    		<li><a href="/blog/tags/cms">CMS</a></li>
+				
+	    		<li><a href="/blog/tags/tutorials">tutorials</a></li>
+				
+	    		<li><a href="/blog/tags/php">PHP</a></li>
+				
+	    		<li><a href="/blog/tags/laravel">Laravel</a></li>
+				
+	    		<li><a href="/blog/tags/frameworks">frameworks</a></li>
+				
+	    		<li><a href="/blog/tags/facebook">Facebook</a></li>
+				
+	    		<li><a href="/blog/tags/drupal-7">Drupal 7</a></li>
+				
+	    		<li><a href="/blog/tags/ux">UX</a></li>
+				
+	    		<li><a href="/blog/tags/less">Less</a></li>
+				
+	    		<li><a href="/blog/tags/mysql">MySQL</a></li>
+				
+	    		<li><a href="/blog/tags/writing">writing</a></li>
+				
+	    		<li><a href="/blog/tags/sitepoint">Sitepoint</a></li>
+				
+	    		<li><a href="/blog/tags/articles">articles</a></li>
+				
+	    		<li><a href="/blog/tags/spotify">Spotify</a></li>
+				
+	    		<li><a href="/blog/tags/drupal-commerce">Drupal Commerce</a></li>
+				
+	    		<li><a href="/blog/tags/bash">Bash</a></li>
+				
+	    		<li><a href="/blog/tags/git">Git</a></li>
+				
+	    		<li><a href="/blog/tags/apache">Apache</a></li>
+				
+	    		<li><a href="/blog/tags/workflow">Workflow</a></li>
+				
+	    		<li><a href="/blog/tags/foundation">Foundation</a></li>
+				
+	    		<li><a href="/blog/tags/gravatar">Gravatar</a></li>
+				
+	    		<li><a href="/blog/tags/jquery">JQuery</a></li>
+				
+	    		<li><a href="/blog/tags/geo">Geo</a></li>
+				
+	    		<li><a href="/blog/tags/backbone">Backbone</a></li>
+				
+	    		<li><a href="/blog/tags/homestead">Homestead</a></li>
+				
+	    		<li><a href="/blog/tags/elasticsearch">Elasticsearch</a></li>
+				
+	    		<li><a href="/blog/tags/jekyll">Jekyll</a></li>
+				
+	    		<li><a href="/blog/tags/grunt">Grunt</a></li>
+				
+				</ul>
+			</div>
+
+</aside>
+
+
+<script type="text/javascript">    
+	var disqus_shortname = 'lukaswhite';
+    
+	(function() {
+		var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+		dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+		(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+	})();
+</script>
+ 
+  </div>
+
+  <!-- Footer begins ========================================================================== -->
+  <footer id="footer">
+    <hr>
+    <div class="eight columns">
+      <ul id="footerLinks">
+        <li>&copy; 2014 Lukas White. All rights reserved.</li>        
+        <li><a href="http://www.twitter.com/lukaswhite" target="_blank">@lukaswhite</a></li>              
+      </ul>
+    </div>
+    <div class="eight columns right">
+      <ul class="social small">
+        <li><a class="linkedin" href="http://uk.linkedin.com/in/lukaswhite" target="_blank"><span>View my LinkedIn Profile</span></a></li>
+        <li><a class="twitter" href="http://www.twitter.com/lukaswhite" target="_blank"><span>Follow me on Twitter</span></a></li>
+        <li><a class="facebook" href="http://www.facebook.com/lukas.white.freelance.web.developer" target="_blank"><span>Find me on Facebook</span></a></li>
+        <li><a class="github" href="https://github.com/lukaswhite" target="_blank"><span>Find me on Github</span></a></li>
+      </ul>
+    </div>
+    <hr>
+    <div class="sixteen columns centered">
+      <p>Powered by <a href="http://www.typeandgrids.com" target="_blank">Type &amp; Grids</a>, <a href="http://jekyllrb.com/">Jekyll</a> and <a href="https://github.com/erikhuda/thor">Thor</a></p>
+    </div>
+  </footer>
+  <!-- Footer ends ============================================================================ -->
+    
+</div><!-- container -->
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-3485550-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</body>
+</html>

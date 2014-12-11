@@ -1,0 +1,276 @@
+<!doctype html>
+<!--[if lt IE 7 ]><html class="ie ie6" lang="en"> <![endif]-->
+<!--[if IE 7 ]><html class="ie ie7" lang="en"> <![endif]-->
+<!--[if IE 8 ]><html class="ie ie8" lang="en"> <![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!--><html lang="en"> <!--<![endif]-->
+<head>
+<meta charset="utf-8">
+
+<!--
+••••••••••••••••••••••••
+
+Powered by Type & Grids™
+www.typeandgrids.com
+
+••••••••••••••••••••••••
+-->
+
+<title>Using Less, the Dynamic Stylesheet Language, in Concrete5</title>
+<meta name="description" content="The website of Lukas White, Manchester-based Freelance Web Designer and Developer">
+<meta name="author" content="Lukas White">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+<!-- CSS
+================================================================================================= -->
+<link rel="stylesheet" href="/dist/styles.min.css">
+
+<!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+
+<!-- Favicons
+================================================================================================= -->
+<link rel="shortcut icon" href="/favicon.ico">
+<link rel="apple-touch-icon" href="images/favicons/apple-touch-icon.png">
+<link rel="apple-touch-icon" sizes="72x72" href="images/favicons/apple-touch-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="114x114" href="images/favicons/apple-touch-icon-114x114.png">
+
+</head>
+<body>
+
+<div class="container">
+  
+  <!-- Header begins ========================================================================== -->
+  <header id="page-header" class="sixteen columns">
+    <div id="logo">
+      <a href="/">
+        <h1>Lukas White</h1>
+        <h2>Freelance Web Developer</h2>
+      </a>
+      <!--
+      <img src="images/logo.png" width="275" height="35" alt="Logo" />
+      -->
+    </div>
+    <nav>
+      <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/about">About</a></li>
+        <li><a href="/blog">Blog</a></li>
+        <li><a href="/work">Work</a></li>
+        <li><a href="/contact">Contact</a></li>        
+      </ul>
+    </nav>
+    <hr />
+  </header>
+  <!-- Header ends ============================================================================ -->
+  
+  <div id="content" class="content">
+  <article class="eleven columns post">
+	<h2>Using Less, the Dynamic Stylesheet Language, in Concrete5</h2>
+	<p class="meta"> &ndash; <time datetime="2011-09-02">2<sup>nd</sup> September, 2011</time></p>
+
+	<div class="body">
+		<p><img src="http://www.lukaswhite.com/images/blogs/2011/concrete5/less.png" width="199" height="81" alt="Less, the dynamic styesheet language" style="float:right;margin:0 10px 10px 0;" /></p>
+
+<p>Having played around with Less for a while, I’m quite taken with it. Especially with useful tools such as Twitter&#39;s <a href="http://twitter.github.com/bootstrap/">newly released Bootstrap</a> being optimised to work with it. Less works with CSS to provide all sorts of neat features such as variables, nested rules, functions and “mixins”, which means less code, and easier to maintain code. So, for example, instead of doing this each time you want a rounded corner: </p>
+
+<div class="highlight"><pre><code class="language-css" data-lang="css"><span class="nt">-moz-border-radius</span><span class="o">:</span> <span class="nt">10px</span><span class="o">;</span> 
+<span class="nt">-webkit-border-radius</span><span class="o">:</span> <span class="nt">10px</span><span class="o">;</span> 
+<span class="nt">border-radius</span><span class="o">:</span> <span class="nt">10px</span><span class="o">;</span></code></pre></div>
+
+<p>You can create a mixin (a lot like a function) once, like so: </p>
+
+<div class="highlight"><pre><code class="language-css" data-lang="css"><span class="nc">.roundedCorners</span> <span class="o">(</span><span class="k">@radius</span><span class="o">:</span> <span class="nt">10px</span><span class="o">)</span> <span class="p">{</span> 
+    <span class="nt">-moz-border-radius</span><span class="o">:</span> <span class="k">@radius</span><span class="p">;</span> 
+    <span class="nt">-webkit-border-radius</span><span class="o">:</span> <span class="k">@radius</span><span class="p">;</span> 
+    <span class="nt">border-radius</span><span class="o">:</span> <span class="k">@radius</span><span class="p">;</span> 
+<span class="p">}</span></code></pre></div>
+
+<p>Then applying rounded corners takes one line: </p>
+
+<div class="highlight"><pre><code class="language-css" data-lang="css"><span class="nc">.classname</span> <span class="p">{</span> <span class="o">.</span><span class="n">roundedCorners</span><span class="p">;</span> <span class="p">}</span></code></pre></div>
+
+<p>Or, using variables (which would otherwise default to 10px in the example above), you can specify the size of the radius, like so: </p>
+
+<p>{syntaxhighlighter brush:css, gutter: false}
+.more-rounded { 
+    .roundedCorners(15); 
+} 
+{/syntaxhighlighter} </p>
+
+<p>Where Less can really come into its own is when building semantic responsive layouts – but that’s a whole separate post. Besides this post isn&#39;t about Less, so much, as how to go about using it with Concrete5 (though some of the principals I’m covering apply to other frameworks and CMS&#39;s). Concrete5 – probably my favourite CMS at the moment – has no support out-of-the-box, and nor did there seem to be a third party extension offering this functionality; so I decided to build it. Before Less is any use it must be compiled to CSS. There are three possible ways of doing this; using the Less JavaScript library, using Node.js or using a server-side compiler. I picked out the third option as in some ways it’s safest; if you’re running in a PHP environment then handling the compilation server-side means you don’t have to worry about the client side – such as the user having turned off Javascript. So, I took the excellent LessPHP library from <a href="http://leafo.net/lessphp/">Leaf Corcoran</a>, and created an add-on so that this could be installed and used within Concrete5. </p>
+
+<p><figure class="captioned-image" style="width:455px;"><img src="/images/blogs/2011/concrete5/concrete5-less.jpg" width="435" height="260" alt="Installing the Less Add-on in Concrete5" /><figcaption></p>
+
+<p>Install Less the way you would any other package in Concrete5; from the administration section go dashboard, select <em>Add Functionality</em> and it will be available to activate.</figcaption></figure> The package contains the necessary PHP compiler in its <code>libraries</code> folder, so all you need to do is include a Less file using the package’s helper in your template’s head section, thus: </p>
+
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="nv">$less</span> <span class="o">=</span> <span class="nx">Loader</span><span class="o">::</span><span class="na">helper</span><span class="p">(</span><span class="s2">&quot;less&quot;</span><span class="p">,</span> <span class="s2">&quot;less&quot;</span><span class="p">);</span> <span class="cp">?&gt;</span><span class="x"></span>
+<span class="x">print $less-&gt;link(&#39;styles.css.less&#39;); ?&gt;</span></code></pre></div>
+
+<p>In the example above, <code>styles.css.less</code> is in the theme folder (it seems most likely this is where you would be using Less), but you can also process a Less file from a package by passing in the package handler. So what does this do? Well, it matches the Less file specified to a corresponding CSS file and if that doesn’t exist, it generates it by compiling the Less file. If the CSS file exists and is more recent than the latest update to the Less file, it uses that – no need for it to recompile, which would severly impact performance. However if you have made a change to your Less file then the resultant CSS will be recompiled for you. One caveat; there is some overlap with Concrete5’s CSS handling, whereby you can, for example, create a theme with a configurable colour scheme by “exposing” the relevant CSS rules to make them editable in the CMS. Less offers something different, however, and because of this, and the fact that it would be difficult to run both features side-by-side I’ve made no effort for the two to play nicely together. There is nothing to stop you linking to a set of base styles in Less format and then adding a configurable CSS style, though. If you want to try it out, you can find the <a href="https://github.com/lukaswhite/less_concrete5">source on Github</a>. It will hopefully be available through the Marketplace soon (free of charge), once it&#39;s gone through the approval process. Let me know if you have any questions! </p>
+
+<p><strong>UPDATE</strong>: this add-on has been approved, and is <a href="http://www.concrete5.org/marketplace/addons/less/">available here</a>.</p>
+
+	</div>
+
+	
+	<p class="tags">Tagged with:
+	
+  <a href="/tag/concrete5">Concrete5</a> 
+	
+  <a href="/tag/less">Less</a> 
+	
+	</p>
+	
+
+	<!--
+	<div class="author">
+		<a href="https://twitter.com/lukaswhite" title="Twitter">Twitter</a>
+		<a href="https://plus.google.com/+LukasWhiteWebDeveloper" title="My Google+ Profile">Google+</a>
+	</div>	
+-->
+
+	<div id="disqus_thread"></div>
+	<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">Comments powered by Disqus.</a></noscript>
+	<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+</article>
+
+<aside class="five columns">
+	
+	<h4>About Me</h4>
+
+<p>I&#39;m a web developer based in Manchester, England. I also design websites.  I generally favour open-source technologies such as PHP, MySQL and JQuery, and I have extensive experience using Drupal.</p>
+
+
+	<div class="block tag-cloud">
+			 	<h4>Tags</h4>
+			 	<ul class="tags">
+				
+	    		<li><a href="/blog/tags/drupal">Drupal</a></li>
+				
+	    		<li><a href="/blog/tags/mobile">mobile</a></li>
+				
+	    		<li><a href="/blog/tags/rwd">RWD</a></li>
+				
+	    		<li><a href="/blog/tags/responsive-web-design">responsive web design</a></li>
+				
+	    		<li><a href="/blog/tags/deployment">deployment</a></li>
+				
+	    		<li><a href="/blog/tags/prowl">Prowl</a></li>
+				
+	    		<li><a href="/blog/tags/push-notifications">push notifications</a></li>
+				
+	    		<li><a href="/blog/tags/concrete5">Concrete5</a></li>
+				
+	    		<li><a href="/blog/tags/cms">CMS</a></li>
+				
+	    		<li><a href="/blog/tags/tutorials">tutorials</a></li>
+				
+	    		<li><a href="/blog/tags/php">PHP</a></li>
+				
+	    		<li><a href="/blog/tags/laravel">Laravel</a></li>
+				
+	    		<li><a href="/blog/tags/frameworks">frameworks</a></li>
+				
+	    		<li><a href="/blog/tags/facebook">Facebook</a></li>
+				
+	    		<li><a href="/blog/tags/drupal-7">Drupal 7</a></li>
+				
+	    		<li><a href="/blog/tags/ux">UX</a></li>
+				
+	    		<li><a href="/blog/tags/less">Less</a></li>
+				
+	    		<li><a href="/blog/tags/mysql">MySQL</a></li>
+				
+	    		<li><a href="/blog/tags/writing">writing</a></li>
+				
+	    		<li><a href="/blog/tags/sitepoint">Sitepoint</a></li>
+				
+	    		<li><a href="/blog/tags/articles">articles</a></li>
+				
+	    		<li><a href="/blog/tags/spotify">Spotify</a></li>
+				
+	    		<li><a href="/blog/tags/drupal-commerce">Drupal Commerce</a></li>
+				
+	    		<li><a href="/blog/tags/bash">Bash</a></li>
+				
+	    		<li><a href="/blog/tags/git">Git</a></li>
+				
+	    		<li><a href="/blog/tags/apache">Apache</a></li>
+				
+	    		<li><a href="/blog/tags/workflow">Workflow</a></li>
+				
+	    		<li><a href="/blog/tags/foundation">Foundation</a></li>
+				
+	    		<li><a href="/blog/tags/gravatar">Gravatar</a></li>
+				
+	    		<li><a href="/blog/tags/jquery">JQuery</a></li>
+				
+	    		<li><a href="/blog/tags/geo">Geo</a></li>
+				
+	    		<li><a href="/blog/tags/backbone">Backbone</a></li>
+				
+	    		<li><a href="/blog/tags/homestead">Homestead</a></li>
+				
+	    		<li><a href="/blog/tags/elasticsearch">Elasticsearch</a></li>
+				
+	    		<li><a href="/blog/tags/jekyll">Jekyll</a></li>
+				
+	    		<li><a href="/blog/tags/grunt">Grunt</a></li>
+				
+				</ul>
+			</div>
+
+</aside>
+
+
+<script type="text/javascript">    
+	var disqus_shortname = 'lukaswhite';
+    
+	(function() {
+		var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+		dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+		(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+	})();
+</script>
+ 
+  </div>
+
+  <!-- Footer begins ========================================================================== -->
+  <footer id="footer">
+    <hr>
+    <div class="eight columns">
+      <ul id="footerLinks">
+        <li>&copy; 2014 Lukas White. All rights reserved.</li>        
+        <li><a href="http://www.twitter.com/lukaswhite" target="_blank">@lukaswhite</a></li>              
+      </ul>
+    </div>
+    <div class="eight columns right">
+      <ul class="social small">
+        <li><a class="linkedin" href="http://uk.linkedin.com/in/lukaswhite" target="_blank"><span>View my LinkedIn Profile</span></a></li>
+        <li><a class="twitter" href="http://www.twitter.com/lukaswhite" target="_blank"><span>Follow me on Twitter</span></a></li>
+        <li><a class="facebook" href="http://www.facebook.com/lukas.white.freelance.web.developer" target="_blank"><span>Find me on Facebook</span></a></li>
+        <li><a class="github" href="https://github.com/lukaswhite" target="_blank"><span>Find me on Github</span></a></li>
+      </ul>
+    </div>
+    <hr>
+    <div class="sixteen columns centered">
+      <p>Powered by <a href="http://www.typeandgrids.com" target="_blank">Type &amp; Grids</a>, <a href="http://jekyllrb.com/">Jekyll</a> and <a href="https://github.com/erikhuda/thor">Thor</a></p>
+    </div>
+  </footer>
+  <!-- Footer ends ============================================================================ -->
+    
+</div><!-- container -->
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-3485550-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</body>
+</html>

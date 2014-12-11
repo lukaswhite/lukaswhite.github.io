@@ -1,0 +1,284 @@
+<!doctype html>
+<!--[if lt IE 7 ]><html class="ie ie6" lang="en"> <![endif]-->
+<!--[if IE 7 ]><html class="ie ie7" lang="en"> <![endif]-->
+<!--[if IE 8 ]><html class="ie ie8" lang="en"> <![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!--><html lang="en"> <!--<![endif]-->
+<head>
+<meta charset="utf-8">
+
+<!--
+••••••••••••••••••••••••
+
+Powered by Type & Grids™
+www.typeandgrids.com
+
+••••••••••••••••••••••••
+-->
+
+<title>Seven Useful Drupal Modules to Enhance Usability for Administrators</title>
+<meta name="description" content="The website of Lukas White, Manchester-based Freelance Web Designer and Developer">
+<meta name="author" content="Lukas White">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+<!-- CSS
+================================================================================================= -->
+<link rel="stylesheet" href="/dist/styles.min.css">
+
+<!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+
+<!-- Favicons
+================================================================================================= -->
+<link rel="shortcut icon" href="/favicon.ico">
+<link rel="apple-touch-icon" href="images/favicons/apple-touch-icon.png">
+<link rel="apple-touch-icon" sizes="72x72" href="images/favicons/apple-touch-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="114x114" href="images/favicons/apple-touch-icon-114x114.png">
+
+</head>
+<body>
+
+<div class="container">
+  
+  <!-- Header begins ========================================================================== -->
+  <header id="page-header" class="sixteen columns">
+    <div id="logo">
+      <a href="/">
+        <h1>Lukas White</h1>
+        <h2>Freelance Web Developer</h2>
+      </a>
+      <!--
+      <img src="images/logo.png" width="275" height="35" alt="Logo" />
+      -->
+    </div>
+    <nav>
+      <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/about">About</a></li>
+        <li><a href="/blog">Blog</a></li>
+        <li><a href="/work">Work</a></li>
+        <li><a href="/contact">Contact</a></li>        
+      </ul>
+    </nav>
+    <hr />
+  </header>
+  <!-- Header ends ============================================================================ -->
+  
+  <div id="content" class="content">
+  <article class="eleven columns post">
+	<h2>Seven Useful Drupal Modules to Enhance Usability for Administrators</h2>
+	<p class="meta"> &ndash; <time datetime="2011-08-24">24<sup>th</sup> August, 2011</time></p>
+
+	<div class="body">
+		<p>One of Drupal’s weaknesses, I feel, is that out-of-the-box usability for administrators is a little poor (the Drupal team themselves would probably agree with me, however this is something that’s now being addressed in a big way). There are, however, plenty of ways to make the experience better through a set of Drupal modules which I’ll be covering in this post. However before even thinking about modules, it’s important you have a good admin theme – and there are a few good options. <a href="http://drupal.org/project/rootcandy">Rootcandy</a> is a perennial favourite, and comes in three flavours; standard, fixed (i.e. a fixed width) and dark. </p>
+
+<figure class="captioned-image" style="width:600px;"><img src="/images/blogs/2011/drupal/rootcandy-admin-theme.png" width="580" height="180" alt="The Rootcandy admin theme for Drupal" /><figcaption>The Rootcandy admin theme for Drupal</figcaption></figure> 
+
+<p><a href="http://drupal.org/project/rubik">Rubik</a> is an admin theme based on the <a href="http://drupal.org/project/tao">Tao</a> base theme, and it’s by Development Seed, whose work on Drupal is usually characterised by great interfaces and UI design. </p>
+
+<figure class="captioned-image" style="width:600px;"><img src="/images/blogs/2011/drupal/rubik-admin-theme.jpg" width="580" height="330" alt="The Rubik admin theme for Drupal" /><figcaption>The Rubik admin theme for Drupal</figcaption></figure> 
+
+<p><a href="http://drupal.org/project/seven">Seven</a> is a backport (for Drupal 6) of the default admin theme in Drupal 7. </p>
+
+<figure class="captioned-image" style="width:600px;"><img src="/images/blogs/2011/drupal/seven-admin-theme.png" width="580" height="215" alt="The Seven admin theme for Drupal" />
+<figcaption>The Seven admin theme for Drupal</figcaption></figure> 
+
+<p>Themes out of the way, onto the modules. </p>
+
+<h3>Admin</h3>
+
+<p>The <a href="http://drupal.org/project/admin">Admin</a> module provides a slide-out menu on the left-hand side of the screen (although this can be altered in the settings) providing easy access to all administrative functions. You can even provide your own blocks to sit in the admin menu. </p>
+
+<figure class="captioned-image" style="width:274px;"><img src="/images/blogs/2011/drupal/admin-module.png" width="254" height="295" alt="The Admin module for Drupal" /><figcaption>The Admin module for Drupal</figcaption></figure> 
+
+<h3>Admin Menu</h3>
+
+<p>The <a href="http://drupal.org/project/admin_menu">Admin Menu</a> module is a better known alternative to Admin, and provides a dropdown, horizontal menu at the top of the screen (see figure below). Simple, but invaluable. <figure class="captioned-image" style="width:600px;"><img src="/images/blogs/2011/drupal/admin-menu-module.png" width="580" height="210" alt="The Admin Menu module for Drupal" /><figcaption>The Admin Menu module for Drupal</figcaption></figure> </p>
+
+<p>One thing that is particularly good about the Admin Menu module over and above the Admin module, is that out-of-the-box it provides a quick and easy way to clear one or all of the caches – an all-too-common task during development. Just click the icon top-left to reveal the option. </p>
+
+<h3>QA Modules</h3>
+
+<p>Enabling and Disabling modules through the UI (hint: use <a href="http://drupal.org/project/drush">Drush</a>!) can be a chore when there are dependencies among modules – you cannot enable a module if a module it depends on is disabled until you click save and start again. <a href="http://drupal.org/project/qamodles">QA Modules</a> does away with this restriction whilst keepiing these restrictions in place, by enabling and disabling the checkboxes for you dynamically using Javascript. So, for example, if you were to enable a module which relies on another three, those three will be enabled automatically in the UI. </p>
+
+<h3>Vertical Tabs</h3>
+
+<p>The <a href="http://drupal.org/project/vertical_tabs">Vertical Tabs</a> module – integrated into core in Drupal 7 – tidies up admin forms by condensing fieldsets into vertical tabs, as illustrated below. It also, usefully, summarises some information about the options contained within the fieldset in the tab itself – providing, for example, information about the published status of a node at a glance. </p>
+
+<figure class="captioned-image" style="width:600px;"><img src="/images/blogs/2011/drupal/vertical-tabs-module.png" width="580" height="350" alt="The Vertical Tabs module for Drupal" /><figcaption>The Vertical Tabs module for Drupal</figcaption></figure> 
+
+<h3>Linkit</h3>
+
+<p>The <a href="http://drupal.org/project/linkit">Linkit</a> module provides an easy interface for internal linking (i.e. to Drupal nodes), offering an autocomplete dropdown for finding contentyou wish to link to. It also stores that link internally in the node/<em>nid</em> format, yet renders any alias which may have been applied – thus, if the alias changes the link remains intact. </p>
+
+<h3>Better Formats</h3>
+
+<p>If there’s one concept of Drupal that causes all sorts of confusion to newcomers, it’s probably input formats. <a href="http://drupal.org/project/better_formats">Better Formats</a> aims not only to extend the input formats section – for example by setting default formats by role or by content type, but also to enhance usability by tweaking the interface. </p>
+
+<h3>Remember Filter</h3>
+
+<p><a href="http://drupal.org/project/remember_filter">Remember Filter</a> also works with the input format system, and simply remembers what input format you selected the last time you added or edited content. So, for example, if you’re adding a bunch of content and it all needs to use a format different to the default, you don’t have to keep changing it, or indeed remember to change it.</p>
+
+	</div>
+
+	
+	<p class="tags">Tagged with:
+	
+  <a href="/tag/drupal">Drupal</a> 
+	
+  <a href="/tag/ux">UX</a> 
+	
+	</p>
+	
+
+	<!--
+	<div class="author">
+		<a href="https://twitter.com/lukaswhite" title="Twitter">Twitter</a>
+		<a href="https://plus.google.com/+LukasWhiteWebDeveloper" title="My Google+ Profile">Google+</a>
+	</div>	
+-->
+
+	<div id="disqus_thread"></div>
+	<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">Comments powered by Disqus.</a></noscript>
+	<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+</article>
+
+<aside class="five columns">
+	
+	<h4>About Me</h4>
+
+<p>I&#39;m a web developer based in Manchester, England. I also design websites.  I generally favour open-source technologies such as PHP, MySQL and JQuery, and I have extensive experience using Drupal.</p>
+
+
+	<div class="block tag-cloud">
+			 	<h4>Tags</h4>
+			 	<ul class="tags">
+				
+	    		<li><a href="/blog/tags/drupal">Drupal</a></li>
+				
+	    		<li><a href="/blog/tags/mobile">mobile</a></li>
+				
+	    		<li><a href="/blog/tags/rwd">RWD</a></li>
+				
+	    		<li><a href="/blog/tags/responsive-web-design">responsive web design</a></li>
+				
+	    		<li><a href="/blog/tags/deployment">deployment</a></li>
+				
+	    		<li><a href="/blog/tags/prowl">Prowl</a></li>
+				
+	    		<li><a href="/blog/tags/push-notifications">push notifications</a></li>
+				
+	    		<li><a href="/blog/tags/concrete5">Concrete5</a></li>
+				
+	    		<li><a href="/blog/tags/cms">CMS</a></li>
+				
+	    		<li><a href="/blog/tags/tutorials">tutorials</a></li>
+				
+	    		<li><a href="/blog/tags/php">PHP</a></li>
+				
+	    		<li><a href="/blog/tags/laravel">Laravel</a></li>
+				
+	    		<li><a href="/blog/tags/frameworks">frameworks</a></li>
+				
+	    		<li><a href="/blog/tags/facebook">Facebook</a></li>
+				
+	    		<li><a href="/blog/tags/drupal-7">Drupal 7</a></li>
+				
+	    		<li><a href="/blog/tags/ux">UX</a></li>
+				
+	    		<li><a href="/blog/tags/less">Less</a></li>
+				
+	    		<li><a href="/blog/tags/mysql">MySQL</a></li>
+				
+	    		<li><a href="/blog/tags/writing">writing</a></li>
+				
+	    		<li><a href="/blog/tags/sitepoint">Sitepoint</a></li>
+				
+	    		<li><a href="/blog/tags/articles">articles</a></li>
+				
+	    		<li><a href="/blog/tags/spotify">Spotify</a></li>
+				
+	    		<li><a href="/blog/tags/drupal-commerce">Drupal Commerce</a></li>
+				
+	    		<li><a href="/blog/tags/bash">Bash</a></li>
+				
+	    		<li><a href="/blog/tags/git">Git</a></li>
+				
+	    		<li><a href="/blog/tags/apache">Apache</a></li>
+				
+	    		<li><a href="/blog/tags/workflow">Workflow</a></li>
+				
+	    		<li><a href="/blog/tags/foundation">Foundation</a></li>
+				
+	    		<li><a href="/blog/tags/gravatar">Gravatar</a></li>
+				
+	    		<li><a href="/blog/tags/jquery">JQuery</a></li>
+				
+	    		<li><a href="/blog/tags/geo">Geo</a></li>
+				
+	    		<li><a href="/blog/tags/backbone">Backbone</a></li>
+				
+	    		<li><a href="/blog/tags/homestead">Homestead</a></li>
+				
+	    		<li><a href="/blog/tags/elasticsearch">Elasticsearch</a></li>
+				
+	    		<li><a href="/blog/tags/jekyll">Jekyll</a></li>
+				
+	    		<li><a href="/blog/tags/grunt">Grunt</a></li>
+				
+				</ul>
+			</div>
+
+</aside>
+
+
+<script type="text/javascript">    
+	var disqus_shortname = 'lukaswhite';
+    
+	(function() {
+		var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+		dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+		(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+	})();
+</script>
+ 
+  </div>
+
+  <!-- Footer begins ========================================================================== -->
+  <footer id="footer">
+    <hr>
+    <div class="eight columns">
+      <ul id="footerLinks">
+        <li>&copy; 2014 Lukas White. All rights reserved.</li>        
+        <li><a href="http://www.twitter.com/lukaswhite" target="_blank">@lukaswhite</a></li>              
+      </ul>
+    </div>
+    <div class="eight columns right">
+      <ul class="social small">
+        <li><a class="linkedin" href="http://uk.linkedin.com/in/lukaswhite" target="_blank"><span>View my LinkedIn Profile</span></a></li>
+        <li><a class="twitter" href="http://www.twitter.com/lukaswhite" target="_blank"><span>Follow me on Twitter</span></a></li>
+        <li><a class="facebook" href="http://www.facebook.com/lukas.white.freelance.web.developer" target="_blank"><span>Find me on Facebook</span></a></li>
+        <li><a class="github" href="https://github.com/lukaswhite" target="_blank"><span>Find me on Github</span></a></li>
+      </ul>
+    </div>
+    <hr>
+    <div class="sixteen columns centered">
+      <p>Powered by <a href="http://www.typeandgrids.com" target="_blank">Type &amp; Grids</a>, <a href="http://jekyllrb.com/">Jekyll</a> and <a href="https://github.com/erikhuda/thor">Thor</a></p>
+    </div>
+  </footer>
+  <!-- Footer ends ============================================================================ -->
+    
+</div><!-- container -->
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-3485550-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</body>
+</html>

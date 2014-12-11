@@ -1,0 +1,302 @@
+<!doctype html>
+<!--[if lt IE 7 ]><html class="ie ie6" lang="en"> <![endif]-->
+<!--[if IE 7 ]><html class="ie ie7" lang="en"> <![endif]-->
+<!--[if IE 8 ]><html class="ie ie8" lang="en"> <![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!--><html lang="en"> <!--<![endif]-->
+<head>
+<meta charset="utf-8">
+
+<!--
+••••••••••••••••••••••••
+
+Powered by Type & Grids™
+www.typeandgrids.com
+
+••••••••••••••••••••••••
+-->
+
+<title>A Look at the Concrete5 CMS</title>
+<meta name="description" content="The website of Lukas White, Manchester-based Freelance Web Designer and Developer">
+<meta name="author" content="Lukas White">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+<!-- CSS
+================================================================================================= -->
+<link rel="stylesheet" href="/dist/styles.min.css">
+
+<!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+
+<!-- Favicons
+================================================================================================= -->
+<link rel="shortcut icon" href="/favicon.ico">
+<link rel="apple-touch-icon" href="images/favicons/apple-touch-icon.png">
+<link rel="apple-touch-icon" sizes="72x72" href="images/favicons/apple-touch-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="114x114" href="images/favicons/apple-touch-icon-114x114.png">
+
+</head>
+<body>
+
+<div class="container">
+  
+  <!-- Header begins ========================================================================== -->
+  <header id="page-header" class="sixteen columns">
+    <div id="logo">
+      <a href="/">
+        <h1>Lukas White</h1>
+        <h2>Freelance Web Developer</h2>
+      </a>
+      <!--
+      <img src="images/logo.png" width="275" height="35" alt="Logo" />
+      -->
+    </div>
+    <nav>
+      <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/about">About</a></li>
+        <li><a href="/blog">Blog</a></li>
+        <li><a href="/work">Work</a></li>
+        <li><a href="/contact">Contact</a></li>        
+      </ul>
+    </nav>
+    <hr />
+  </header>
+  <!-- Header ends ============================================================================ -->
+  
+  <div id="content" class="content">
+  <article class="eleven columns post">
+	<h2>A Look at the Concrete5 CMS</h2>
+	<p class="meta"> &ndash; <time datetime="2011-06-28">28<sup>th</sup> June, 2011</time></p>
+
+	<div class="body">
+		<p>There are so many Content Management Systems (<abbr title="Content Management System">CMS</abbr>’s) out there that due to the sheer volume of choice it’s easy to plump for the best known options, such as <a href="/blog/categories/drupal">Drupal</a>, Joomla! and Wordpress. However there are times when these “flagship” CMS’s might not be the best option. Drupal, for example, can be overly complex and bloated for fairly simple websites (personally I’ve often thought of it more as a framework anyway), or Wordpress might be too specific for a site that’s not strictly a blog. I’ve long wanted a good, easy-to-use, stripped-down but extensible – alternative, and one such option I’ve looked at recently is <a href="http://www.concrete5.org/">Concrete5</a>. Concrete5 has gone from being a commercial product to <a href="http://www.concrete5.org/help/legal/concrete5_mit/">MIT-licensed</a> Open Source and makes some pretty bold claims about being easier-to-use and better coded <a href="http://www.cmscritic.com/concrete5-founder-franz-maruna-interview/">than Drupal or Joomla</a>. But does it live up to these lofty ambitions? And how does it compare to Drupal, Joomla and so on? </p>
+
+<h3>The User Interface</h3>
+
+<p>The first thing that leaps out about Concrete5 is the inline editing (or at least, a modal window-based approach to inline editing), a feature which the major CMS’s have been slow or resistant to adopt but which I’ve often thought would help content editors no end. Too often there’s a disconnect between areas of a page and the administrative interface to those areas (Drupal’s block system being one such example), so being able to edit things directly – or near as dammit – provides a real advantage from a usability point-of-view. There are some screenshots of this functionality below, and the Concrete5 team have put together a <a href="http://www.youtube.com/watch?v=UtaO3b7b08M&amp;feature=player_embedded">video showing it in action</a>. </p>
+
+<figure class="captioned-image" style="width:600px;"><img src="/images/blogs/2011/concrete5/concrete5-cms-inline-editing-1.jpg" width="580" height="320" alt="Inline editing in Concrete5" /><figcaption>Using Concrete5’s inline editing feature, you simply need to click an area of the page whilst in edit mode to directly edit the content or characteristics of that area.</figcaption></figure> 
+
+<figure class="captioned-image" style="width:600px;"><img src="/images/blogs/2011/concrete5/concrete5-cms-inline-editing-2.jpg" width="580" height="450" alt="Inline editing in Concrete5" /><figcaption>In this screenshot, clicking an area and selecting *edit* has brought up a rich text editor as a modal window, allowing the content to be edited directly.</figcaption></figure> 
+
+<h3>Theming Concrete5</h3>
+
+<p>Theming in Concrete5 is nice and simple. The Concrete5 website even includes a screencast showing, it claims, how a design can be <a href="http://www.concrete5.org/documentation/how-tos/designers/make-a-theme/">converted to theme</a> in just eight minutes. (The reality is somewhat different, naturally, but there’s no reason why a simple HTML page can’t converted in around that.) There’s also a miniumum amount of code required in the theme files to make it work, which is something I personally like when a project is divided up between front and back-end coders (an area, I believe, where Wordpress excels). As I mentioned earlier I’ve always found Drupal’s block architecture to be among its weakest features from a usability point-of-view, so it’s very refreshing to be able to add a new region with a couple of lines of code, browse to a page and click the region to begin populating it with blocks (every element of content in Concrete5 is encapsulated in a block; in contrast to Drupal, where blocks typically contain tertiary content). Re-ordering and moving blocks between regions takes a couple of clicks before dragging around the page – simple and intuitive. </p>
+
+<figure class="captioned-image" style="width:600px;"><img src="/images/blogs/2011/concrete5/concrete5-cms-design.jpg" width="580" height="450" alt="Design options in Concrete5" /><figcaption>Concrete5 allowis a number of different layouts – configurable in the theme – across a site. Themes are readily available on the Marketplace, and can be installed (along with other add-ons) from the admin area of the website itself.</figcaption></figure> 
+
+<p>It’s relatively simple to override the output of any block in your theme, in such as way that you aren’t touching the Concrete5 core – it’s just not particularly obvious initially (In fact, I’ll probably write a tutorial on this later). </p>
+
+<h3>Digging Into the Concrete5 Codebase</h3>
+
+<p>Digging into the code, the first observation I made – and the most striking and welcome – was the extent to which Concrete5 adheres to the O-O paradigm and the MVC architecture. The block system – which, don’t forget, is at the core of the CMS – utilises MVC, with a controller responsible for add and edit operations on content of a given type, rendered using a separate, themeable template file. Each block (which can effectively be the output of a whole page) can be neatly encapsulated in a package. What’s less clear, however, is how to override aspects of a block such as its markup, without recreating a whole package or editing the view within a contributed package (unlike Drupal for example, where a module’s output can be overriden by creating new template files in the site’s theme). Commenting leads a lot to be desired, though that’s hardly exclusive to Concrete5, but most files appear to be relatively short, with functionality divided up neatly and encapsulated within classes in a logical and consistent manner. Coding styles aren’t always consistent (capitalisation of SQL statements, for example), but not in a way which is overly significant or which makes the code difficult to follow. </p>
+
+<h3>The File Structure</h3>
+
+<p>On the subject of Concrete5’s directory structure, this is neat and tidy with a nice clean separation between core and custom extensions, themes and so on. The core is incorporated under a single subdirectory which might seem simple and common-sense, but is a more logical arrangement – and easier when updating – than Drupal’s, for example. Concrete5’s neat plugin system means that any add-on – be it an add-on or a theme – can be installed as a package by placing it in that folder, and the system is smart enough to work out what’s being installed. </p>
+
+<h3>Third Party Libraries – Zend Framework, JQuery, ADOdb</h3>
+
+<p>Concrete5 uses a number of trusted (by me, at least!) third-party modules and libraries, including Zend Framework (one that I favour in particular), ADOdb and of course JQuery. Experience with Zend has helped my learning curve already, and the use of JQuery over something like Dojo is – in my view, at least – a bonus. Third-party libraries are neatly stored away in clearly marked directories and it’ quickly clear how new modules would be incorporated when building new extensions. </p>
+
+<h3>Extending Concrete5</h3>
+
+<p>One criticism I noticed when canvassing opinions on Concrete5 – which mirrors my initial impression, I have to admit – is what the company’s business model appears to be insomuch as the core product is free and open source, but a significant proportion of the add-ons available through their <a href="http://www.concrete5.org/marketplace/">Marketplace</a> come at a price. Whilst the company clearly make no attempt to hide this fact, it’s something that might not be immediately obvious when assessing Concrete5 as a CMS. An advantage of Drupal here is that commercial modules are a rarity, and the community of developers much larger. On the flip-side, the “marketplace” becomes exactly that for developers to benefit financially from their own work. It also implies – though I cannot yet confirm or refute this assumption – that add-ons come with a certain guarantee of quality, as they presumably have to accepted into the Marketplace by the company. (Note however that as an add-on is simply a directory structure, there is no requirement that an add-on be delivered through that marketplace – the App Store this ain’t.) </p>
+
+<h3>Some Pros and Cons of Concrete5</h3>
+
+<p>I’ve both covered and found a number of pros and cons while digging around with Concrete5, which I’ll summarise below. </p>
+
+<h4>Pros:</h4>
+
+<ul>
+<li>  Slick and easy-to-use interface</li>
+<li>  Easy to install</li>
+<li>  Fully O-O</li>
+<li>  Judicious use of third-party libraries</li>
+<li>  Easy to theme</li>
+<li>  Excellent documentation</li>
+<li>  Performs well</li>
+<li>  Useful selection of helpers</li>
+<li>  Not too bloated</li>
+</ul>
+
+<h4>Cons:</h4>
+
+<ul>
+<li>  Much smaller community than the “big two” (Drupal and Joomla)</li>
+<li>  Many add-ons come at an additional cost</li>
+<li>  Certain things you might expect “out of the box” have to be sourced or developed manually (e.g. a contact form)</li>
+<li>  The commenting in the source isn’t great</li>
+<li>  The permissions model lacks the granularity of, say, Drupal&amp;rsquos – and the “advanced permissions” must be manually enabled</li>
+<li>  The documentation seems weighted towards CMS users; some theming and development areas not very well covered</li>
+</ul>
+
+<h3>Concrete5 vs Drupal vs Joomla, and Conclusions</h3>
+
+<p>If this is the question you’re looking for an answer to, I’m going to disappoint you because I don’t think it’s fair to compare them (though of course it’s inevitable that people will try to). As I’ve already stated, Drupal is – in my view at least – a development platform as much, if not more, as a CMS. Drupal might, for example, be used to create an intranet (<a href="http://openatrium.com/">Open Atrium</a> is one such endeavour) – Concrete5 is unlikely to be suited to such a task. But as a CMS, Concrete5 is an excellent option. One of the things I liked about Concrete5 is that’s nice to be able to think about a site in terms of what the user sees and work backwards, rather than get bogged down with content types and schemas and worry about presentation later. The click-to-edit block mechanism, the inline editing and the emphasis on filling regions of a page interactively feels more intuitive than, say, building content types and then templating in Drupal. This approach might render Conrete5 less suitable for a complex web application, but makes it a much more satisfying choice for a simple website – and it’s one I’ll be taking for some websites in the future.</p>
+
+	</div>
+
+	
+	<p class="tags">Tagged with:
+	
+  <a href="/tag/concrete5">Concrete5</a> 
+	
+  <a href="/tag/cms">CMS</a> 
+	
+	</p>
+	
+
+	<!--
+	<div class="author">
+		<a href="https://twitter.com/lukaswhite" title="Twitter">Twitter</a>
+		<a href="https://plus.google.com/+LukasWhiteWebDeveloper" title="My Google+ Profile">Google+</a>
+	</div>	
+-->
+
+	<div id="disqus_thread"></div>
+	<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">Comments powered by Disqus.</a></noscript>
+	<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+</article>
+
+<aside class="five columns">
+	
+	<h4>About Me</h4>
+
+<p>I&#39;m a web developer based in Manchester, England. I also design websites.  I generally favour open-source technologies such as PHP, MySQL and JQuery, and I have extensive experience using Drupal.</p>
+
+
+	<div class="block tag-cloud">
+			 	<h4>Tags</h4>
+			 	<ul class="tags">
+				
+	    		<li><a href="/blog/tags/drupal">Drupal</a></li>
+				
+	    		<li><a href="/blog/tags/mobile">mobile</a></li>
+				
+	    		<li><a href="/blog/tags/rwd">RWD</a></li>
+				
+	    		<li><a href="/blog/tags/responsive-web-design">responsive web design</a></li>
+				
+	    		<li><a href="/blog/tags/deployment">deployment</a></li>
+				
+	    		<li><a href="/blog/tags/prowl">Prowl</a></li>
+				
+	    		<li><a href="/blog/tags/push-notifications">push notifications</a></li>
+				
+	    		<li><a href="/blog/tags/concrete5">Concrete5</a></li>
+				
+	    		<li><a href="/blog/tags/cms">CMS</a></li>
+				
+	    		<li><a href="/blog/tags/tutorials">tutorials</a></li>
+				
+	    		<li><a href="/blog/tags/php">PHP</a></li>
+				
+	    		<li><a href="/blog/tags/laravel">Laravel</a></li>
+				
+	    		<li><a href="/blog/tags/frameworks">frameworks</a></li>
+				
+	    		<li><a href="/blog/tags/facebook">Facebook</a></li>
+				
+	    		<li><a href="/blog/tags/drupal-7">Drupal 7</a></li>
+				
+	    		<li><a href="/blog/tags/ux">UX</a></li>
+				
+	    		<li><a href="/blog/tags/less">Less</a></li>
+				
+	    		<li><a href="/blog/tags/mysql">MySQL</a></li>
+				
+	    		<li><a href="/blog/tags/writing">writing</a></li>
+				
+	    		<li><a href="/blog/tags/sitepoint">Sitepoint</a></li>
+				
+	    		<li><a href="/blog/tags/articles">articles</a></li>
+				
+	    		<li><a href="/blog/tags/spotify">Spotify</a></li>
+				
+	    		<li><a href="/blog/tags/drupal-commerce">Drupal Commerce</a></li>
+				
+	    		<li><a href="/blog/tags/bash">Bash</a></li>
+				
+	    		<li><a href="/blog/tags/git">Git</a></li>
+				
+	    		<li><a href="/blog/tags/apache">Apache</a></li>
+				
+	    		<li><a href="/blog/tags/workflow">Workflow</a></li>
+				
+	    		<li><a href="/blog/tags/foundation">Foundation</a></li>
+				
+	    		<li><a href="/blog/tags/gravatar">Gravatar</a></li>
+				
+	    		<li><a href="/blog/tags/jquery">JQuery</a></li>
+				
+	    		<li><a href="/blog/tags/geo">Geo</a></li>
+				
+	    		<li><a href="/blog/tags/backbone">Backbone</a></li>
+				
+	    		<li><a href="/blog/tags/homestead">Homestead</a></li>
+				
+	    		<li><a href="/blog/tags/elasticsearch">Elasticsearch</a></li>
+				
+	    		<li><a href="/blog/tags/jekyll">Jekyll</a></li>
+				
+	    		<li><a href="/blog/tags/grunt">Grunt</a></li>
+				
+				</ul>
+			</div>
+
+</aside>
+
+
+<script type="text/javascript">    
+	var disqus_shortname = 'lukaswhite';
+    
+	(function() {
+		var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+		dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+		(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+	})();
+</script>
+ 
+  </div>
+
+  <!-- Footer begins ========================================================================== -->
+  <footer id="footer">
+    <hr>
+    <div class="eight columns">
+      <ul id="footerLinks">
+        <li>&copy; 2014 Lukas White. All rights reserved.</li>        
+        <li><a href="http://www.twitter.com/lukaswhite" target="_blank">@lukaswhite</a></li>              
+      </ul>
+    </div>
+    <div class="eight columns right">
+      <ul class="social small">
+        <li><a class="linkedin" href="http://uk.linkedin.com/in/lukaswhite" target="_blank"><span>View my LinkedIn Profile</span></a></li>
+        <li><a class="twitter" href="http://www.twitter.com/lukaswhite" target="_blank"><span>Follow me on Twitter</span></a></li>
+        <li><a class="facebook" href="http://www.facebook.com/lukas.white.freelance.web.developer" target="_blank"><span>Find me on Facebook</span></a></li>
+        <li><a class="github" href="https://github.com/lukaswhite" target="_blank"><span>Find me on Github</span></a></li>
+      </ul>
+    </div>
+    <hr>
+    <div class="sixteen columns centered">
+      <p>Powered by <a href="http://www.typeandgrids.com" target="_blank">Type &amp; Grids</a>, <a href="http://jekyllrb.com/">Jekyll</a> and <a href="https://github.com/erikhuda/thor">Thor</a></p>
+    </div>
+  </footer>
+  <!-- Footer ends ============================================================================ -->
+    
+</div><!-- container -->
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-3485550-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</body>
+</html>

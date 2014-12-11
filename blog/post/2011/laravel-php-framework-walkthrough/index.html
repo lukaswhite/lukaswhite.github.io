@@ -1,0 +1,447 @@
+<!doctype html>
+<!--[if lt IE 7 ]><html class="ie ie6" lang="en"> <![endif]-->
+<!--[if IE 7 ]><html class="ie ie7" lang="en"> <![endif]-->
+<!--[if IE 8 ]><html class="ie ie8" lang="en"> <![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!--><html lang="en"> <!--<![endif]-->
+<head>
+<meta charset="utf-8">
+
+<!--
+••••••••••••••••••••••••
+
+Powered by Type & Grids™
+www.typeandgrids.com
+
+••••••••••••••••••••••••
+-->
+
+<title>The Laravel PHP Framework: A Walkthrough</title>
+<meta name="description" content="The website of Lukas White, Manchester-based Freelance Web Designer and Developer">
+<meta name="author" content="Lukas White">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+<!-- CSS
+================================================================================================= -->
+<link rel="stylesheet" href="/dist/styles.min.css">
+
+<!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+
+<!-- Favicons
+================================================================================================= -->
+<link rel="shortcut icon" href="/favicon.ico">
+<link rel="apple-touch-icon" href="images/favicons/apple-touch-icon.png">
+<link rel="apple-touch-icon" sizes="72x72" href="images/favicons/apple-touch-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="114x114" href="images/favicons/apple-touch-icon-114x114.png">
+
+</head>
+<body>
+
+<div class="container">
+  
+  <!-- Header begins ========================================================================== -->
+  <header id="page-header" class="sixteen columns">
+    <div id="logo">
+      <a href="/">
+        <h1>Lukas White</h1>
+        <h2>Freelance Web Developer</h2>
+      </a>
+      <!--
+      <img src="images/logo.png" width="275" height="35" alt="Logo" />
+      -->
+    </div>
+    <nav>
+      <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/about">About</a></li>
+        <li><a href="/blog">Blog</a></li>
+        <li><a href="/work">Work</a></li>
+        <li><a href="/contact">Contact</a></li>        
+      </ul>
+    </nav>
+    <hr />
+  </header>
+  <!-- Header ends ============================================================================ -->
+  
+  <div id="content" class="content">
+  <article class="eleven columns post">
+	<h2>The Laravel PHP Framework: A Walkthrough</h2>
+	<p class="meta"> &ndash; <time datetime="2011-08-05">5<sup>th</sup> August, 2011</time></p>
+
+	<div class="body">
+		<p><a href="http://www.laravel.com">Laravel</a> is the new kid on the block of PHP frameworks, and whilst in its early stages of evolution (the author wrote it, he says, in the early part of 2011) it does promise – and delivers, from what I can tell – an expressive syntax and an elegant (indeed, you might say eloquent) ORM. Laravel is a fully Object Oriented MVC framework which makes extensive use of features new or recent to PHP – you can forget about running it on PHP4. With PHP5.3 compliant namespacing mechanisms as opposed to, for example, Zend Framework’s pseudo-namespacing, it’s certainly what you might call a modern framework. </p>
+
+<h3>Routes</h3>
+
+<p>In Laravel you define routes – which, staying true to the RESTful paradigm, are defined not just as URI’s, but according to the HTTP operation they are to react to. Thus, instead of defining a route such as <code>/about-us</code> you would define a function to respond to a GET request on that URI, which is done using a closure which looks reassuringly like JavaScript:</p>
+
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="s1">&#39;GET /about-us&#39;</span> <span class="o">=&gt;</span> <span class="k">function</span><span class="p">()</span>
+<span class="p">{</span>        
+    <span class="k">return</span> <span class="s1">&#39;some output&#39;</span><span class="p">;</span>
+<span class="p">}</span></code></pre></div>
+
+<p>Wild-card parameters allow parameters to be passed via the URI, and indeed you can even restrict these to numeric ID’s. So for example, your route definition could look like this: `</p>
+
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="s1">&#39;GET /person/(:num)&#39;</span> <span class="o">=&gt;</span> <span class="k">function</span><span class="p">(</span><span class="nv">$id</span><span class="p">)</span>
+<span class="p">{</span>        
+    <span class="nv">$user</span> <span class="o">=</span> <span class="nx">User</span><span class="o">::</span><span class="na">find</span><span class="p">(</span><span class="nv">$id</span><span class="p">);</span>
+    <span class="nv">$view</span> <span class="o">=</span> <span class="nx">View</span><span class="o">::</span><span class="na">make</span><span class="p">(</span><span class="s1">&#39;user&#39;</span><span class="p">);</span>
+    <span class="nv">$view</span><span class="o">-&gt;</span><span class="na">bind</span><span class="p">(</span><span class="s1">&#39;user&#39;</span><span class="p">,</span> <span class="nv">$user</span><span class="p">);</span>
+    <span class="k">return</span> <span class="nv">$view</span><span class="p">;</span>
+<span class="p">}</span></code></pre></div>
+
+<p>Or, you can create a slug using the built-in <code>URL</code> class:</p>
+
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="nv">$article</span><span class="o">-&gt;</span><span class="na">slug</span> <span class="o">=</span> <span class="nx">URL</span><span class="o">::</span><span class="na">slug</span><span class="p">(</span><span class="nv">$article</span><span class="o">-&gt;</span><span class="na">title</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">);</span></code></pre></div>
+
+<p>Then switch from <code>:num</code> to <code>:any</code> in your route definition:</p>
+
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="s1">&#39;GET /article/(:any)&#39;</span> <span class="o">=&gt;</span> <span class="k">function</span><span class="p">(</span><span class="nv">$slug</span><span class="p">)</span>
+<span class="p">{</span>        
+    <span class="c1">// .. find the article identified by slug ...</span>
+<span class="p">}</span></code></pre></div>
+
+<p>If you think of the routes definitions as being lightweight controllers, you’ll quickly see from the examples above where the other components of a fully-fledged MVC architecture come in; the ORM (called “Eloquent”) is in action, <em>find</em>ing a User entity with the ID provided from the route, then being <em>bind</em>ed (well, bound) to a <em>View</em>. Moving on from processing GET requests, a process to handle the submission of a form might be defined thus: </p>
+
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="s1">&#39;POST /form-submit&#39;</span> <span class="o">=&gt;</span> <span class="k">function</span><span class="p">()</span>
+<span class="p">{</span>        
+    <span class="c1">// do some processing</span>
+    <span class="nx">Redirect</span><span class="o">::</span><span class="na">to</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">with</span><span class="p">(</span><span class="s1">&#39;status&#39;</span><span class="p">,</span> <span class="s1">&#39;Your form submission has been received&#39;</span><span class="p">);</span>
+<span class="p">}</span></code></pre></div>
+
+<p>Note the fluent interface in the redirection function, allowing a flash message to be passed along the request chain. Nice syntax. Keeping RESTful, a function could be defined to delete a resource using something like this:</p>
+
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="s1">&#39;DELETE /person/(:num)/delete&#39;</span> <span class="o">=&gt;</span> <span class="k">function</span><span class="p">(</span><span class="nv">$id</span><span class="p">)</span>
+<span class="p">{</span>        
+    <span class="c1">// .. delete person resource identified by $id ...</span>
+    <span class="nx">Redirect</span><span class="o">::</span><span class="na">to</span><span class="p">(</span><span class="o">/</span><span class="p">);</span>
+<span class="p">}</span></code></pre></div>
+
+<p>I keep talking about the RESTfulness because the first thing that struck me is that it looks a great little framework for quickly scaffolding a web service. While there is not currently any content negotiation built in which would make this even easier, it’s not difficult to see how this could be extended. </p>
+
+<h3>Filters</h3>
+
+<p>One of the things I particularly like about Laravel is that your route definitions can also apply filters to your input (for example CSRF protection or input sanitisation) or on their output. There are a couple of filters built in (for CSRF protection and for authentication) and they can be shared amongst routes. Thus, you could restrict access to a route from unauthorised users thus: </p>
+
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="s1">&#39;GET /secure&#39;</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span><span class="s1">&#39;before&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;auth&#39;</span><span class="p">,</span> <span class="s1">&#39;do&#39;</span> <span class="o">=&gt;</span> <span class="k">function</span><span class="p">()</span> <span class="p">{</span></code></pre></div>
+
+<p>In the example above, the filter <code>auth</code> is to be executed <em>before</em> execution of the route logic (i.e., the closure defined in the ‘do’ element). (The format of the route declaration has changed slightly from the previous, simply because the definition is getting slightly more complex.) The <code>auth</code> filter is defined for you in another closure, this time in the file <code>filters.php</code>: </p>
+
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="s1">&#39;auth&#39;</span> <span class="o">=&gt;</span> <span class="k">function</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="p">(</span> <span class="o">!</span> <span class="nx">Auth</span><span class="o">::</span><span class="na">check</span><span class="p">())</span> <span class="o">?</span> <span class="nx">Redirect</span><span class="o">::</span><span class="na">to_login</span><span class="p">()</span> <span class="o">:</span> <span class="k">null</span><span class="p">;</span>
+<span class="p">},</span></code></pre></div>
+
+<p>This callback highlights another geature of Laravel; the built-in authentication mechanism, which I’ll cover later – for now, what about that <code>Redirect::to_login()</code> syntax? This leads nicely onto named routes. </p>
+
+<h3>Named Routes</h3>
+
+<p>One of the other features of the routes system designed for developer convenience is the option to create a definition like this: </p>
+
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="s1">&#39;GET /user/login&#39;</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span><span class="s1">&#39;name&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;login&#39;</span><span class="p">,</span> <span class="s1">&#39;do&#39;</span> <span class="o">=&gt;</span> <span class="k">function</span><span class="p">()</span>
+<span class="p">{</span>        
+    <span class="k">return</span> <span class="nx">View</span><span class="o">::</span><span class="na">make</span><span class="p">(</span><span class="s1">&#39;user/login&#39;</span><span class="p">);</span>
+<span class="p">}),</span></code></pre></div>
+
+<p>Now, with the route to <code>user_login</code> assigned the name <code>login</code>, you can start doing this:</p>
+
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="k">return</span> <span class="nx">Redirect</span><span class="o">::</span><span class="na">to_login</span><span class="p">();</span></code></pre></div>
+
+<p>However, there is more to Laravel than routing; here are some other features that stood out for me. </p>
+
+<h3>The ORM</h3>
+
+<p>Laravel has a built-in Object Relational Mapper (ORM) for data persistance, and provides the Model to the router’s Controller and the Views. Defining a new model using the Eloquent ORM is as simple as this: </p>
+
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="k">class</span> <span class="nc">Post</span> <span class="k">extends</span> <span class="nx">Eloquent</span> <span class="p">{</span> <span class="p">}</span></code></pre></div>
+
+<p>In this example a new model is defined which, unless specified otherwise, expects to find a table named <code>posts</code> (a pluralised, lowercase version of the model’s name) and a primary key named <code>id</code> It’s common to include timestamps on creation and updating; Laravel takes care of this out of the box – all you have to do is add columns called <code>created_at</code> and <code>updated_at</code> (both of the MySQL type <code>TIMESTAMP</code>) to your base table, and the following line in the class definition: `</p>
+
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="k">class</span> <span class="nc">Post</span> <span class="k">extends</span> <span class="nx">Eloquent</span> <span class="p">{</span>
+    
+    <span class="k">public</span> <span class="k">static</span> <span class="nv">$timestamps</span> <span class="o">=</span> <span class="k">true</span><span class="p">;</span></code></pre></div>
+
+<p>Relationships can be modelled easily and intuitively; as is common across Laravel, if you keep to certain naming conventions then configuration is simple:</p>
+
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="k">class</span> <span class="nc">Post</span> <span class="k">extends</span> <span class="nx">Eloquent</span> <span class="p">{</span>
+    
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">author</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">has_one</span><span class="p">(</span><span class="s1">&#39;Author&#39;</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">tags</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">has_and_belongs_to_many</span><span class="p">(</span><span class="s1">&#39;Tag&#39;</span><span class="p">);</span>
+    <span class="p">}</span></code></pre></div>
+
+<p>The assumptions here are: 
+*   Posts are defined in a table called <code>posts</code> (lower case, pluralised form of the classname)
+*   Authors are defined in a table called <code>authors</code>
+*   Tags are defined in a table called <code>tags</code>
+*   The <code>posts</code> table contains a column called <code>author_id</code>
+*   All tables’ primary key columns are called <code>id</code>
+*   A foreign key in the <code>tags</code> table is called <code>post_id</code></p>
+
+<h3>Database Support</h3>
+
+<p>In additon to the ORM there is a nice fluent query builder (not dissimilar to Zend, or Drupal 7’s new database abstraction layer), and it’s database-agnostic; there is support currently for SQLite (the Laravel default), the ubiquitous MySQL or Postgres. Configuration for this, as with other areas, is simple – in fact if you’re using SQLite and place your database in the <code>/application/storage/db</code> directory and call it <code>application.sqlite</code>, then it requires no configuration whatsoever. So, for example, you can do this for insertion:</p>
+
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="nv">$hits</span> <span class="o">=</span> <span class="nx">Db</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;hits&#39;</span><span class="p">);</span>
+
+<span class="nv">$hits</span><span class="o">-&gt;</span><span class="na">insert</span><span class="p">(</span>
+    <span class="k">array</span><span class="p">(</span>
+        <span class="s1">&#39;url&#39;</span> <span class="o">=&gt;</span> <span class="nv">$url</span><span class="p">,</span>
+        <span class="s1">&#39;ts&#39;</span> <span class="o">=&gt;</span> <span class="nb">time</span><span class="p">(),</span>
+        <span class="s1">&#39;ip_address&#39;</span> <span class="o">=&gt;</span> <span class="nx">Request</span><span class="o">::</span><span class="na">ip</span><span class="p">()</span>
+    <span class="p">)</span>
+<span class="p">);</span></code></pre></div>
+
+<p>Or create queries such as:</p>
+
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;posts&#39;</span><span class="p">)</span>
+     <span class="o">-&gt;</span><span class="na">where</span><span class="p">(</span><span class="s1">&#39;author_id&#39;</span><span class="p">,</span> <span class="s1">&#39;=&#39;</span><span class="p">,</span> <span class="s1">&#39;123&#39;</span><span class="p">)</span>
+     <span class="o">-&gt;</span><span class="na">where_in</span><span class="p">(</span><span class="s1">&#39;status&#39;</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span><span class="s1">&#39;draft&#39;</span><span class="p">,</span> <span class="s1">&#39;unpublished&#39;</span><span class="p">))</span>
+     <span class="o">-&gt;</span><span class="na">get</span><span class="p">();</span></code></pre></div>
+
+<p>You can even use what Laravel calls <em>dynamic where methods</em>:</p>
+
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="nv">$user</span> <span class="o">=</span> <span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">where_email_and_password</span><span class="p">(</span><span class="s1">&#39;hello@lukaswhite.com&#39;</span><span class="p">,</span> <span class="s1">&#39;secret&#39;</span><span class="p">);</span></code></pre></div>
+
+<h3>Simple Configuration</h3>
+
+<p>Configuration is in the form of a collection of files in the <code>/application/config</code> directory, each returning an array of named configuration values. Extending the configuration options is as simple as adding a new file. Add a file called <code>facebook.php</code>, for example: `</p>
+
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
+<span class="k">return</span> <span class="k">array</span><span class="p">(</span>
+    <span class="s1">&#39;app_id&#39;</span>    <span class="o">=&gt;</span> <span class="s1">&#39;YOUR_APP_ID_HERE&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;secret&#39;</span>    <span class="o">=&gt;</span> <span class="s1">&#39;YOUR_SECRET_HERE&#39;</span><span class="p">,</span>
+<span class="p">);</span>
+<span class="cp">?&gt;</span><span class="x"></span></code></pre></div>
+
+<p>...and you can do something like this from anywhere in your code: </p>
+
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="nv">$facebook_config</span> <span class="o">=</span> <span class="nx">Config</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;facebook&#39;</span><span class="p">);</span>  <span class="c1">// returns an array of options</span></code></pre></div>
+
+<p>Or you can be more specific:</p>
+
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="nv">$api_key</span> <span class="o">=</span> <span class="nx">Config</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;facebook.api_key&#39;</span><span class="p">);</span></code></pre></div>
+
+<p>In keeping with Laravel’s intention to require the minimum possible configuration, the pre-existing configuration files come pre-loaded with sensible default values, but changing any of them is simple. </p>
+
+<h3>An Auth Component</h3>
+
+<p>Authentication is largely taken care of for you by the Auth class; provided you adhere to certain assumptions; users are represented by an “Eloquent” model, there is a <code>password</code> and a column called <code>salt</code> (which is generated for you by the framework&#39;s built-in hashing utility). The identifying column is configurable however, should you wish to allow people to log in using an email address, for example. There is not, at time of writing, an authorisation / ACL model, but the authentication system provided is probably adequate for most small web applications. </p>
+
+<h3>A Data Validation Library</h3>
+
+<p>Data validation is neatly done, with a basic set of generic validators – lengths, inclusion (e.g. checkboxes or radio buttons), regular expression matching or acceptance of (like a checkbox being ticked, e.g. acceptance of terms and conditions) – all with the minimum of configuration. If you call a set of validators without telling it what to validate, it will automatically validate the input (e.g. GET / POST parameters). Again, simplistic, but cover most simple cases – and there’s nothing to stop you from defining your own. </p>
+
+<h3>Text and Inflection Utilities</h3>
+
+<p>There are some fairly standard text-related helper functions for operations such as: </p>
+
+<ul>
+<li>  (English) language processing, such as pluralisation</li>
+<li>  Character or word-based trimming</li>
+<li>  There is even a basic bad-word (“censor”) filter There is also some rudimentary internationalisation support, primarily for translatable strings. </li>
+</ul>
+
+<h3>Caching and Logging</h3>
+
+<p>While developing an application with the framework, you can opt to get an error message and a full stack trace in a nicely presented error page. Additionally, logging to a file is simple – change a configuration value or two and set the log files&#39; directory to be writeable. </p>
+
+<h3>Extensibility</h3>
+
+<p>The true test of any framework, arguably, is its extensibility – and overriding or extending framework classes is easy. Everything is namespaced with framework classes aliased, thus: </p>
+
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="nv">$view</span> <span class="o">=</span> <span class="nx">View</span><span class="o">::</span><span class="na">make</span><span class="p">(</span><span class="s1">&#39;user/login&#39;</span><span class="p">);</span></code></pre></div>
+
+<p>...would, were it not for aliasing, be:</p>
+
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="nv">$view</span> <span class="o">=</span> <span class="nx">System\View</span><span class="o">::</span><span class="na">make</span><span class="p">(</span><span class="s1">&#39;user/login&#39;</span><span class="p">);</span></code></pre></div>
+
+<p>The <strong>alias.php</strong> configuration file defines these aliases as a name/value array, e.g.:</p>
+
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="k">return</span> <span class="k">array</span><span class="p">(</span>
+    <span class="s1">&#39;Auth&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;System\\Auth&#39;</span><span class="p">,</span>
+    <span class="o">...</span>
+    <span class="s1">&#39;View&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;System\\View&#39;</span><span class="p">,</span>
+<span class="p">);</span></code></pre></div>
+
+<p>Therefore should you wish, for example, to start using a custom View across your code, a quick re-jig of your aliases and it’s done:</p>
+
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="k">return</span> <span class="k">array</span><span class="p">(</span>
+    <span class="s1">&#39;View&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;My\\View&#39;</span><span class="p">,</span>
+<span class="p">);</span></code></pre></div>
+
+<h3>Conclusions</h3>
+
+<p>Even after looking closely at Laravel and building a few little applications with it, I stick by my view that it looks like a tool for building web services – but this is no bad thing. In part it’s because some of the things I’ve become accustomed to for web applications aren&#39;t there; managing dependencies (e.g. of Javascript files), layouts, decorators and so on. There are things that are either limited or simple aren&#39;t particularly evolved – the form-building functions (which I’ve not even touched on) are a shadow of those offered by Zend_Form, or Drupal with its Form API, for example – but this is a very new framework and one which will surely evolve. One of the great things about the framework is its learning curve – indeed, I’ve covered a lot of the basics here and if you work through this post you wouldn’t be far off being able to develop a simple application. Configuration is beautifully simple, and whilst certain assumptions can be frustrating at first, if you’re building something from scratch then you’ll soon appreciate how little you actually have to do to get up and running. The main thing that’s not clear nor well documented is the process for extending the functionality; extending the system classes is easy but the packages mechanism is largely undocumented – but packages are starting to appear nonetheless. My view is that the framework would be an excellent introduction to a simple web framework from an O-O minded PHP developer, a promising way to start building a web service and a good way of building a quick prototype for a website or application. Very promising indeed.</p>
+
+	</div>
+
+	
+	<p class="tags">Tagged with:
+	
+  <a href="/tag/laravel">Laravel</a> 
+	
+  <a href="/tag/frameworks">frameworks</a> 
+	
+  <a href="/tag/php">PHP</a> 
+	
+	</p>
+	
+
+	<!--
+	<div class="author">
+		<a href="https://twitter.com/lukaswhite" title="Twitter">Twitter</a>
+		<a href="https://plus.google.com/+LukasWhiteWebDeveloper" title="My Google+ Profile">Google+</a>
+	</div>	
+-->
+
+	<div id="disqus_thread"></div>
+	<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">Comments powered by Disqus.</a></noscript>
+	<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+</article>
+
+<aside class="five columns">
+	
+	<h4>About Me</h4>
+
+<p>I&#39;m a web developer based in Manchester, England. I also design websites.  I generally favour open-source technologies such as PHP, MySQL and JQuery, and I have extensive experience using Drupal.</p>
+
+
+	<div class="block tag-cloud">
+			 	<h4>Tags</h4>
+			 	<ul class="tags">
+				
+	    		<li><a href="/blog/tags/drupal">Drupal</a></li>
+				
+	    		<li><a href="/blog/tags/mobile">mobile</a></li>
+				
+	    		<li><a href="/blog/tags/rwd">RWD</a></li>
+				
+	    		<li><a href="/blog/tags/responsive-web-design">responsive web design</a></li>
+				
+	    		<li><a href="/blog/tags/deployment">deployment</a></li>
+				
+	    		<li><a href="/blog/tags/prowl">Prowl</a></li>
+				
+	    		<li><a href="/blog/tags/push-notifications">push notifications</a></li>
+				
+	    		<li><a href="/blog/tags/concrete5">Concrete5</a></li>
+				
+	    		<li><a href="/blog/tags/cms">CMS</a></li>
+				
+	    		<li><a href="/blog/tags/tutorials">tutorials</a></li>
+				
+	    		<li><a href="/blog/tags/php">PHP</a></li>
+				
+	    		<li><a href="/blog/tags/laravel">Laravel</a></li>
+				
+	    		<li><a href="/blog/tags/frameworks">frameworks</a></li>
+				
+	    		<li><a href="/blog/tags/facebook">Facebook</a></li>
+				
+	    		<li><a href="/blog/tags/drupal-7">Drupal 7</a></li>
+				
+	    		<li><a href="/blog/tags/ux">UX</a></li>
+				
+	    		<li><a href="/blog/tags/less">Less</a></li>
+				
+	    		<li><a href="/blog/tags/mysql">MySQL</a></li>
+				
+	    		<li><a href="/blog/tags/writing">writing</a></li>
+				
+	    		<li><a href="/blog/tags/sitepoint">Sitepoint</a></li>
+				
+	    		<li><a href="/blog/tags/articles">articles</a></li>
+				
+	    		<li><a href="/blog/tags/spotify">Spotify</a></li>
+				
+	    		<li><a href="/blog/tags/drupal-commerce">Drupal Commerce</a></li>
+				
+	    		<li><a href="/blog/tags/bash">Bash</a></li>
+				
+	    		<li><a href="/blog/tags/git">Git</a></li>
+				
+	    		<li><a href="/blog/tags/apache">Apache</a></li>
+				
+	    		<li><a href="/blog/tags/workflow">Workflow</a></li>
+				
+	    		<li><a href="/blog/tags/foundation">Foundation</a></li>
+				
+	    		<li><a href="/blog/tags/gravatar">Gravatar</a></li>
+				
+	    		<li><a href="/blog/tags/jquery">JQuery</a></li>
+				
+	    		<li><a href="/blog/tags/geo">Geo</a></li>
+				
+	    		<li><a href="/blog/tags/backbone">Backbone</a></li>
+				
+	    		<li><a href="/blog/tags/homestead">Homestead</a></li>
+				
+	    		<li><a href="/blog/tags/elasticsearch">Elasticsearch</a></li>
+				
+	    		<li><a href="/blog/tags/jekyll">Jekyll</a></li>
+				
+	    		<li><a href="/blog/tags/grunt">Grunt</a></li>
+				
+				</ul>
+			</div>
+
+</aside>
+
+
+<script type="text/javascript">    
+	var disqus_shortname = 'lukaswhite';
+    
+	(function() {
+		var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+		dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+		(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+	})();
+</script>
+ 
+  </div>
+
+  <!-- Footer begins ========================================================================== -->
+  <footer id="footer">
+    <hr>
+    <div class="eight columns">
+      <ul id="footerLinks">
+        <li>&copy; 2014 Lukas White. All rights reserved.</li>        
+        <li><a href="http://www.twitter.com/lukaswhite" target="_blank">@lukaswhite</a></li>              
+      </ul>
+    </div>
+    <div class="eight columns right">
+      <ul class="social small">
+        <li><a class="linkedin" href="http://uk.linkedin.com/in/lukaswhite" target="_blank"><span>View my LinkedIn Profile</span></a></li>
+        <li><a class="twitter" href="http://www.twitter.com/lukaswhite" target="_blank"><span>Follow me on Twitter</span></a></li>
+        <li><a class="facebook" href="http://www.facebook.com/lukas.white.freelance.web.developer" target="_blank"><span>Find me on Facebook</span></a></li>
+        <li><a class="github" href="https://github.com/lukaswhite" target="_blank"><span>Find me on Github</span></a></li>
+      </ul>
+    </div>
+    <hr>
+    <div class="sixteen columns centered">
+      <p>Powered by <a href="http://www.typeandgrids.com" target="_blank">Type &amp; Grids</a>, <a href="http://jekyllrb.com/">Jekyll</a> and <a href="https://github.com/erikhuda/thor">Thor</a></p>
+    </div>
+  </footer>
+  <!-- Footer ends ============================================================================ -->
+    
+</div><!-- container -->
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-3485550-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</body>
+</html>
